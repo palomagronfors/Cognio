@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     (function () {
       var t = localStorage.getItem('teema') ||
@@ -413,6 +414,29 @@
     .pika-muistio .poista:hover { color: #d93a4e; }
     @media (max-width: 640px){ .pika-fab { right: 16px; bottom: 16px; width: 52px; height: 52px; } }
 
+    /* ===== Kirjautuminen ===== */
+    .auth-verho{position:fixed;inset:0;background:var(--md-scrim);z-index:50;display:none;
+      align-items:center;justify-content:center;padding:20px}
+    .auth-verho.auki{display:flex}
+    .auth-modaali{position:relative;background:var(--md-surface);border-radius:20px;padding:30px 26px 26px;
+      width:100%;max-width:400px;box-shadow:var(--varjo-hover);text-align:center;animation:valmisPomppu .3s ease}
+    .auth-logo{font-size:40px;line-height:1;margin-bottom:8px}
+    .auth-sulje{position:absolute;top:12px;right:12px;background:none;border:none;font-size:18px;cursor:pointer;
+      color:var(--md-on-surface-variant);padding:6px 9px;border-radius:8px}
+    .auth-sulje:hover{background:color-mix(in srgb,var(--md-on-surface) 10%,transparent)}
+    .auth-modaali h3{font-size:20px;font-weight:800;justify-content:center}
+    .auth-email{font-weight:700;color:var(--md-primary);word-break:break-all;margin:2px 0 10px}
+    .auth-google{background:#fff;color:#3c4043;border:1px solid var(--md-outline)}
+    :root[data-theme="dark"] .auth-google{background:#2a2431;color:#f3e9ee}
+    .auth-google::before{content:"G";display:inline-flex;align-items:center;justify-content:center;
+      width:20px;height:20px;border-radius:50%;background:linear-gradient(135deg,#EA4335,#4285F4);color:#fff;
+      font-weight:800;font-size:13px;margin-right:8px}
+    .auth-erotin{display:flex;align-items:center;gap:10px;margin:16px 0;color:var(--md-on-surface-variant);font-size:13px}
+    .auth-erotin::before,.auth-erotin::after{content:"";flex:1;height:1px;background:var(--md-outline-variant)}
+    .auth-viesti{font-size:13.5px;margin:12px 0 0;color:var(--md-on-surface-variant);min-height:18px}
+    .auth-viesti.ok{color:var(--md-ok,#1f8a52)}
+    #authNappi.kirjautunut{background:var(--md-primary-container);color:var(--md-on-primary-container);border-color:transparent}
+
     /* ===== Apu ja palaute ===== */
     .apu-kortti { display: flex; gap: 14px; align-items: flex-start; padding: 16px; border-radius: 14px;
       background: var(--md-surface-container-high); border: 1px solid var(--md-outline-variant); }
@@ -603,6 +627,7 @@
       <span class="haku-pikanappain">/</span>
     </button>
     <div class="topbar-oikea">
+      <button class="nappi outline pieni" id="authNappi" style="padding:8px 14px">Kirjaudu</button>
       <button class="icon-nappi" id="teemaVaihto" title="Vaihda teema"></button>
     </div>
   </div>
@@ -1079,6 +1104,29 @@
     <div class="pika-lista" id="pikaLista"></div>
   </aside>
 
+  <!-- ===== Kirjautuminen ===== -->
+  <div class="auth-verho" id="authVerho">
+    <div class="auth-modaali" role="dialog" aria-modal="true">
+      <button class="auth-sulje" id="authSulje" aria-label="Sulje">✕</button>
+      <div class="auth-logo">⚡</div>
+      <div id="authUlos" hidden>
+        <h3 style="margin:0 0 4px">Olet kirjautunut</h3>
+        <p class="auth-email" id="authKuka"></p>
+        <p class="pieni himmea">Opiskelusi tallentuu pilveen ja jatkuu joka laitteella tällä tunnuksella.</p>
+        <button class="nappi outline" id="authKirjauduUlos" style="width:100%; justify-content:center">Kirjaudu ulos</button>
+      </div>
+      <div id="authSisaan">
+        <h3 style="margin:0 0 4px">Kirjaudu Cognioon</h3>
+        <p class="pieni himmea" style="margin:0 0 18px">Kirjautumalla opiskelusi tallentuu pilveen ja jatkuu kaikilla laitteillasi.</p>
+        <button class="nappi auth-google" id="authGoogle" style="width:100%; justify-content:center">Jatka Googlella</button>
+        <div class="auth-erotin"><span>tai sähköpostilla</span></div>
+        <input type="email" id="authEmail" placeholder="sinun@sahkoposti.fi" autocomplete="email">
+        <button class="nappi" id="authEmailNappi" style="width:100%; justify-content:center; margin-top:8px">Lähetä kirjautumislinkki</button>
+        <p class="auth-viesti" id="authViesti"></p>
+      </div>
+    </div>
+  </div>
+
   <!-- Globaali haku (command palette) -->
   <div class="haku-verho" id="hakuVerho">
     <div class="haku-modaali">
@@ -1220,6 +1268,51 @@
         ['sustainable','kestävä'],['controversial','kiistanalainen'],['significant','merkittävä'],
         ['fluctuate','vaihdella'],['comprehensive','kattava'],['deteriorate','heikentyä'],
         ['ambiguous','monitulkintainen'],['resilient','sinnikäs'],['scarce','niukka'],
+        ['abundant','runsas'],['crucial','ratkaiseva'],['deliberate','tarkoituksellinen'],
+        ['feasible','toteutettavissa oleva'],['inherent','luontainen'],['prevalent','yleinen, vallitseva'],
+        ['tedious','puuduttava'],['vital','elintärkeä'],['notion','käsitys, ajatus'],
+      ]},
+      { nimi:'ENA2 verbit ja ilmaukset', aine:'ENA', kurssi:'ENA2', tyyppi:'kortit', parit:[
+        ['account for','selittää'],['carry out','toteuttaa'],['come across','törmätä johonkin'],
+        ['figure out','selvittää, tajuta'],['give up','luovuttaa'],['look into','tutkia'],
+        ['point out','huomauttaa'],['rely on','luottaa johonkin'],['set up','perustaa'],
+        ['turn down','hylätä, kieltäytyä'],['bring about','saada aikaan'],['put off','lykätä'],
+        ['run out of','loppua kesken'],['take on','ottaa hoitaakseen'],['work out','onnistua; treenata'],
+        ['cope with','selviytyä jostakin'],['deal with','käsitellä'],['look forward to','odottaa innolla'],
+        ['make up for','hyvittää'],['stand out','erottua'],
+      ]},
+      { nimi:'ENA3 yhteiskunta ja ympäristö', aine:'ENA', kurssi:'ENA3', tyyppi:'kortit', parit:[
+        ['climate change','ilmastonmuutos'],['poverty','köyhyys'],['inequality','eriarvoisuus'],
+        ['biodiversity','luonnon monimuotoisuus'],['renewable energy','uusiutuva energia'],['greenhouse gas','kasvihuonekaasu'],
+        ['unemployment','työttömyys'],['welfare','hyvinvointi'],['democracy','demokratia'],
+        ['legislation','lainsäädäntö'],['immigration','maahanmuutto'],['sustainability','kestävyys'],
+        ['consumption','kulutus'],['pollution','saastuminen'],['deforestation','metsäkato'],
+        ['recycling','kierrätys'],['economy','talous'],['wealth','varallisuus'],
+        ['citizen','kansalainen'],['policy','politiikka, toimintalinja'],
+      ]},
+      { nimi:'RUB11 perussanasto', aine:'RUB', kurssi:'RUB11', tyyppi:'kortit', parit:[
+        ['viktig','tärkeä'],['svår','vaikea'],['lätt','helppo'],['möjlig','mahdollinen'],
+        ['nödvändig','välttämätön'],['tillsammans','yhdessä'],['ungefär','suunnilleen'],['verklig','todellinen'],
+        ['tydlig','selkeä'],['allvarlig','vakava'],['vanlig','tavallinen'],['ovanlig','epätavallinen'],
+        ['faktiskt','itse asiassa'],['ändå','kuitenkin'],['dessutom','lisäksi'],['eftersom','koska'],
+        ['trots','huolimatta'],['själv','itse'],['ganska','melko'],['knappast','tuskin'],
+        ['förstås','tietysti'],['åtminstone','ainakin'],['särskilt','erityisesti'],['numera','nykyään'],
+      ]},
+      { nimi:'RUB12 verbit ja ilmaukset', aine:'RUB', kurssi:'RUB12', tyyppi:'kortit', parit:[
+        ['att bli','tulla joksikin'],['att behöva','tarvita'],['att tycka','pitää (mielipide)'],
+        ['att tänka','ajatella'],['att försöka','yrittää'],['att lyckas','onnistua'],
+        ['att hända','tapahtua'],['att bruka','olla tapana'],['att märka','huomata'],
+        ['att sakna','kaivata'],['att räcka','riittää'],['att öka','lisääntyä'],
+        ['att minska','vähentyä'],['att påverka','vaikuttaa'],['att kräva','vaatia'],
+        ['att erbjuda','tarjota'],['att undvika','välttää'],['att våga','uskaltaa'],
+        ['att förklara','selittää'],['att beskriva','kuvailla'],
+      ]},
+      { nimi:'RUB13 arki ja yhteiskunta', aine:'RUB', kurssi:'RUB13', tyyppi:'kortit', parit:[
+        ['samhälle','yhteiskunta'],['miljö','ympäristö'],['utbildning','koulutus'],['arbete','työ'],
+        ['hälsa','terveys'],['framtid','tulevaisuus'],['förändring','muutos'],['möjlighet','mahdollisuus'],
+        ['befolkning','väestö'],['invandring','maahanmuutto'],['jämställdhet','tasa-arvo'],['utveckling','kehitys'],
+        ['ekonomi','talous'],['klimat','ilmasto'],['ansvar','vastuu'],['rättighet','oikeus'],
+        ['lag','laki'],['företag','yritys'],['nyheter','uutiset'],['åsikt','mielipide'],
       ]},
       { nimi:'BI1 peruskäsitteet', aine:'BI', kurssi:'BI1', tyyppi:'kortit', parit:[
         ['Fotosynteesi','yhteyttäminen, jossa tuotetaan glukoosia'],['Mitoosi','tavallinen solunjakautuminen'],
@@ -1228,9 +1321,9 @@
         ['Osmoosi','veden liike puoliläpäisevän kalvon läpi'],['Alleeli','geenin vaihtoehtoinen muoto'],
       ]},
       { nimi:'HI1 vuosiluvut', aine:'HI', kurssi:'HI1', tyyppi:'kortit', parit:[
-        ['Ranskan suuri vallankumous','1789'],['Ensimmäinen maailmansota','1914–1918'],['Toinen maailmansota','1939–1945'],
+        ['Ranskan suuri vallankumous','1789'],['Ensimmäinen maailmansota','1914-1918'],['Toinen maailmansota','1939-1945'],
         ['Suomen itsenäistyminen','1917'],['Berliinin muurin murtuminen','1989'],['Reformaatio','1517'],
-        ['Talvisota','1939–1940'],['YK perustettiin','1945'],
+        ['Talvisota','1939-1940'],['YK perustettiin','1945'],
       ]},
     ];
     let idLaskuri = 1;
@@ -2608,6 +2701,86 @@
     /* ============ Alustus ============ */
     piirraIkonit();
     naytaNakyma(localStorage.getItem('cognio_nakyma')||'koti');
+
+    /* ============ Kirjautuminen ja pilvisynkka (Supabase) ============ */
+    (function(){
+      const SB_URL = "https://lyzawkkibuidquqbyeko.supabase.co";
+      const SB_KEY = "sb_publishable_ZoNXTylNOt6kS9rMeoRsQw_8gmu9HIn";
+      if(!window.supabase){ return; }   // kirjasto ei latautunut -> sovellus toimii silti paikallisesti
+      const sb = window.supabase.createClient(SB_URL, SB_KEY);
+      const $ = id => document.getElementById(id);
+      const paluuOsoite = location.href.split('#')[0].split('?')[0];
+
+      function avaa(){ $('authVerho').classList.add('auki'); }
+      function sulje(){ $('authVerho').classList.remove('auki'); }
+      function viesti(t, ok){ const e=$('authViesti'); e.textContent=t||''; e.classList.toggle('ok', !!ok); }
+      function paivitaNakyma(user){
+        const nappi=$('authNappi');
+        if(user){
+          nappi.textContent = '👤 ' + (user.email ? user.email.split('@')[0] : 'Tili');
+          nappi.classList.add('kirjautunut');
+          $('authSisaan').hidden = true; $('authUlos').hidden = false; $('authKuka').textContent = user.email || '';
+        } else {
+          nappi.textContent = 'Kirjaudu'; nappi.classList.remove('kirjautunut');
+          $('authSisaan').hidden = false; $('authUlos').hidden = true;
+        }
+      }
+      let synkAjastin;
+      function tallennaPilveen(user){
+        clearTimeout(synkAjastin);
+        synkAjastin = setTimeout(async ()=>{
+          const blob={};
+          for(let i=0;i<localStorage.length;i++){ const k=localStorage.key(i); if(k&&k.indexOf('cognio_')===0) blob[k]=localStorage.getItem(k); }
+          await sb.from('kayttaja_data').upsert({ user_id:user.id, data:blob, updated_at:new Date().toISOString() });
+        }, 1500);
+      }
+      function asennaPeilaus(user){
+        if(window.__cognioPeilaus) return; window.__cognioPeilaus=true;
+        const setOrig = localStorage.setItem.bind(localStorage);
+        const remOrig = localStorage.removeItem.bind(localStorage);
+        localStorage.setItem = (k,v)=>{ setOrig(k,v); if(String(k).indexOf('cognio_')===0) tallennaPilveen(user); };
+        localStorage.removeItem = (k)=>{ remOrig(k); if(String(k).indexOf('cognio_')===0) tallennaPilveen(user); };
+      }
+      async function lataaPilvesta(user){
+        const { data } = await sb.from('kayttaja_data').select('data').eq('user_id', user.id).maybeSingle();
+        if(data && data.data && Object.keys(data.data).length){
+          let muutos=false;
+          Object.entries(data.data).forEach(([k,v])=>{ if(localStorage.getItem(k)!==v){ localStorage.setItem(k, v); muutos=true; } });
+          if(muutos){ location.reload(); return true; }
+        } else {
+          tallennaPilveen(user);   // ensimmäinen kirjautuminen: vie nykyinen data pilveen
+        }
+        return false;
+      }
+      $('authNappi').onclick = avaa;
+      $('authSulje').onclick = sulje;
+      $('authVerho').onclick = (e)=>{ if(e.target.id==='authVerho') sulje(); };
+      $('authGoogle').onclick = async ()=>{
+        const { error } = await sb.auth.signInWithOAuth({ provider:'google', options:{ redirectTo: paluuOsoite } });
+        if(error) viesti('Google-kirjautuminen ei ole vielä käytössä (aktivoidaan seuraavaksi). ' + error.message);
+      };
+      $('authEmailNappi').onclick = async ()=>{
+        const email = $('authEmail').value.trim();
+        if(!email){ viesti('Kirjoita sähköpostiosoitteesi.'); return; }
+        viesti('Lähetetään…');
+        const { error } = await sb.auth.signInWithOtp({ email, options:{ emailRedirectTo: paluuOsoite } });
+        viesti(error ? ('Virhe: ' + error.message) : 'Valmis! Tarkista sähköpostisi ja avaa kirjautumislinkki.', !error);
+      };
+      $('authEmail').addEventListener('keydown', e=>{ if(e.key==='Enter') $('authEmailNappi').click(); });
+      $('authKirjauduUlos').onclick = async ()=>{ await sb.auth.signOut(); location.reload(); };
+      sb.auth.onAuthStateChange(async (_e, session)=>{
+        const user = session && session.user;
+        paivitaNakyma(user);
+        if(user){
+          if(!window.__cognioLadattu){ window.__cognioLadattu=true;
+            const reloadaa = await lataaPilvesta(user);
+            if(!reloadaa) asennaPeilaus(user);
+          }
+          sulje();
+        }
+      });
+      sb.auth.getSession().then(({data})=>{ paivitaNakyma(data.session && data.session.user); });
+    })();
   </script>
 </body>
 </html>
