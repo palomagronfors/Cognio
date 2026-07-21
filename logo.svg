@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 150" width="540" height="150" role="img" aria-label="Cognio">
+  <defs>
+    <linearGradient id="cognioG" x1="20" y1="12" x2="120" y2="132" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#F5409B"/>
+      <stop offset=".55" stop-color="#C42E8A"/>
+      <stop offset="1" stop-color="#7C3AED"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Merkki -->
+  <g transform="translate(15,15)">
+    <!-- C -->
+    <path d="M92 36 A40 40 0 1 0 92 84" fill="none" stroke="url(#cognioG)" stroke-width="18" stroke-linecap="round"/>
+    <!-- Aivot keskellä -->
+    <g fill="none" stroke="url(#cognioG)" stroke-width="4.5" stroke-linecap="round">
+      <ellipse cx="60" cy="60" rx="22" ry="18"/>
+      <path d="M55 49 a11 11 0 0 0 0 22"/>
+      <path d="M65 49 a11 11 0 0 1 0 22"/>
+    </g>
+    <!-- Kipinä aivojen keskellä -->
+    <path d="M60 50.5 L62.8 57.2 L69.5 60 L62.8 62.8 L60 69.5 L57.2 62.8 L50.5 60 L57.2 57.2 Z"
+          fill="url(#cognioG)" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/>
+  </g>
+
+  <!-- Tekstilogo -->
+  <text x="152" y="100" font-family="Inter, system-ui, -apple-system, sans-serif" font-size="82" font-weight="800" letter-spacing="-3.5" fill="#221019">Cognio</text>
+</svg>
