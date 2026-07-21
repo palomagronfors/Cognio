@@ -2707,7 +2707,9 @@
       const SB_URL = "https://lyzawkkibuidquqbyeko.supabase.co";
       const SB_KEY = "sb_publishable_ZoNXTylNOt6kS9rMeoRsQw_8gmu9HIn";
       if(!window.supabase){ return; }   // kirjasto ei latautunut -> sovellus toimii silti paikallisesti
-      const sb = window.supabase.createClient(SB_URL, SB_KEY);
+      const sb = window.supabase.createClient(SB_URL, SB_KEY, {
+        auth: { flowType: 'implicit', detectSessionInUrl: true, persistSession: true, autoRefreshToken: true }
+      });
       const $ = id => document.getElementById(id);
       const paluuOsoite = location.href.split('#')[0].split('?')[0];
 
