@@ -186,7 +186,9 @@
     .navi-alavalikko { position: absolute; top: calc(100% + 4px); left: 0; min-width: 210px;
       background: var(--md-surface-container-high); border: 1px solid var(--md-outline-variant); border-radius: 14px;
       box-shadow: 0 8px 28px rgba(0,0,0,0.28); padding: 8px; display: none; z-index: 30; }
-    .navi-kohta:hover .navi-alavalikko, .navi-kohta.auki .navi-alavalikko { display: block; }
+    .navi-kohta.auki .navi-alavalikko { display: block; }
+    /* Hover-avaus vain hiirilaitteilla; kosketuslaitteilla vain napautus (.auki) ohjaa */
+    @media (hover: hover) and (pointer: fine) { .navi-kohta:hover .navi-alavalikko { display: block; } }
     .navi-alavalikko { max-height: 74vh; overflow-y: auto; }
     /* Kaaviopalkit (tilastot) */
     .kaavio-rivi { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
@@ -437,6 +439,42 @@
     .auth-viesti.ok{color:var(--md-ok,#1f8a52)}
     #authNappi.kirjautunut{background:var(--md-primary-container);color:var(--md-on-primary-container);border-color:transparent}
 
+    /* ===== Esittelysivu ===== */
+    .esittely-hero { text-align: center; padding: 40px 24px 34px; margin-bottom: 22px; border-radius: 24px; color: #fff;
+      background: linear-gradient(120deg, var(--md-primary), color-mix(in srgb, var(--md-primary) 55%, #7C3AED), #7C3AED, var(--md-primary));
+      background-size: 300% 300%; animation: heroLiuku 22s ease infinite; }
+    .esittely-merkki { font-size: 54px; line-height: 1; margin-bottom: 8px; }
+    .esittely-hero h1 { font-size: clamp(26px, 4vw, 38px); margin: 0 auto 12px; max-width: 16ch; line-height: 1.15; letter-spacing: -0.02em; text-wrap: balance; }
+    .esittely-ala { font-size: 17px; max-width: 60ch; margin: 0 auto 24px; opacity: .95; }
+    .esittely-napit { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .esittely-hero .nappi { background: #fff; color: var(--md-primary); }
+    .esittely-hero .nappi.outline { background: rgba(255,255,255,.15); color: #fff; border: 1px solid rgba(255,255,255,.5); }
+    .esittely-ruudukko { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-bottom: 22px; }
+    .esittely-kortti { background: var(--md-surface-container); border: 1px solid var(--md-outline-variant); border-radius: 16px; padding: 22px; }
+    .esittely-kortti .ek-ikoni { font-size: 30px; margin-bottom: 10px; }
+    .esittely-kortti h3 { margin: 0 0 6px; font-size: 17px; }
+    .esittely-kortti p { margin: 0; color: var(--md-on-surface-variant); font-size: 14.5px; line-height: 1.55; }
+    .hyoty-lista { list-style: none; padding: 0; margin: 14px 0 18px; display: grid; gap: 10px; }
+    .hyoty-lista li { font-size: 15px; }
+
+    /* ===== Opintojaksot ===== */
+    .oj-jakso { border: 1px solid var(--md-outline-variant); border-radius: 14px; padding: 16px 18px; margin-bottom: 12px; background: var(--md-surface); }
+    .oj-jakso h3 { margin: 0 0 8px; font-size: 16.5px; display: flex; align-items: center; gap: 10px; }
+    .oj-numero { flex: 0 0 auto; width: 26px; height: 26px; border-radius: 8px; background: var(--aine-vari, var(--md-primary)); color: #fff;
+      display: grid; place-items: center; font-size: 13px; font-weight: 800; }
+    .oj-aiheet { display: flex; flex-wrap: wrap; gap: 8px; }
+    .oj-aihe { background: var(--md-surface-container-high); border-radius: 999px; padding: 5px 12px; font-size: 13.5px; }
+
+    /* ===== Profiili ===== */
+    .profiili-yla { display: flex; align-items: center; gap: 16px; }
+    .profiili-avatar { width: 60px; height: 60px; border-radius: 50%; flex-shrink: 0; object-fit: cover;
+      background: linear-gradient(135deg, var(--md-primary), #7C3AED); color: #fff; display: grid; place-items: center; font-size: 26px; font-weight: 800; }
+    .profiili-nimi { font-size: 20px; font-weight: 800; }
+    .profiili-email { color: var(--md-on-surface-variant); font-size: 14px; word-break: break-all; }
+    .asetus-rivi { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--md-outline-variant); }
+    .asetus-rivi:last-child { border-bottom: none; }
+    .asetus-rivi .ala { color: var(--md-on-surface-variant); font-size: 13.5px; margin-top: 2px; }
+
     /* ===== Apu ja palaute ===== */
     .apu-kortti { display: flex; gap: 14px; align-items: flex-start; padding: 16px; border-radius: 14px;
       background: var(--md-surface-container-high); border: 1px solid var(--md-outline-variant); }
@@ -610,13 +648,15 @@
           <button data-nakyma="peli"><span class="ikoni" data-ikoni="play"></span> Salamavisa ⚡</button>
         </div>
       </div>
+      <button class="navi-otsikko" data-nakyma="opintojaksot"><span class="ikoni" data-ikoni="book"></span> Opintojaksot</button>
       <button class="navi-otsikko" data-nakyma="tilastot"><span class="ikoni" data-ikoni="chart"></span> Tilastot</button>
       <div class="navi-kohta">
-        <button class="navi-otsikko" data-ryhma="kokeet,suunnitelma,muistio,apu"><span class="ikoni" data-ikoni="tasks"></span> Lisää <span class="nuoli">▾</span></button>
+        <button class="navi-otsikko" data-ryhma="kokeet,suunnitelma,muistio,apu,profiili"><span class="ikoni" data-ikoni="tasks"></span> Lisää <span class="nuoli">▾</span></button>
         <div class="navi-alavalikko">
           <button data-nakyma="kokeet"><span class="ikoni" data-ikoni="tasks"></span> Vanhat kokeet</button>
           <button data-nakyma="suunnitelma"><span class="ikoni" data-ikoni="chart"></span> Opintosuunnitelma</button>
           <button data-nakyma="muistio"><span class="ikoni" data-ikoni="note"></span> Muistiinpanot</button>
+          <button data-nakyma="profiili"><span class="ikoni" data-ikoni="settings"></span> Profiili</button>
           <button data-nakyma="apu"><span class="ikoni" data-ikoni="idea"></span> Apu ja palaute</button>
         </div>
       </div>
@@ -635,14 +675,14 @@
   <main class="sisalto">
 
     <!-- ===== KOTI ===== -->
-    <section class="nakyma sarakkeet" id="nakyma-koti">
+    <section class="nakyma sarakkeet" id="nakyma-koti" hidden>
       <div class="hero taysleveys">
         <h1>Hei ja tervetuloa Cognioon! 👋</h1>
         <p>Cognio on henkilökohtainen YO-valmentajasi. Täällä voit kerrata sanastoa ja käsitteitä kääntökorteilla, testata osaamistasi rakentamillasi kokeilla, harjoitella esseitä koeajassa ja pitää muistiinpanoja - kaikki yhdessä paikassa.</p>
         <p>Cognio seuraa edistymistäsi, tunnistaa heikot aiheet ja rakentaa sinulle henkilökohtaisen opintosuunnitelman kokeeseen. Aloitetaan opiskelu!</p>
         <div class="hero-napit">
           <button class="nappi" data-siirry="kortit">Aloita opiskelu →</button>
-          <button class="nappi vaalea" id="heroPaiva">Päivän kertaus</button>
+          <button class="nappi vaalea" data-siirry="opintojaksot">Selaa opintojaksoja</button>
         </div>
       </div>
 
@@ -675,7 +715,7 @@
         <h2><span class="ikoni" data-ikoni="play"></span> Jatka opiskelua</h2>
         <div id="jatkaAlue"></div>
         <div class="nappirivi" style="margin-top:12px">
-          <button class="nappi" id="paivanKertaus"><span class="ikoni" data-ikoni="idea"></span> Päivän kertaus</button>
+          <button class="nappi" data-siirry="kortit"><span class="ikoni" data-ikoni="cards"></span> Valitse aine ja harjoittele</button>
         </div>
       </div>
 
@@ -727,8 +767,8 @@
       <!-- Vaihe 1: valitse pakka -->
       <div id="korttiValinta">
         <div class="kortti">
-          <h2><span class="ikoni" data-ikoni="cards"></span> Valitse pakka</h2>
-          <p class="himmea">Valitse mitä haluat harjoitella. Pääset harjoittelemaan juuri kyseisiä kortteja.</p>
+          <h2><span class="ikoni" data-ikoni="cards"></span> Valitse aine</h2>
+          <p class="himmea">Harjoittele ainekohtaisesti — kortteja ei sekoiteta aineiden kesken. Valitse aine, sitten kurssi.</p>
           <div class="aine-ruudukko" id="pakkaRuudukko"></div>
           <button class="nappi outline" id="uusiPakka" style="margin-top:14px"><span class="ikoni" data-ikoni="plus"></span> Uusi pakka</button>
         </div>
@@ -1088,6 +1128,56 @@
         </div>
       </div>
     </section>
+
+    <!-- ===== ESITTELYSIVU (landing) ===== -->
+    <section class="nakyma" id="nakyma-esittely" hidden>
+      <div class="esittely-hero">
+        <div class="esittely-merkki">⚡</div>
+        <h1>Cognio — henkilökohtainen YO-valmentajasi</h1>
+        <p class="esittely-ala">Kertaa sanastoa ja käsitteitä kääntökorteilla, testaa osaamistasi omilla kokeilla, harjoittele esseitä koeajassa ja seuraa edistymistäsi. Kaikki yhdessä paikassa, suomeksi.</p>
+        <div class="esittely-napit">
+          <button class="nappi iso" data-siirry="kortit">Kokeile kääntökortteja →</button>
+          <button class="nappi outline iso" id="esittelyKirjaudu">Kirjaudu / Luo tili</button>
+        </div>
+        <p class="pieni himmea" id="esittelyTila" style="margin-top:16px"></p>
+      </div>
+
+      <div class="esittely-ruudukko">
+        <div class="esittely-kortti"><div class="ek-ikoni">🎴</div><h3>Kääntökortit</h3><p>Opettele sanoja ja käsitteitä. Älykäs kertausväli tuo heikot kortit useammin.</p></div>
+        <div class="esittely-kortti"><div class="ek-ikoni">📝</div><h3>Omat kokeet</h3><p>Rakenna itsellesi koe valitsemastasi aiheesta ja tarkista osaamisesi.</p></div>
+        <div class="esittely-kortti"><div class="ek-ikoni">✍️</div><h3>Esseet</h3><p>Harjoittele kirjoittamista ajastettuna, sanamäärä ja koeolosuhteet mukana.</p></div>
+        <div class="esittely-kortti"><div class="ek-ikoni">📚</div><h3>Opintojaksot</h3><p>Tiivistetyt jaksot ja tärkeimmät aiheet jokaisesta aineesta.</p></div>
+        <div class="esittely-kortti"><div class="ek-ikoni">📊</div><h3>Tilastot ja suunnitelma</h3><p>Näet edistymisesi ja saat henkilökohtaisen opintosuunnitelman kokeeseen.</p></div>
+        <div class="esittely-kortti"><div class="ek-ikoni">⚡</div><h3>Salamavisa</h3><p>Testaa muistiasi nopeassa pelissä, kerää comboja ja tee ennätyksiä.</p></div>
+      </div>
+
+      <div class="kortti esittely-hyoty">
+        <h2>🔓 Näin saat kaiken irti</h2>
+        <p class="himmea">Voit kokeilla <b>kääntökortteja</b> ja selata <b>opintojaksoja</b> ilman kirjautumista. Kun luot tilin ja kirjaudut:</p>
+        <ul class="hyoty-lista">
+          <li>💾 Opiskelusi <b>tallentuu ja synkkaantuu</b> kaikille laitteillesi</li>
+          <li>📊 Saat <b>henkilökohtaiset tilastot</b> ja edistymisen seurannan</li>
+          <li>📝 Omat <b>pakat, muistiinpanot ja esseet</b></li>
+          <li>🎯 <b>Personoitu opintosuunnitelma</b> ja tulevien kokeiden laskuri</li>
+        </ul>
+        <button class="nappi" id="esittelyKirjaudu2">Kirjaudu ja aloita →</button>
+      </div>
+    </section>
+
+    <!-- ===== OPINTOJAKSOT ===== -->
+    <section class="nakyma" id="nakyma-opintojaksot" hidden>
+      <div class="kortti">
+        <h2>📚 Opintojaksot ja tärkeät aiheet</h2>
+        <p class="himmea">Tiivistetyt jaksot ja keskeisimmät aiheet aineittain. Valitse aine nähdäksesi sen kokonaisuudet.</p>
+        <div class="aine-ruudukko" id="ojAineet"></div>
+      </div>
+      <div class="kortti" id="ojSisalto" hidden></div>
+    </section>
+
+    <!-- ===== PROFIILI ===== -->
+    <section class="nakyma keskitetty" id="nakyma-profiili" hidden>
+      <div id="profiiliAlue"></div>
+    </section>
   </main>
 
   <!-- ===== Pikamuistiinpano (liukuu sivusta) ===== -->
@@ -1384,11 +1474,18 @@
     }
 
     /* ============ Navigointi ============ */
-    const NAKYMAT = ['koti','aine','kortit','koe','kokeet','muistio','suunnitelma','tilastot','esseet','peli','apu'];
+    const NAKYMAT = ['esittely','koti','aine','kortit','koe','kokeet','muistio','suunnitelma','tilastot','esseet','peli','apu','opintojaksot','profiili'];
+    // Näkymät jotka vaativat kirjautumisen (julkiset: esittely, kortit, aine, opintojaksot, apu)
+    const LUKITUT = ['koti','koe','kokeet','muistio','suunnitelma','tilastot','esseet','peli','profiili'];
+    let kirjautunut = false;
     let nykyAine = null;
     function suljeValikot(){ document.querySelectorAll('.navi-kohta.auki').forEach(k=>k.classList.remove('auki')); }
     function naytaNakyma(nimi){
-      if(!NAKYMAT.includes(nimi)) nimi='koti';
+      if(!NAKYMAT.includes(nimi)) nimi='esittely';
+      if(LUKITUT.includes(nimi) && !kirjautunut){   // lukittu näkymä ilman kirjautumista
+        if(window.pyydaKirjautuminen) window.pyydaKirjautuminen('Kirjaudu käyttääksesi tätä ominaisuutta — silloin data myös tallentuu ja synkkaantuu laitteidesi välillä.');
+        nimi = 'esittely';
+      }
       if(nimi!=='peli' && typeof peliLopeta==='function') peliLopeta();   // pysäytä peli poistuttaessa
       NAKYMAT.forEach(n=>{ document.getElementById('nakyma-'+n).hidden=(n!==nimi); });
       document.querySelectorAll('.navi-otsikko').forEach(o=>{
@@ -1408,6 +1505,150 @@
       if(nimi==='tilastot') piirraTilastot();
       if(nimi==='esseet') avaaEsseet();
       if(nimi==='peli') avaaPeli();
+      if(nimi==='esittely') piirraEsittely();
+      if(nimi==='opintojaksot') piirraOpintojaksot();
+      if(nimi==='profiili') piirraProfiili();
+    }
+    // Päivitä UI kun kirjautumistila muuttuu (kutsutaan auth-osiosta)
+    function paivitaKirjautuminen(sisaan){
+      kirjautunut = !!sisaan;
+      document.body.classList.toggle('kirjautunut', kirjautunut);
+      const nyt = localStorage.getItem('cognio_nakyma') || 'esittely';
+      // jos ollaan lukitussa näkymässä eikä olla kirjautuneita, siirry esittelyyn
+      if(!kirjautunut && LUKITUT.includes(nyt)) naytaNakyma('esittely');
+      else { const akt=document.querySelector('.nakyma:not([hidden])'); if(akt && akt.id==='nakyma-esittely') piirraEsittely(); if(akt && akt.id==='nakyma-profiili') piirraProfiili(); }
+    }
+
+    /* ============ Esittely, opintojaksot, profiili ============ */
+    function piirraEsittely(){
+      const tila = document.getElementById('esittelyTila');
+      const nappi = document.getElementById('esittelyKirjaudu');
+      if(kirjautunut){
+        const u = window.cognioKayttaja;
+        tila.innerHTML = 'Kirjautuneena: <b>'+suojaa((u&&u.email)||'')+'</b> — datasi synkkaantuu laitteidesi välillä.';
+        if(nappi) nappi.textContent = 'Siirry etusivulle';
+      } else {
+        tila.textContent = 'Vinkki: kääntökortteja ja opintojaksoja voi kokeilla ilman kirjautumista.';
+        if(nappi) nappi.textContent = 'Kirjaudu / Luo tili';
+      }
+    }
+    const OPINTOJAKSOT = {
+      'ÄI':[{nimi:'Tekstien tulkinta',aiheet:['tekstilajit','kaunokirjallisuuden analyysi','media- ja kuvanluku']},
+            {nimi:'Kirjoittaminen',aiheet:['esseen rakenne','argumentointi','kielenhuolto']},
+            {nimi:'Vuorovaikutus',aiheet:['puheviestintä','ryhmäkeskustelu','vaikuttaminen']},
+            {nimi:'Kirjallisuus',aiheet:['kirjallisuuden lajit','tyylikeinot','kirjallisuushistoria']}],
+      'RUB':[{nimi:'Perustaidot',aiheet:['arjen sanasto','verbit','sanajärjestys']},
+             {nimi:'Vuorovaikutus',aiheet:['keskustelu','mielipiteen ilmaisu','kirjoittaminen']},
+             {nimi:'Yhteiskunta ja kulttuuri',aiheet:['Pohjoismaat','ajankohtaiset aiheet']},
+             {nimi:'Opiskelu ja työ',aiheet:['koulutus','työelämän sanasto']}],
+      'ENA':[{nimi:'Sanasto ja rakenteet',aiheet:['laaja sanasto','aikamuodot','ehtolauseet']},
+             {nimi:'Viestintä',aiheet:['keskustelu','eri tekstilajit','kuullun ymmärtäminen']},
+             {nimi:'Yhteiskunta ja ympäristö',aiheet:['globaalit kysymykset','media']},
+             {nimi:'Kulttuuri ja tiede',aiheet:['englanninkielinen maailma','tieteelliset tekstit']}],
+      'BI':[{nimi:'Solu ja elämä',aiheet:['solubiologia','aineenvaihdunta','fotosynteesi']},
+            {nimi:'Perinnöllisyys',aiheet:['DNA','geenit','periytyminen','geenitekniikka']},
+            {nimi:'Ekologia',aiheet:['ekosysteemit','ravintoketjut','ympäristönmuutokset']},
+            {nimi:'Evoluutio ja ihminen',aiheet:['luonnonvalinta','ihmisen biologia']}],
+      'GE':[{nimi:'Luonnonmaantiede',aiheet:['ilmakehä','sää ja ilmasto','geologiset prosessit']},
+            {nimi:'Ihmismaantiede',aiheet:['väestö','kaupungistuminen','kulttuurit']},
+            {nimi:'Riskit ja kestävyys',aiheet:['luonnonriskit','ilmastonmuutos','kestävä kehitys']},
+            {nimi:'Aluetutkimus',aiheet:['kartat','paikkatieto (GIS)']}],
+      'FY':[{nimi:'Mekaniikka',aiheet:['liike','voima','energia','liikemäärä']},
+            {nimi:'Lämpö ja aine',aiheet:['lämpöoppi','kaasujen tilanyhtälö']},
+            {nimi:'Sähkö ja magnetismi',aiheet:['virtapiirit','kentät','sähkömagneettinen induktio']},
+            {nimi:'Aallot ja moderni fysiikka',aiheet:['aallot','optiikka','atomi- ja ydinfysiikka']}],
+      'KE':[{nimi:'Aineen rakenne',aiheet:['atomit','jaksollinen järjestelmä','sidokset']},
+            {nimi:'Reaktiot ja stoikiometria',aiheet:['reaktioyhtälöt','ainemäärä (mooli)','laskut']},
+            {nimi:'Orgaaninen kemia',aiheet:['hiiliyhdisteet','funktionaaliset ryhmät']},
+            {nimi:'Tasapaino ja energia',aiheet:['reaktionopeus','hapot ja emäkset','sähkökemia']}],
+      'HI':[{nimi:'Ihminen ja ympäristö',aiheet:['esihistoria','maatalous','kaupungistuminen']},
+            {nimi:'Kansainväliset suhteet',aiheet:['maailmansodat','imperialismi','kylmä sota']},
+            {nimi:'Suomen historia',aiheet:['autonomia','itsenäistyminen','sotien aika']},
+            {nimi:'Aatteet ja vallankumoukset',aiheet:['valistus','teollistuminen','ideologiat']}],
+      'YH':[{nimi:'Suomalainen yhteiskunta',aiheet:['demokratia','eduskunta','hallitus']},
+            {nimi:'Talous',aiheet:['kansantalous','markkinat','työllisyys','verotus']},
+            {nimi:'Oikeus',aiheet:['perusoikeudet','lainsäädäntö','oikeuslaitos']},
+            {nimi:'Kansainvälinen politiikka',aiheet:['EU','YK','globalisaatio']}],
+      'PS':[{nimi:'Psyykkinen toiminta',aiheet:['havainto','tarkkaavaisuus','motivaatio']},
+            {nimi:'Kehitys ja oppiminen',aiheet:['elämänkaari','oppimisen psykologia']},
+            {nimi:'Aivot ja hermosto',aiheet:['biologinen psykologia','tunteet']},
+            {nimi:'Mielenterveys',aiheet:['hyvinvointi','mielenterveyden häiriöt']}],
+      'FI':[{nimi:'Johdatus filosofiaan',aiheet:['argumentointi','logiikka']},
+            {nimi:'Etiikka',aiheet:['moraaliteoriat','hyvä elämä']},
+            {nimi:'Tieto ja todellisuus',aiheet:['tietoteoria','metafysiikka']},
+            {nimi:'Yhteiskuntafilosofia',aiheet:['oikeudenmukaisuus','valta','vapaus']}],
+      'TE':[{nimi:'Terveys ja voimavarat',aiheet:['fyysinen','psyykkinen','sosiaalinen terveys']},
+            {nimi:'Elämäntavat',aiheet:['ravinto','liikunta','uni','päihteet']},
+            {nimi:'Sairaudet ja ehkäisy',aiheet:['kansantaudit','tartuntataudit','ensiapu']},
+            {nimi:'Yhteiskunta ja terveys',aiheet:['terveyspalvelut','terveyserot']}],
+      'UE':[{nimi:'Uskonnon luonne',aiheet:['uskonnon piirteet','uskonnontutkimus']},
+            {nimi:'Maailmanuskonnot',aiheet:['kristinusko','islam','juutalaisuus','itämaiset uskonnot']},
+            {nimi:'Uskonto ja kulttuuri',aiheet:['uskonto Suomessa','historia']},
+            {nimi:'Etiikka ja katsomukset',aiheet:['uskonnon etiikka','uskonnonvapaus']}],
+      'ET':[{nimi:'Katsomukset',aiheet:['maailmankatsomus','sekulaari etiikka']},
+            {nimi:'Etiikka',aiheet:['moraalin perusteet','hyvä elämä']},
+            {nimi:'Kulttuuri ja identiteetti',aiheet:['ihmisoikeudet','kulttuurien moninaisuus']},
+            {nimi:'Yhteiskunta',aiheet:['demokratia','kestävä tulevaisuus']}],
+    };
+    function piirraOpintojaksot(){
+      const alue = document.getElementById('ojAineet');
+      alue.innerHTML = AINEET.map(a=>`<div class="aine-kortti" data-aine="${a.koodi}" style="--aine-vari:${a.vari}; text-align:center">
+        <span class="aine-koodi" style="background:${a.vari}">${a.koodi}</span>
+        <div class="aine-nimi" style="font-size:12.5px">${a.nimi}</div></div>`).join('');
+      alue.querySelectorAll('.aine-kortti').forEach(el=>{ el.onclick=()=>naytaOpintojakso(el.dataset.aine); });
+      document.getElementById('ojSisalto').hidden = true;
+    }
+    function naytaOpintojakso(koodi){
+      const a = AINEET.find(x=>x.koodi===koodi) || AINEET[0];
+      const jaksot = OPINTOJAKSOT[koodi] || [];
+      const alue = document.getElementById('ojSisalto'); alue.hidden = false;
+      alue.innerHTML = `<h2><span class="aine-koodi" style="background:${a.vari}">${a.koodi}</span> &nbsp;${a.nimi}</h2>`
+        + jaksot.map((j,i)=>`<div class="oj-jakso" style="--aine-vari:${a.vari}">
+            <h3><span class="oj-numero">${i+1}</span> ${suojaa(j.nimi)}</h3>
+            <div class="oj-aiheet">${j.aiheet.map(t=>`<span class="oj-aihe">${suojaa(t)}</span>`).join('')}</div></div>`).join('')
+        + `<button class="nappi outline" id="ojHarjoittele" style="margin-top:6px">Harjoittele ${suojaa(a.nimi)} kääntökorteilla →</button>`;
+      const h = document.getElementById('ojHarjoittele'); if(h) h.onclick=()=>{ nykyAine=koodi; naytaNakyma('aine'); };
+      alue.scrollIntoView({behavior:'smooth', block:'start'});
+    }
+    function piirraProfiili(){
+      const alue = document.getElementById('profiiliAlue');
+      const u = window.cognioKayttaja;
+      if(!kirjautunut || !u){
+        alue.innerHTML = `<div class="kortti" style="text-align:center">
+          <div class="esittely-merkki" style="font-size:44px">🔒</div>
+          <h2 style="justify-content:center">Kirjaudu nähdäksesi profiilisi</h2>
+          <p class="himmea">Profiilissa näet tilisi tiedot, henkilökohtaiset tilastot ja asetukset.</p>
+          <button class="nappi" id="profKirjaudu">Kirjaudu / Luo tili</button></div>`;
+        const b=document.getElementById('profKirjaudu'); if(b) b.onclick=()=>{ if(window.pyydaKirjautuminen) window.pyydaKirjautuminen('Kirjaudu nähdäksesi profiilisi.'); };
+        return;
+      }
+      const meta = u.user_metadata || {};
+      const nimi = meta.full_name || (u.email ? u.email.split('@')[0] : 'Käyttäjä');
+      const avatar = meta.avatar_url ? `<img class="profiili-avatar" src="${meta.avatar_url}" alt="" referrerpolicy="no-referrer">` : `<div class="profiili-avatar">${suojaa((nimi[0]||'?').toUpperCase())}</div>`;
+      const t = haeTilastot();
+      const tumma = document.documentElement.getAttribute('data-theme')==='dark';
+      alue.innerHTML = `
+        <div class="kortti"><div class="profiili-yla">${avatar}
+          <div><div class="profiili-nimi">${suojaa(nimi)}</div><div class="profiili-email">${suojaa(u.email||'')}</div></div></div></div>
+        <div class="kortti">
+          <h2>📊 Omat tilastot</h2>
+          <div class="tilasto-rivi">
+            <div class="tilasto"><div class="tilasto-arvo">${(t.opiskeluMin/60).toFixed(1).replace('.0','')} h</div><div class="tilasto-nimi">Opiskeltu</div></div>
+            <div class="tilasto"><div class="tilasto-arvo">${hallussaProsentti()} %</div><div class="tilasto-nimi">Hallussa</div></div>
+            <div class="tilasto"><div class="tilasto-arvo">${t.kysymyksia||0}</div><div class="tilasto-nimi">Kysymystä</div></div>
+            <div class="tilasto"><div class="tilasto-arvo">Taso ${taso(t.xp||0)}</div><div class="tilasto-nimi">Taso</div></div>
+            <div class="tilasto"><div class="tilasto-arvo">${t.putki||0}</div><div class="tilasto-nimi">Putki (pv)</div></div>
+          </div>
+          <button class="nappi outline pieni" id="profTilastot" style="margin-top:12px">Näytä tarkat tilastot →</button></div>
+        <div class="kortti">
+          <h2>⚙️ Asetukset</h2>
+          <div class="asetus-rivi"><div><b>Teema</b><div class="ala">Vaalea tai tumma ulkoasu</div></div><button class="nappi outline pieni" id="profTeema">${tumma?'☀️ Vaalea':'🌙 Tumma'}</button></div>
+          <div class="asetus-rivi"><div><b>Kirjautuminen</b><div class="ala">${suojaa(u.email||'')}</div></div><button class="nappi outline pieni" id="profUlos">Kirjaudu ulos</button></div>
+          <div class="asetus-rivi"><div><b>Palauta oletukset</b><div class="ala">Poistaa omat pakat, muistiinpanot ja tilastot tältä laitteelta</div></div><button class="nappi outline pieni" id="profNollaa" style="color:#d93a4e; border-color:#d93a4e">Palauta</button></div></div>`;
+      document.getElementById('profTilastot').onclick=()=>naytaNakyma('tilastot');
+      document.getElementById('profTeema').onclick=()=>{ asetaTeema(tumma?'light':'dark'); piirraProfiili(); };
+      document.getElementById('profUlos').onclick=()=>{ if(window.cognioKirjauduUlos) window.cognioKirjauduUlos(); };
+      document.getElementById('profNollaa').onclick=nollaaKaikki;
     }
 
     /* ============ Koti ============ */
@@ -1843,17 +2084,16 @@
       piirraKurssiMateriaalit();
     }
     function piirraPakkaRuudukko() {
-      const alue = document.getElementById('pakkaRuudukko'); const pakat = haePakat();
-      alue.innerHTML = pakat.map(p => {
-        const opittu = p.kortit.filter(c=>c.opittu).length;
-        const pros = p.kortit.length ? Math.round(opittu/p.kortit.length*100) : 0;
-        const vari = aineVari(p.aine);
-        return `<div class="aine-kortti" data-id="${p.id}" style="--aine-vari:${vari}">
-          <span class="aine-koodi" style="background:${vari}">${p.aine}</span>
-          <div class="aine-nimi">${suojaa(p.nimi)}</div>
-          <div class="aine-tila">${p.kortit.length} korttia · ${pros} % hallussa</div></div>`;
+      // Ainekohtainen: valitaan ensin aine, ei sekoiteta aineiden kesken
+      const alue = document.getElementById('pakkaRuudukko');
+      alue.innerHTML = AINEET.map(a => {
+        const h = aineenHallussa(a.koodi);
+        return `<div class="aine-kortti" data-aine="${a.koodi}" style="--aine-vari:${a.vari}; text-align:center">
+          <span class="aine-koodi" style="background:${a.vari}">${a.koodi}</span>
+          <div class="aine-nimi" style="font-size:12.5px">${a.nimi}</div>
+          <div class="aine-tila">${h.kortteja ? h.kortteja+' korttia · '+h.pros+' %' : 'aloita tästä'}</div></div>`;
       }).join('');
-      alue.querySelectorAll('.aine-kortti').forEach(el=>{ el.onclick=()=>valitsePakka(Number(el.dataset.id)); });
+      alue.querySelectorAll('.aine-kortti').forEach(el=>{ el.onclick=()=>{ nykyAine=el.dataset.aine; naytaNakyma('aine'); }; });
     }
     function valitsePakka(id){ asetaAktiivinen(id); korttiLahde=null; korttiPaluuAine=null; naytaOpiskelu(); }
     let istuntoOikein = 0, istuntoVaarin = 0;
@@ -1964,7 +2204,8 @@
     function peliEnnatykset(){ const d=localStorage.getItem('cognio_peli_ennatys'); return d?JSON.parse(d):{}; }
     function peliTallennaEnnatys(avain, pisteet){ const e=peliEnnatykset(); e[avain]=pisteet; localStorage.setItem('cognio_peli_ennatys', JSON.stringify(e)); }
     function peliLahteet(){
-      const lahteet = [{ avain:'all', nimi:'🎲 Kaikki kortit', kortit: kaikkiKortit().filter(c=>c.etu&&c.taka) }];
+      // Vain ainekohtaiset pakat - ei aineiden välistä sekoitusta
+      const lahteet = [];
       haePakat().forEach(p=>{ const k=p.kortit.filter(c=>c.etu&&c.taka); if(k.length>=2) lahteet.push({ avain:'pakka'+p.id, nimi: aineNimi(p.aine)+' · '+p.nimi, kortit:k }); });
       return lahteet;
     }
@@ -1999,8 +2240,9 @@
         </div>`).join('');
     }
     function peliAloita(){
-      const avain = document.getElementById('peliLahde').value || 'all';
+      const avain = document.getElementById('peliLahde').value;
       const lahde = peliLahteet().find(l=>l.avain===avain) || peliLahteet()[0];
+      if(!lahde){ dlgViesti('Lisää ensin kortteja johonkin aineeseen (väh. 2), niin voit pelata.', 'Ei kortteja'); return; }
       const pool = lahde.kortit.filter(c=>c.etu&&c.taka);
       if(pool.length < 2){ dlgViesti('Tarvitset vähintään 2 korttia pelataksesi. Lisää kortteja aineiden kursseille.', 'Ei tarpeeksi kortteja'); return; }
       peli = { avain, pool, jono: sekoita(pool), pisteet:0, combo:0, sydamet:3, vastattu:false, timer:null, kesto:10000, jaljella:10000, oikeat:0, yhteensa:0, nykyinen:null };
@@ -2611,7 +2853,6 @@
       if(e.key==='Escape' && document.getElementById('hakuVerho').classList.contains('nakyy')) suljeHaku();
     });
     document.getElementById('lisaaKoe').onclick=lisaaKoe;
-    document.getElementById('paivanKertaus').onclick=paivanKertaus;
 
     document.getElementById('flip').onclick=kaannaKortti;
     document.getElementById('osasin').onclick=()=>merkitseKortti(true);
@@ -2625,8 +2866,9 @@
     document.getElementById('valmisTakaisin').onclick=korttiTakaisin;
 
     // Logo → etusivu, hero-napit, pikasiirrot
-    document.getElementById('brandiKoti').onclick=()=>naytaNakyma('koti');
-    document.getElementById('heroPaiva').onclick=paivanKertaus;
+    document.getElementById('brandiKoti').onclick=()=>naytaNakyma(kirjautunut?'koti':'esittely');
+    document.getElementById('esittelyKirjaudu').onclick=()=>{ if(kirjautunut) naytaNakyma('koti'); else if(window.pyydaKirjautuminen) window.pyydaKirjautuminen('Luo tili tai kirjaudu — saat pilvisynkan ja henkilökohtaiset ominaisuudet.'); };
+    document.getElementById('esittelyKirjaudu2').onclick=()=>{ if(kirjautunut) naytaNakyma('koti'); else if(window.pyydaKirjautuminen) window.pyydaKirjautuminen('Luo tili tai kirjaudu aloittaaksesi.'); };
     document.querySelectorAll('[data-siirry]').forEach(b=>{ b.onclick=()=>{ if(b.dataset.siirry==='kortit'){ korttiLahde=null; korttiPaluuAine=null; siirryOpiskeluun=false; } naytaNakyma(b.dataset.siirry); }; });
     document.getElementById('lisaaKortti').onclick=lisaaKortti;
     document.getElementById('joukkoLisaaNappi').onclick=joukkoLisaa;
@@ -2700,7 +2942,7 @@
 
     /* ============ Alustus ============ */
     piirraIkonit();
-    naytaNakyma(localStorage.getItem('cognio_nakyma')||'koti');
+    naytaNakyma('esittely');   // aloita aina esittelysivulta, ei hypätä suoraan tilastoihin
 
     /* ============ Kirjautuminen ja pilvisynkka (Supabase) ============ */
     (function(){
@@ -2717,6 +2959,7 @@
       function sulje(){ $('authVerho').classList.remove('auki'); }
       function viesti(t, ok){ const e=$('authViesti'); e.textContent=t||''; e.classList.toggle('ok', !!ok); }
       function paivitaNakyma(user){
+        window.cognioKayttaja = user || null;
         const nappi=$('authNappi');
         if(user){
           nappi.textContent = '👤 ' + (user.email ? user.email.split('@')[0] : 'Tili');
@@ -2726,6 +2969,7 @@
           nappi.textContent = 'Kirjaudu'; nappi.classList.remove('kirjautunut');
           $('authSisaan').hidden = false; $('authUlos').hidden = true;
         }
+        if(typeof paivitaKirjautuminen==='function') paivitaKirjautuminen(user);
       }
       let synkAjastin;
       function tallennaPilveen(user){
@@ -2754,7 +2998,9 @@
         }
         return false;
       }
-      $('authNappi').onclick = avaa;
+      $('authNappi').onclick = ()=>{ if(kirjautunut) naytaNakyma('profiili'); else avaa(); };
+      window.pyydaKirjautuminen = (m)=>{ if(m) viesti(m); avaa(); };
+      window.cognioKirjauduUlos = async ()=>{ await sb.auth.signOut(); location.reload(); };
       $('authSulje').onclick = sulje;
       $('authVerho').onclick = (e)=>{ if(e.target.id==='authVerho') sulje(); };
       $('authGoogle').onclick = async ()=>{
