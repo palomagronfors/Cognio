@@ -285,6 +285,14 @@
     h3 { margin: var(--v4) 0 var(--v2); font-size: var(--fs-md); font-weight: 700; color: var(--md-on-surface);
       letter-spacing: -0.015em; line-height: var(--lh-snug); }
     p { margin: 0 0 var(--v3); max-width: 72ch; }
+    /* Klikattava otsikko: vie vastaavaan näkymään */
+    .otsikko-linkki { cursor: pointer; transition: color .16s var(--helppo); }
+    .otsikko-linkki::after { content: '→'; font-size: .78em; margin-left: var(--v2); opacity: 0;
+      transform: translateX(-5px); transition: opacity .18s var(--helppo), transform .18s var(--helppo); }
+    .otsikko-linkki:hover { color: var(--md-primary); }
+    .otsikko-linkki:hover::after { opacity: .85; transform: none; }
+    .otsikko-linkki:focus-visible { outline: 2px solid var(--md-primary); outline-offset: 4px; border-radius: 8px; }
+    @media (prefers-reduced-motion: reduce){ .otsikko-linkki, .otsikko-linkki::after { transition: none; } }
     .himmea { color: var(--md-on-surface-variant); }
     .pieni { font-size: var(--fs-sm); line-height: 1.5; }
     a { color: var(--md-primary); text-underline-offset: 3px; text-decoration-thickness: 1.5px; }
@@ -818,7 +826,7 @@
       </div>
 
       <div class="kortti">
-        <div class="osio-otsikko"><h2 style="margin:0"><span class="ikoni" data-ikoni="chart"></span> Edistyminen</h2>
+        <div class="osio-otsikko"><h2 style="margin:0" class="otsikko-linkki" data-siirry="tilastot" role="button" tabindex="0" title="Näytä tilastot"><span class="ikoni" data-ikoni="chart"></span> Edistyminen</h2>
           <span class="merkki-pill" id="tasoPill">Taso 1</span></div>
         <div class="tilasto-rivi" style="margin-top:14px">
           <div class="tilasto"><div class="tilasto-arvo" id="tTunnit">0 h</div><div class="tilasto-nimi">Opiskeltu</div></div>
@@ -830,7 +838,7 @@
       </div>
 
       <div class="kortti">
-        <h2><span class="ikoni" data-ikoni="play"></span> Jatka opiskelua</h2>
+        <h2 class="otsikko-linkki" data-siirry="kortit" role="button" tabindex="0" title="Siirry kääntökortteihin"><span class="ikoni" data-ikoni="play"></span> Jatka opiskelua</h2>
         <div id="jatkaAlue"></div>
         <div class="nappirivi" style="margin-top:12px">
           <button class="nappi" data-siirry="kortit"><span class="ikoni" data-ikoni="cards"></span> Valitse aine ja harjoittele</button>
@@ -838,12 +846,12 @@
       </div>
 
       <div class="kortti taysleveys">
-        <h2><span class="ikoni" data-ikoni="book"></span> Oppiaineet</h2>
+        <h2 class="otsikko-linkki" data-siirry="opintojaksot" role="button" tabindex="0" title="Selaa opintojaksoja"><span class="ikoni" data-ikoni="book"></span> Oppiaineet</h2>
         <div class="aine-ruudukko" id="aineRuudukko"></div>
       </div>
 
       <div class="kortti taysleveys">
-        <div class="osio-otsikko"><h2 style="margin:0"><span class="ikoni" data-ikoni="calendar"></span> Tulevat YO-kokeet</h2></div>
+        <div class="osio-otsikko"><h2 style="margin:0" class="otsikko-linkki" data-siirry="suunnitelma" role="button" tabindex="0" title="Avaa opintosuunnitelma"><span class="ikoni" data-ikoni="calendar"></span> Tulevat YO-kokeet</h2></div>
         <div id="koeLista" style="margin-top:12px"></div>
         <div style="margin-top:14px"><label for="uusiKoeAine">Aine</label><select id="uusiKoeAine"></select></div>
         <label style="margin-top:6px">Valitse päivämäärä</label>
@@ -3153,7 +3161,12 @@
     document.getElementById('esittelyKirjaudu2').onclick=()=>{ if(kirjautunut) naytaNakyma('koti'); else if(window.pyydaKirjautuminen) window.pyydaKirjautuminen('Luo tili tai kirjaudu aloittaaksesi.'); };
     document.getElementById('lukkoKirjaudu').onclick=()=>{ if(window.pyydaKirjautuminen) window.pyydaKirjautuminen('Kirjaudu ilmaiseksi. Opiskelusi tallentuu ja synkkaantuu laitteidesi välillä.'); };
     document.getElementById('lukkoTakaisin').onclick=()=>naytaNakyma('esittely');
-    document.querySelectorAll('[data-siirry]').forEach(b=>{ b.onclick=()=>{ if(b.dataset.siirry==='kortit'){ korttiLahde=null; korttiPaluuAine=null; siirryOpiskeluun=false; } naytaNakyma(b.dataset.siirry); }; });
+    document.querySelectorAll('[data-siirry]').forEach(b=>{
+      const siirry = ()=>{ if(b.dataset.siirry==='kortit'){ korttiLahde=null; korttiPaluuAine=null; siirryOpiskeluun=false; } naytaNakyma(b.dataset.siirry); };
+      b.onclick = siirry;
+      // Näppäimistökäyttö klikattaville otsikoille (Enter ja välilyönti)
+      if(b.getAttribute('role')==='button') b.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); siirry(); } });
+    });
     document.getElementById('lisaaKortti').onclick=lisaaKortti;
     document.getElementById('joukkoLisaaNappi').onclick=joukkoLisaa;
     document.getElementById('poistaPakka').onclick=poistaPakka;
