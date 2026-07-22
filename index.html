@@ -353,6 +353,43 @@
     :root[data-theme="dark"] select {
       background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23D6C1C4' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>"); }
 
+    /* --- Opintosuunnitelma --- */
+    .sn-lomake { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: var(--v3); }
+    .sn-lomake input[type="number"] { width: 100%; }
+    .sn-aineet { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: var(--v2); }
+    .sn-aine { display: flex; align-items: center; gap: var(--v2); padding: var(--v2) var(--v3);
+      border: 1px solid var(--md-outline-variant); border-radius: var(--r-sm); background: var(--md-surface-container); }
+    .sn-aine.valittu { border-color: var(--md-primary); background: var(--md-surface-container-high); }
+    .sn-aine input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--md-primary); flex: none; margin: 0; }
+    .sn-aine .sn-nimi { flex: 1; font-weight: 600; font-size: 14px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .sn-aine select { width: auto; min-width: 62px; min-height: 34px; padding: 4px 30px 4px 10px; margin: 0; font-size: 13px;
+      background-position: right 9px center; background-size: 13px; }
+    .sn-aine .sn-nuoli { color: var(--md-on-surface-variant); font-size: 13px; }
+    .taulu-vieritys { overflow-x: auto; margin-top: var(--v3); }
+    .viikkotaulu { border-collapse: collapse; width: 100%; font-size: 14px; }
+    .viikkotaulu th, .viikkotaulu td { padding: 10px var(--v3); text-align: left; border-bottom: 1px solid var(--md-outline-variant); white-space: nowrap; }
+    .viikkotaulu thead th { font-size: 12.5px; text-transform: uppercase; letter-spacing: 0.4px; color: var(--md-on-surface-variant); }
+    .viikkotaulu tbody tr:hover { background: var(--md-surface-container); }
+    .viikkotaulu .vk-nimi { font-weight: 700; }
+    .viikkotaulu .vk-alku { display: block; font-size: 12px; font-weight: 400; color: var(--md-on-surface-variant); }
+    .viikkotaulu .vk-aihe { display: block; font-size: 12px; color: var(--md-on-surface-variant); white-space: normal; }
+    .viikkotaulu tr.vk-koeviikko td { background: var(--md-error-container); color: var(--md-on-error-container); }
+    .sn-jakauma { margin-top: var(--v4); }
+    .sn-jana { display: flex; height: 12px; border-radius: 999px; overflow: hidden; margin: var(--v2) 0 var(--v3); background: var(--md-surface-container-high); }
+    .sn-jana span { display: block; height: 100%; }
+    .sn-selite { display: flex; flex-wrap: wrap; gap: var(--v2) var(--v4); font-size: 13px; }
+    .sn-selite b { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; }
+    .sn-piste { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+    .sn-luvut { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: var(--v3); margin: var(--v4) 0; }
+    .sn-luku { text-align: center; padding: var(--v3); border-radius: var(--r-sm); background: var(--md-surface-container); }
+    .sn-luku b { display: block; font-size: 26px; font-weight: 800; color: var(--md-primary); line-height: 1.2; }
+    .sn-luku span { font-size: 12.5px; color: var(--md-on-surface-variant); }
+    .sn-lista { list-style: none; padding: 0; margin: 0; }
+    .sn-lista li { padding: var(--v3) 0; border-bottom: 1px solid var(--md-outline-variant); }
+    .sn-lista li:last-child { border-bottom: none; }
+    .sn-lista .sn-otsake { font-weight: 700; display: block; margin-bottom: 2px; }
+    .sn-lista .sn-teksti { font-size: 14px; color: var(--md-on-surface-variant); }
+
     /* Haku */
     .haku { position: relative; margin-bottom: 18px; }
     .haku .ikoni { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--md-on-surface-variant); }
@@ -1117,8 +1154,43 @@
     <section class="nakyma sarakkeet" id="nakyma-suunnitelma" hidden>
       <div class="kortti taysleveys">
         <h2><span class="ikoni" data-ikoni="chart"></span> Personoitu opintosuunnitelma</h2>
-        <p class="himmea">Suunnitelma mukautuu siihen, kuinka paljon aikaa on jäljellä lähimpään kokeeseesi.</p>
+        <p class="himmea">Kerro tilanteesi, niin rakennan sinulle viikkoaikataulun kirjoituksiin asti.</p>
+        <details class="joukko-lisays" id="snAsetukset">
+          <summary><span class="ikoni" data-ikoni="settings"></span> Omat tiedot ja tavoitteet</summary>
+          <div class="sn-lomake">
+            <div><label for="snVuosi">Vuosikurssi</label><select id="snVuosi"></select></div>
+            <div><label for="snKausi">Kirjoitusten ajankohta</label><select id="snKausi"></select></div>
+            <div><label for="snTunnit">Tunteja viikossa</label><input type="number" id="snTunnit" min="1" max="60" value="10"></div>
+          </div>
+          <label style="margin-top:var(--v3)">Kirjoitettavat aineet, nykyinen taso ja tavoite</label>
+          <div id="snAineet" class="sn-aineet"></div>
+          <div class="nappirivi" style="margin-top:var(--v4)">
+            <button class="nappi" id="snLuo"><span class="ikoni" data-ikoni="check"></span> Tallenna ja luo suunnitelma</button>
+            <button class="nappi outline pieni" id="snTyhjenna">Tyhjennä valinnat</button>
+          </div>
+        </details>
         <div id="suunnitelmaAlue"></div>
+      </div>
+
+      <div class="kortti taysleveys" id="snViikkoKortti" hidden>
+        <h2><span class="ikoni" data-ikoni="calendar"></span> Viikkoaikataulu</h2>
+        <p class="pieni himmea">Tunnit jaettu aineittain sen mukaan, kuinka iso matka tavoitteeseesi on. Jokaiselle viikolle on nostettu opintojakso, johon kannattaa keskittyä.</p>
+        <div class="taulu-vieritys"><table class="viikkotaulu" id="snViikkoTaulu"></table></div>
+        <p class="pieni himmea" id="snViikkoHuom"></p>
+      </div>
+
+      <div class="kortti">
+        <h2>🌤️ Päivärytmi ja tauot</h2>
+        <div id="snRytmi"></div>
+      </div>
+      <div class="kortti">
+        <h2>📌 Kuukausitavoitteet</h2>
+        <div id="snKuukaudet"></div>
+      </div>
+      <div class="kortti">
+        <h2>🏆 Vahvuutesi</h2>
+        <p class="pieni himmea">Aineet, joissa olet jo hyvällä mallilla. Pidä ne yllä kevyellä kertauksella.</p>
+        <div id="vahvuudetAlue"></div>
       </div>
       <div class="kortti">
         <h2>⚠️ Kertaa nämä ensin</h2>
@@ -2952,25 +3024,154 @@
       const tulevat = haeKokeet().map(k=>({...k, p:paiviaKokeeseen(k.pvm)})).filter(k=>k.p>=0).sort((a,b)=>a.p-b.p);
       return tulevat[0] || null;
     }
+    const SN_ARVOSANAT = ['I','A','B','C','M','E','L'];
+    const SN_ARVONIMET = { I:'I', A:'A', B:'B', C:'C', M:'M', E:'E', L:'L' };
+    const SN_VUOSIKURSSIT = ['1. vuosi','2. vuosi','3. vuosi','Abi (kirjoitan pian)'];
+    function haeSnAsetukset(){
+      const d = localStorage.getItem('cognio_suunnitelma');
+      const o = d ? JSON.parse(d) : {};
+      return { vuosi: o.vuosi || SN_VUOSIKURSSIT[1], kausi: o.kausi || '', tunnit: Number(o.tunnit) || 10, aineet: o.aineet || {} };
+    }
+    function tallennaSnAsetukset(o){ localStorage.setItem('cognio_suunnitelma', JSON.stringify(o)); }
+
+    // Seuraavat YO-kirjoituskerrat (kevät alkaa maaliskuussa, syksy syyskuussa)
+    function snKaudet(){
+      const nyt = new Date(tanaan()+'T00:00:00'); const lista = [];
+      for (let v = nyt.getFullYear(); v <= nyt.getFullYear()+4; v++) {
+        lista.push({ pvm: v+'-03-15', nimi: 'Kevät '+v });
+        lista.push({ pvm: v+'-09-15', nimi: 'Syksy '+v });
+      }
+      return lista.filter(k => new Date(k.pvm+'T00:00:00') > nyt).slice(0, 6);
+    }
+    function snPaivia(pvm){ return Math.max(0, Math.ceil((new Date(pvm+'T00:00:00') - new Date(tanaan()+'T00:00:00'))/86400000)); }
+    function snPvmTeksti(d){ return d.getDate()+'.'+(d.getMonth()+1)+'.'; }
+    const SN_KUUKAUDET = ['tammikuu','helmikuu','maaliskuu','huhtikuu','toukokuu','kesäkuu','heinäkuu','elokuu','syyskuu','lokakuu','marraskuu','joulukuu'];
+
+    function rakennaSnLomake(){
+      const a = haeSnAsetukset();
+      const vs = document.getElementById('snVuosi');
+      vs.innerHTML = SN_VUOSIKURSSIT.map(v=>`<option${v===a.vuosi?' selected':''}>${suojaa(v)}</option>`).join('');
+      const kaudet = snKaudet();
+      const ks = document.getElementById('snKausi');
+      ks.innerHTML = '<option value="">Valitse ajankohta</option>' +
+        kaudet.map(k=>`<option value="${k.pvm}"${k.pvm===a.kausi?' selected':''}>${suojaa(k.nimi)}</option>`).join('');
+      document.getElementById('snTunnit').value = a.tunnit;
+
+      const arvoValikko = (id, arvo) => `<select data-kentta="${id}">` +
+        SN_ARVOSANAT.map(g=>`<option value="${g}"${g===arvo?' selected':''}>${SN_ARVONIMET[g]}</option>`).join('') + '</select>';
+
+      document.getElementById('snAineet').innerHTML = AINEET.map(ai=>{
+        const s = a.aineet[ai.koodi] || {};
+        const on = !!s.valittu;
+        return `<div class="sn-aine${on?' valittu':''}" data-koodi="${ai.koodi}">
+          <input type="checkbox" data-kentta="valittu"${on?' checked':''} aria-label="${suojaa(ai.nimi)}">
+          <span class="sn-nimi" title="${suojaa(ai.nimi)}"><span class="sn-piste" style="background:${ai.vari}"></span> ${suojaa(ai.koodi)}</span>
+          ${arvoValikko('nyt', s.nyt||'C')}<span class="sn-nuoli">→</span>${arvoValikko('tavoite', s.tavoite||'E')}
+        </div>`;
+      }).join('');
+
+      document.getElementById('snAineet').querySelectorAll('.sn-aine').forEach(el=>{
+        el.querySelectorAll('[data-kentta]').forEach(kentta=>{
+          kentta.onchange = ()=>{ el.classList.toggle('valittu', el.querySelector('[data-kentta="valittu"]').checked); };
+        });
+      });
+      document.getElementById('snLuo').onclick = ()=>{
+        const uusi = { vuosi: vs.value, kausi: ks.value, tunnit: Math.min(60, Math.max(1, Number(document.getElementById('snTunnit').value)||10)), aineet: {} };
+        document.getElementById('snAineet').querySelectorAll('.sn-aine').forEach(el=>{
+          uusi.aineet[el.dataset.koodi] = {
+            valittu: el.querySelector('[data-kentta="valittu"]').checked,
+            nyt: el.querySelector('[data-kentta="nyt"]').value,
+            tavoite: el.querySelector('[data-kentta="tavoite"]').value
+          };
+        });
+        tallennaSnAsetukset(uusi);
+        document.getElementById('snAsetukset').open = false;
+        piirraSuunnitelma();
+        dlgViesti('Suunnitelma on päivitetty tietojesi mukaan.', 'Valmista');
+      };
+      document.getElementById('snTyhjenna').onclick = async ()=>{
+        if(await dlgVahvista('Tyhjennetäänkö suunnitelman tiedot?', 'Tyhjennä')){
+          localStorage.removeItem('cognio_suunnitelma'); piirraSuunnitelma();
+        }
+      };
+    }
+
+    // Laskee painotukset: mitä isompi matka tavoitteeseen ja heikompi hallinta, sitä enemmän tunteja
+    function snLaskePainot(a){
+      let koodit = AINEET.map(x=>x.koodi).filter(k => a.aineet[k] && a.aineet[k].valittu);
+      let arvioitu = false;
+      if (!koodit.length) { koodit = AINEET.map(x=>x.koodi).filter(k => aineenHallussa(k).kortteja > 0); arvioitu = true; }
+      if (!koodit.length) return { rivit: [], arvioitu };
+      const kokeet = haeKokeet();
+      const rivit = koodit.map(k=>{
+        const s = a.aineet[k] || {};
+        const hall = aineenHallussa(k);
+        const kuilu = Math.max(0, SN_ARVOSANAT.indexOf(s.tavoite||'E') - SN_ARVOSANAT.indexOf(s.nyt||'C'));
+        const vaje = (100 - hall.pros) / 100;
+        const koe = kokeet.filter(x=>x.aine===k).map(x=>paiviaKokeeseen(x.pvm)).filter(p=>p>=0).sort((x,y)=>x-y)[0];
+        const kiire = (koe!==undefined && koe <= 60) ? (60-koe)/60 * 0.7 : 0;
+        return { koodi:k, nimi:aineNimi(k), vari:aineVari(k), hall, kuilu, koe,
+                 paino: 1 + kuilu*0.9 + vaje*0.8 + kiire,
+                 nyt: s.nyt||null, tavoite: s.tavoite||null };
+      });
+      const summa = rivit.reduce((s,r)=>s+r.paino, 0);
+      rivit.forEach(r=>{ r.osuus = r.paino/summa; r.tunnit = Math.max(0.5, Math.round(a.tunnit * r.osuus * 2)/2); });
+      rivit.sort((x,y)=>y.paino-x.paino);
+      return { rivit, arvioitu };
+    }
+
     function piirraSuunnitelma() {
-      const lahin = lahinKoe();
+      rakennaSnLomake();
+      const a = haeSnAsetukset();
       const alue = document.getElementById('suunnitelmaAlue');
       const pakat = haePakat();
-      let kortteja=0, opittavaa=0; pakat.forEach(p=>{ kortteja+=p.kortit.length; opittavaa+=p.kortit.filter(c=>!c.opittu).length; });
-      if (!lahin) {
-        alue.innerHTML = `<p class="himmea">Lisää koepäivä etusivun "Tulevat YO-kokeet" -osiossa, niin luon sinulle henkilökohtaisen aikataulun.</p>
-          <p>Kerrattavaa yhteensä: <b>${opittavaa}</b> korttia.</p>`;
+      let opittavaa = 0; pakat.forEach(p=>{ opittavaa += p.kortit.filter(c=>!c.opittu).length; });
+      const { rivit, arvioitu } = snLaskePainot(a);
+      const lahin = lahinKoe();
+      const kohdePvm = a.kausi || (lahin ? lahin.pvm : '');
+      const paivia = kohdePvm ? snPaivia(kohdePvm) : 0;
+      const viikkoja = kohdePvm ? Math.max(1, Math.ceil(paivia/7)) : 0;
+
+      if (!rivit.length) {
+        alue.innerHTML = `<div class="tyhja">Valitse yläpuolelta kirjoitettavat aineet ja tavoitearvosanat, niin rakennan sinulle viikkoaikataulun.</div>`;
+        document.getElementById('snViikkoKortti').hidden = true;
+        document.getElementById('snRytmi').innerHTML = '<div class="tyhja pieni">Täytä tietosi, niin ehdotan päivärytmin.</div>';
+        document.getElementById('snKuukaudet').innerHTML = '<div class="tyhja pieni">Täytä tietosi, niin asetan kuukausitavoitteet.</div>';
       } else {
-        const paivat = Math.max(1, lahin.p);
-        const perPaiva = Math.ceil(opittavaa / paivat) || 0;
+        const kokTunnit = Math.round(viikkoja * a.tunnit);
         alue.innerHTML = `
-          <p><b>${aineNimi(lahin.aine)}</b> · lähin koe <b>${lahin.p} päivän</b> päästä (${lahin.pvm}).</p>
-          <p>Kerrattavia kortteja jäljellä: <b>${opittavaa}</b>.</p>
-          <div class="vastaus-laatikko">
-            📅 <b>Suositus:</b> kertaa noin <b>${perPaiva} korttia päivässä</b>, niin ehdit käydä kaiken läpi ennen koetta.<br>
-            Tee lisäksi <b>1 harjoituskoe</b> joka toinen päivä ja <b>1 essee</b> viikossa.
+          ${arvioitu ? '<p class="pieni himmea">Et ole vielä valinnut aineita, joten käytän niitä aineita joissa sinulla on kortteja.</p>' : ''}
+          <div class="sn-luvut">
+            <div class="sn-luku"><b>${viikkoja || '–'}</b><span>viikkoa jäljellä</span></div>
+            <div class="sn-luku"><b>${a.tunnit} h</b><span>viikossa</span></div>
+            <div class="sn-luku"><b>${kokTunnit || '–'} h</b><span>yhteensä ennen kirjoituksia</span></div>
+            <div class="sn-luku"><b>${opittavaa}</b><span>korttia kerrattavana</span></div>
+          </div>
+          ${kohdePvm ? `<p>Tavoite: <b>${suojaa(kohdePvm)}</b> · ${paivia} päivää jäljellä.</p>`
+                     : `<p class="himmea">Valitse kirjoitusten ajankohta, niin lasken aikataulun päivälleen.</p>`}
+          <div class="sn-jakauma">
+            <label>Viikkotuntien jakautuminen</label>
+            <div class="sn-jana">${rivit.map(r=>`<span style="width:${(r.osuus*100).toFixed(1)}%;background:${r.vari}" title="${suojaa(r.nimi)}"></span>`).join('')}</div>
+            <div class="sn-selite">${rivit.map(r=>`<b><span class="sn-piste" style="background:${r.vari}"></span>${suojaa(r.koodi)} ${r.tunnit} h</b>`).join('')}</div>
+          </div>
+          <div class="vastaus-laatikko" style="margin-top:var(--v4)">
+            <b>Näin etenet:</b> kertaa noin <b>${viikkoja ? Math.max(1, Math.ceil(opittavaa/Math.max(1,paivia))) : Math.max(1, Math.ceil(opittavaa/30))} korttia päivässä</b>,
+            tee <b>1 harjoituskoe viikossa</b> ja kirjoita <b>1 essee viikossa</b>. Pidä yksi päivä viikossa kokonaan vapaana.
           </div>`;
+        snPiirraViikot(rivit, viikkoja, kohdePvm);
+        snPiirraRytmi(a, rivit);
+        snPiirraKuukaudet(rivit, kohdePvm);
       }
+      // Vahvuudet
+      const vahvat = AINEET.map(x=>({ a:x, h:aineenHallussa(x.koodi) })).filter(x=>x.h.kortteja>0).sort((x,y)=>y.h.pros-x.h.pros).slice(0,3);
+      const value = document.getElementById('vahvuudetAlue');
+      value.innerHTML = vahvat.length ? vahvat.map(x=>`
+        <div class="rivi-vali" data-aine="${x.a.koodi}" style="cursor:pointer">
+          <div><div class="sana-etu"><span class="aine-koodi" style="width:30px;height:30px;font-size:12px;background:${x.a.vari}">${x.a.koodi}</span> &nbsp;${suojaa(x.a.nimi)}</div>
+          <div class="sana-taka">${x.h.opittu}/${x.h.kortteja} korttia hallussa</div></div>
+          <b style="color:var(--md-primary)">${x.h.pros} %</b></div>`).join('')
+        : '<div class="tyhja pieni">Harjoittele kortteja, niin näet vahvuutesi.</div>';
+      value.querySelectorAll('[data-aine]').forEach(el=>{ el.onclick=()=>avaaAine(el.dataset.aine); });
       // Heikkoudet
       const heikot = AINEET.map(a=>({ a, h:aineenHallussa(a.koodi) })).filter(x=>x.h.kortteja>0).sort((x,y)=>x.h.pros-y.h.pros).slice(0,4);
       const halue=document.getElementById('heikkoudetAlue');
@@ -2988,6 +3189,79 @@
       if (pros === null) { ennuste.textContent='–'; eteksti.textContent='Tee harjoituskokeita, niin arvioin tasosi.'; }
       else { ennuste.textContent = arvioArvosana(pros); eteksti.textContent = `Perustuu ${t.kysymyksia} kysymykseen, joista ${pros}% oikein.`; }
     }
+    function snPiirraViikot(rivit, viikkoja, kohdePvm){
+      const kortti = document.getElementById('snViikkoKortti');
+      const taulu = document.getElementById('snViikkoTaulu');
+      const kaikki = viikkoja || 8;
+      const nayta = Math.min(kaikki, 10);
+      const alku = new Date(tanaan()+'T00:00:00');
+      const kohde = kohdePvm ? new Date(kohdePvm+'T00:00:00') : null;
+      let html = '<thead><tr><th>Viikko</th>' + rivit.map(r=>`<th><span class="sn-piste" style="background:${r.vari}"></span> ${suojaa(r.koodi)}</th>`).join('') + '</tr></thead><tbody>';
+      for (let vi = 0; vi < nayta; vi++) {
+        const alkuPvm = new Date(alku.getTime() + vi*7*86400000);
+        const loppuPvm = new Date(alkuPvm.getTime() + 6*86400000);
+        const koeviikko = kohde && kohde >= alkuPvm && kohde <= loppuPvm;
+        html += `<tr class="${koeviikko?'vk-koeviikko':''}">
+          <td><span class="vk-nimi">Vko ${vi+1}${koeviikko?' · kirjoitukset':''}</span><span class="vk-alku">${snPvmTeksti(alkuPvm)}–${snPvmTeksti(loppuPvm)}</span></td>`;
+        html += rivit.map(r=>{
+          const kurssit = aineenKurssit(r.koodi);
+          const idx = kurssit.length ? Math.min(kurssit.length-1, Math.floor(vi * kurssit.length / Math.max(1, kaikki))) : -1;
+          const aihe = idx >= 0 ? kurssit[idx] : 'kertaus';
+          return `<td><b>${r.tunnit} h</b><span class="vk-aihe">${suojaa(aihe)}</span></td>`;
+        }).join('');
+        html += '</tr>';
+      }
+      html += '</tbody>';
+      taulu.innerHTML = html;
+      kortti.hidden = false;
+      document.getElementById('snViikkoHuom').textContent = kaikki > nayta
+        ? `Näytetään ${nayta} ensimmäistä viikkoa ${kaikki} viikosta. Aikataulu päivittyy itsestään viikko viikolta.`
+        : '';
+    }
+
+    function snPiirraRytmi(a, rivit){
+      const paivia = a.tunnit >= 18 ? 6 : 5;
+      const perPaiva = a.tunnit / paivia;
+      const min = Math.round(perPaiva * 60);
+      const jakso = min >= 100 ? 50 : 25;
+      const tauko = jakso === 50 ? 10 : 5;
+      const jaksoja = Math.max(1, Math.round(min / jakso));
+      const paakohde = rivit[0];
+      document.getElementById('snRytmi').innerHTML = `
+        <ul class="sn-lista">
+          <li><span class="sn-otsake">${paivia} opiskelupäivää viikossa</span>
+            <span class="sn-teksti">Noin ${Math.round(perPaiva*10)/10} tuntia päivässä. Yksi päivä viikossa on kokonaan vapaa.</span></li>
+          <li><span class="sn-otsake">${jaksoja} × ${jakso} min jaksoa</span>
+            <span class="sn-teksti">Pidä ${tauko} minuutin tauko jokaisen jakson jälkeen ja 20 minuutin tauko puolivälissä. Nouse ylös ja liiku tauolla.</span></li>
+          <li><span class="sn-otsake">Aloita vaikeimmasta</span>
+            <span class="sn-teksti">Tee ensimmäinen jakso aineessa ${suojaa(paakohde.koodi)}. Aivot ovat silloin virkeimmillään.</span></li>
+          <li><span class="sn-otsake">Lopeta kertaukseen</span>
+            <span class="sn-teksti">Käy päivän lopuksi kääntökortit läpi 10 minuuttia. Se siirtää asiat pitkäkestoiseen muistiin.</span></li>
+          <li><span class="sn-otsake">Nuku 8 tuntia</span>
+            <span class="sn-teksti">Uni on osa opiskelua. Valvominen ennen koetta laskee tulosta enemmän kuin yksi kertaamaton aihe.</span></li>
+        </ul>`;
+    }
+
+    function snPiirraKuukaudet(rivit, kohdePvm){
+      const nyt = new Date(tanaan()+'T00:00:00');
+      const loppu = kohdePvm ? new Date(kohdePvm+'T00:00:00') : new Date(nyt.getTime() + 150*86400000);
+      const kuut = [];
+      let k = new Date(nyt.getFullYear(), nyt.getMonth(), 1);
+      while (k <= loppu && kuut.length < 6) { kuut.push(new Date(k)); k = new Date(k.getFullYear(), k.getMonth()+1, 1); }
+      const alue = document.getElementById('snKuukaudet');
+      if (!kuut.length) { alue.innerHTML = '<div class="tyhja pieni">Valitse kirjoitusten ajankohta.</div>'; return; }
+      alue.innerHTML = '<ul class="sn-lista">' + kuut.map((d, i)=>{
+        const paino = rivit[i % rivit.length];
+        const toka = rivit[(i+1) % rivit.length];
+        const viimeinen = i === kuut.length-1;
+        const nimi = SN_KUUKAUDET[d.getMonth()] + ' ' + d.getFullYear();
+        const teksti = viimeinen
+          ? `Vain kertausta: käy ${suojaa(paino.koodi)} ja ${suojaa(toka.koodi)} kääntökortit läpi kahdesti ja tee kaksi harjoituskoetta. Älä opettele enää uutta.`
+          : `Pääpaino aineessa ${suojaa(paino.nimi)}${paino.tavoite?` (tavoite ${suojaa(paino.tavoite)})`:''}. Vie ${suojaa(paino.koodi)} korttien hallinta ${Math.min(100, paino.hall.pros + 20)} prosenttiin ja pidä ${suojaa(toka.koodi)} yllä viikoittaisella kertauksella. Kirjoita neljä esseetä.`;
+        return `<li><span class="sn-otsake">${suojaa(nimi)}</span><span class="sn-teksti">${teksti}</span></li>`;
+      }).join('') + '</ul>';
+    }
+
     function arvioArvosana(pros) {
       if (pros>=95) return 'L (laudatur)'; if (pros>=88) return 'E (eximia)'; if (pros>=78) return 'M (magna)';
       if (pros>=63) return 'C (cum laude)'; if (pros>=45) return 'B (lubenter)'; if (pros>=30) return 'A (approbatur)';
