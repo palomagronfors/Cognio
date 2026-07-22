@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Cognio - YO-valmistautuminen</title>
+  <title>Cognio YO-valmistautuminen</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><defs><linearGradient id='g' x1='20' y1='12' x2='120' y2='132' gradientUnits='userSpaceOnUse'><stop offset='0' stop-color='%23F5409B'/><stop offset='.55' stop-color='%23C42E8A'/><stop offset='1' stop-color='%237C3AED'/></linearGradient></defs><path d='M92 36 A40 40 0 1 0 92 84' fill='none' stroke='url(%23g)' stroke-width='18' stroke-linecap='round'/><g fill='none' stroke='url(%23g)' stroke-width='4.5' stroke-linecap='round'><ellipse cx='60' cy='60' rx='22' ry='18'/><path d='M55 49 a11 11 0 0 0 0 22'/><path d='M65 49 a11 11 0 0 1 0 22'/></g><path d='M60 50.5 L62.8 57.2 L69.5 60 L62.8 62.8 L60 69.5 L57.2 62.8 L50.5 60 L57.2 57.2 Z' fill='url(%23g)' stroke='%23fff' stroke-width='1.4' stroke-linejoin='round'/></svg>">
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#B3315F">
@@ -776,7 +776,7 @@
     <section class="nakyma sarakkeet" id="nakyma-koti" hidden>
       <div class="hero taysleveys">
         <h1>Hei ja tervetuloa Cognioon! 👋</h1>
-        <p>Cognio on henkilökohtainen YO-valmentajasi. Täällä voit kerrata sanastoa ja käsitteitä kääntökorteilla, testata osaamistasi rakentamillasi kokeilla, harjoitella esseitä koeajassa ja pitää muistiinpanoja - kaikki yhdessä paikassa.</p>
+        <p>Cognio on henkilökohtainen YO-valmentajasi. Täällä voit kerrata sanastoa ja käsitteitä kääntökorteilla, testata osaamistasi rakentamillasi kokeilla, harjoitella esseitä koeajassa ja pitää muistiinpanoja. Kaikki on yhdessä paikassa.</p>
         <p>Cognio seuraa edistymistäsi, tunnistaa heikot aiheet ja rakentaa sinulle henkilökohtaisen opintosuunnitelman kokeeseen. Aloitetaan opiskelu!</p>
         <div class="hero-napit">
           <button class="nappi" data-siirry="kortit">Aloita opiskelu →</button>
@@ -866,7 +866,7 @@
       <div id="korttiValinta">
         <div class="kortti">
           <h2><span class="ikoni" data-ikoni="cards"></span> Valitse aine</h2>
-          <p class="himmea">Harjoittele ainekohtaisesti — kortteja ei sekoiteta aineiden kesken. Valitse aine, sitten kurssi.</p>
+          <p class="himmea">Harjoittele ainekohtaisesti. Kortteja ei sekoiteta aineiden kesken. Valitse ensin aine ja sitten kurssi.</p>
           <div class="aine-ruudukko" id="pakkaRuudukko"></div>
           <button class="nappi outline" id="uusiPakka" style="margin-top:14px"><span class="ikoni" data-ikoni="plus"></span> Uusi pakka</button>
         </div>
@@ -910,7 +910,7 @@
             <h2 style="margin:0">📚 <span id="kurssiMatOtsikko">Kurssin materiaalit</span></h2>
             <button class="nappi outline pieni" id="kurssiLisaaLinkki"><span class="ikoni" data-ikoni="plus"></span> Lisää linkki</button>
           </div>
-          <p class="pieni himmea">Kohdennettuja lähteitä juuri tähän kurssiin. Voit lisätä omia linkkejä - ne tallentuvat tälle kurssille.</p>
+          <p class="pieni himmea">Kohdennettuja lähteitä juuri tähän kurssiin. Voit lisätä omia linkkejä. Ne tallentuvat tälle kurssille.</p>
           <div class="linkkilista" id="kurssiMatLinkit"></div>
         </div>
         <div class="kortti" id="pakanMuokkaus">
@@ -926,8 +926,8 @@
 
           <details class="joukko-lisays" id="joukkoLisays">
             <summary><span class="ikoni" data-ikoni="plus"></span> Luo monta korttia kerralla</summary>
-            <p class="pieni himmea">Liitä sana ja merkitys - <b>yksi pari per rivi</b>, niin monta kuin haluat (esim. 70). Erottimena käy pilkku, puolipiste, kaksoispiste, nuoli →, sarkain (Excelistä), yhtäsuuruusmerkki, ajatusviiva - <b>tai pelkkä välilyönti</b>.</p>
-            <textarea id="joukkoSyote" placeholder="inevitable, väistämätön&#10;meticulous; pikkutarkka&#10;ubiquitous - kaikkialla esiintyvä"></textarea>
+            <p class="pieni himmea">Liitä sana ja merkitys. Kirjoita <b>yksi pari per rivi</b>, niin monta kuin haluat. Erottimena käy pilkku, puolipiste, kaksoispiste, nuoli →, sarkain (Excelistä), yhtäsuuruusmerkki tai ajatusviiva. Myös <b>pelkkä välilyönti</b> käy.</p>
+            <textarea id="joukkoSyote" placeholder="inevitable, väistämätön&#10;meticulous, pikkutarkka&#10;ubiquitous, kaikkialla esiintyvä"></textarea>
             <div class="valintarivi" style="margin-top:10px; gap:16px; flex-wrap:wrap; align-items:center">
               <label style="margin:0; display:flex; align-items:center; gap:8px; width:auto">
                 <input type="checkbox" id="joukkoKaanna" style="width:auto"> Käännä puolet (merkitys ensin → sana)
@@ -945,7 +945,7 @@
     <section class="nakyma keskitetty" id="nakyma-koe" hidden>
       <div class="kortti" id="koeAsetukset">
         <h2><span class="ikoni" data-ikoni="quiz"></span> Rakenna oma koe</h2>
-        <p class="himmea">Valitse aihealue ja asetukset - koe testaa juuri sen mitä haluat harjoitella.</p>
+        <p class="himmea">Valitse aihealue ja asetukset. Koe testaa juuri sen mitä haluat harjoitella.</p>
         <label for="koePakka">Aihealue (pakka)</label>
         <select id="koePakka"></select>
         <label for="koeMaara">Kysymysten määrä</label>
@@ -1002,7 +1002,7 @@
         <p>YO-koe arvostellaan pistein, jotka muunnetaan arvosanoiksi suhteellisella asteikolla:</p>
         <ul>
           <li><b>L</b> laudatur · <b>E</b> eximia · <b>M</b> magna · <b>C</b> cum laude · <b>B</b> lubenter · <b>A</b> approbatur · <b>I</b> improbatur (hylätty)</li>
-          <li>Arvosanarajat määräytyvät <i>kunkin tutkintokerran</i> suoritusten mukaan (suhteellinen arviointi) - kiinteitä prosenttirajoja ei ole.</li>
+          <li>Arvosanarajat määräytyvät <i>kunkin tutkintokerran</i> suoritusten mukaan (suhteellinen arviointi). Kiinteitä prosenttirajoja ei ole.</li>
           <li>Kielissä painottuvat: tehtävän ymmärtäminen, kielen sujuvuus ja tarkkuus, sanaston laajuus ja rakenteiden monipuolisuus.</li>
           <li>Esseissä arvioidaan sisältöä, jäsentelyä ja kielen tasoa kokonaisuutena.</li>
         </ul>
@@ -1010,7 +1010,7 @@
 
       <div class="kortti">
         <h2>🧩 Vastausesimerkit (rakenne)</h2>
-        <details><summary>Englannin essee - hyvä rakenne</summary>
+        <details><summary>Englannin esseen hyvä rakenne</summary>
           <div class="vastaus-laatikko">
             <b>1. Johdanto:</b> esittele aihe ja oma näkökulma (1–2 lausetta).<br>
             <b>2. Käsittelykappaleet (2–3):</b> yksi pääajatus per kappale, perustelu + esimerkki. Sidesanat: <i>however, moreover, for instance, therefore</i>.<br>
@@ -1018,9 +1018,9 @@
             <b>Tarkista lopuksi:</b> aikamuodot, artikkelit, sanajärjestys.
           </div>
         </details>
-        <details style="margin-top:10px"><summary>Aineistotehtävä - vastauksen runko</summary>
+        <details style="margin-top:10px"><summary>Aineistotehtävän vastausrunko</summary>
           <div class="vastaus-laatikko">
-            Viittaa aineistoon (”According to the text…”), erittele syy–seuraus-suhteet, ja perustele johtopäätökset aineiston pohjalta. Vältä pelkkää referointia - analysoi.
+            Viittaa aineistoon (”According to the text…”), erittele syy- ja seuraussuhteet, ja perustele johtopäätökset aineiston pohjalta. Vältä pelkkää referointia - analysoi.
           </div>
         </details>
       </div>
@@ -1030,7 +1030,7 @@
         <ul>
           <li>Lue tehtävänanto huolellisesti loppuun asti ennen vastaamista.</li>
           <li>Jaa aika: varaa esseelle riittävästi aikaa ja jätä 10 min tarkistukseen.</li>
-          <li>Aloita helpoimmista tehtävistä - kerää varmat pisteet ensin.</li>
+          <li>Aloita helpoimmista tehtävistä. Kerää varmat pisteet ensin.</li>
           <li>Suunnittele essee ranskalaisin viivoin ennen puhtaaksikirjoitusta.</li>
           <li>Tarkista lopuksi kielioppi, oikeinkirjoitus ja että vastasit koko kysymykseen.</li>
         </ul>
@@ -1077,7 +1077,7 @@
           <button class="tk-nappi korostus" id="korostaNappi" title="Korosta valinta"><span class="ikoni" data-ikoni="marker"></span></button>
           <button class="tk-nappi" id="poistaKorostus" title="Poista korostus">✕ korostus</button>
         </div>
-        <p class="pieni himmea">Kirjoita muistiinpanoja aineittain. Maalaa tekstiä ja käytä työkaluja kuten tekstinkäsittelyssä - muutokset tallentuvat automaattisesti.</p>
+        <p class="pieni himmea">Kirjoita muistiinpanoja aineittain. Maalaa tekstiä ja käytä työkaluja kuten tekstinkäsittelyssä. Muutokset tallentuvat automaattisesti.</p>
         <div class="muistio" id="muistio" contenteditable="true"></div>
       </div>
     </section>
@@ -1090,7 +1090,7 @@
         <div id="suunnitelmaAlue"></div>
       </div>
       <div class="kortti">
-        <h2>⚠️ Heikkoudet - kertaa nämä ensin</h2>
+        <h2>⚠️ Kertaa nämä ensin</h2>
         <p class="pieni himmea">Suositukset perustuvat harjoitustuloksiisi (opitut kortit / aine).</p>
         <div id="heikkoudetAlue"></div>
       </div>
@@ -1169,7 +1169,7 @@
         <select id="peliLahde"></select>
         <div class="peli-ennatys">🏆 Ennätys: <b id="peliEnnatys">0</b></div>
         <button class="nappi iso" id="peliAloitaNappi"><span class="ikoni" data-ikoni="play"></span> Aloita peli</button>
-        <p class="pieni himmea" style="margin-top:16px">Mitä nopeammin vastaat, sitä enemmän pisteitä. Väärä vastaus tai loppunut aika vie yhden sydämen - sydämiä on kolme.</p>
+        <p class="pieni himmea" style="margin-top:16px">Mitä nopeammin vastaat, sitä enemmän pisteitä. Väärä vastaus tai loppunut aika vie yhden sydämen. Sydämiä on kolme.</p>
         <div class="peli-ennatykset" id="peliEnnatykset"></div>
       </div>
 
@@ -1202,7 +1202,7 @@
     <section class="nakyma keskitetty" id="nakyma-apu" hidden>
       <div class="kortti">
         <h2><span class="ikoni" data-ikoni="idea"></span> Apu ja palaute</h2>
-        <p class="himmea">Onko sinulla kehitysidea, toive uudesta ominaisuudesta tai löysitkö virheen? Otan palautteen ilolla vastaan — Cognio kehittyy käyttäjien ideoiden pohjalta.</p>
+        <p class="himmea">Onko sinulla kehitysidea, toive uudesta ominaisuudesta tai löysitkö virheen? Otan palautteen ilolla vastaan. Cognio kehittyy käyttäjien ideoiden pohjalta.</p>
         <div class="apu-kortti">
           <span class="apu-ikoni">✉️</span>
           <div>
@@ -1218,7 +1218,7 @@
         <h2>❓ Usein kysytyt kysymykset</h2>
         <div class="ukk">
           <details><summary>Miten lisään kääntökortteja?</summary><p>Avaa aine → valitse kurssi → kirjoita etu- ja takapuoli ja paina "Lisää kortti".</p></details>
-          <details><summary>Voinko luoda monta korttia kerralla?</summary><p>Kyllä. "Muokkaa pakkaa" -kortissa avaa "Luo monta korttia kerralla" ja liitä lista — yksi sana ja merkitys per rivi. Erottimeksi käy pilkku, puolipiste, kaksoispiste, sarkain tai pelkkä välilyönti.</p></details>
+          <details><summary>Voinko luoda monta korttia kerralla?</summary><p>Kyllä. "Muokkaa pakkaa" -kortissa avaa "Luo monta korttia kerralla" ja liitä lista. Kirjoita yksi sana ja merkitys per rivi. Erottimeksi käy pilkku, puolipiste, kaksoispiste, sarkain tai pelkkä välilyönti.</p></details>
           <details><summary>Miten poistan kortin tai kaksoiskappaleet?</summary><p>Napauta käsitettä listassa poistaaksesi sen. Jos samoja on kaksi, ohjelma tunnistaa ne ja ehdottaa poistoa automaattisesti.</p></details>
           <details><summary>Miten kertaus toimii?</summary><p>Kortteja kierrätetään kasvavin välein (spaced repetition): hyvin osatut palaavat harvemmin, heikot useammin. Käytä myös "Päivän kertausta" etusivulla.</p></details>
           <details><summary>Mikä on Salamavisa?</summary><p>Nopea peli, jossa vastaat korttiesi kysymyksiin ajassa, keräät comboja ja teet ennätyksiä. Löydät sen kohdasta Harjoittele → Salamavisa ⚡.</p></details>
@@ -1231,7 +1231,7 @@
     <section class="nakyma" id="nakyma-esittely" hidden>
       <div class="esittely-hero">
         <div class="esittely-merkki">⚡</div>
-        <h1>Cognio — henkilökohtainen YO-valmentajasi</h1>
+        <h1>Cognio on henkilökohtainen YO-valmentajasi</h1>
         <p class="esittely-ala">Kertaa sanastoa ja käsitteitä kääntökorteilla, testaa osaamistasi omilla kokeilla, harjoittele esseitä koeajassa ja seuraa edistymistäsi. Kaikki yhdessä paikassa, suomeksi.</p>
         <div class="esittely-napit">
           <button class="nappi iso" data-siirry="kortit">Kokeile kääntökortteja →</button>
@@ -1286,7 +1286,7 @@
       <h3 style="margin:0">⚡ Pikamuistiinpano</h3>
       <button class="pika-sulje" id="pikaSulje" aria-label="Sulje">✕</button>
     </div>
-    <p class="pieni himmea" style="margin:0">Kirjoita nopea muistiinpano — se tallentuu heti ja säilyy täällä.</p>
+    <p class="pieni himmea" style="margin:0">Kirjoita nopea muistiinpano. Se tallentuu heti ja säilyy täällä.</p>
     <textarea id="pikaSyote" placeholder="Kirjoita nopea muistiinpano…"></textarea>
     <button class="nappi" id="pikaTallenna" style="width:100%; justify-content:center"><span class="ikoni" data-ikoni="plus"></span> Tallenna muistiinpano</button>
     <div class="pika-lista" id="pikaLista"></div>
@@ -1302,7 +1302,7 @@
         <button class="nappi iso" id="lukkoKirjaudu">Kirjaudu ilmaiseksi →</button>
         <button class="nappi outline" id="lukkoTakaisin">Palaa etusivulle</button>
       </div>
-      <p class="pieni himmea" style="margin:var(--v3) 0 0">Ilmainen · ei korttitietoja · kirjautuminen vie ~10 sekuntia</p>
+      <p class="pieni himmea" style="margin:var(--v3) 0 0">Kirjautuminen on ilmaista. Korttitietoja ei kysytä.</p>
     </div>
   </div>
 
@@ -1704,16 +1704,16 @@
 
     /* --- Kirjautumislukko: sumennettu sisältö + vaihtuva kehotus --- */
     const LUKKO_VIESTIT = [
-      { ikoni:'🔒', otsikko:'Oho! Tämä on vain kirjautuneille', teksti:'Kirjaudu sisään ja nauti ilmaiseksi — opiskelusi tallentuu ja kulkee mukanasi joka laitteella.' },
+      { ikoni:'🔒', otsikko:'Oho! Tämä on vain kirjautuneille', teksti:'Kirjaudu sisään ja nauti ilmaiseksi. Opiskelusi tallentuu ja kulkee mukanasi joka laitteella.' },
       { ikoni:'✨', otsikko:'Melkein perillä!', teksti:'Tämä osio avautuu kirjautumalla. Se on täysin ilmaista eikä vie kuin hetken.' },
       { ikoni:'🎓', otsikko:'Tässä piilee paras osa', teksti:'Kirjautuneena saat omat tilastot, muistiinpanot ja henkilökohtaisen opintosuunnitelman. Ilmaiseksi.' },
       { ikoni:'🚀', otsikko:'Valmiina lähtöön?', teksti:'Luo tili sekunneissa, niin edistymisesi tallentuu etkä menetä yhtään kerrattua korttia.' },
-      { ikoni:'💾', otsikko:'Muistetaanko sinut ensi kerralla?', teksti:'Kirjaudu, niin kaikki kerrattu säilyy — myös puhelimella ja koulun koneella.' },
+      { ikoni:'💾', otsikko:'Muistetaanko sinut ensi kerralla?', teksti:'Kirjaudu, niin kaikki kerrattu säilyy. Se toimii myös puhelimella ja koulun koneella.' },
       { ikoni:'🧠', otsikko:'Aivot valmiina, tili puuttuu', teksti:'Kirjaudu ilmaiseksi ja avaa kaikki Cognion ominaisuudet käyttöösi.' },
-      { ikoni:'⭐', otsikko:'Tämä on jäsenetu — ja se on ilmainen', teksti:'Kirjaudu sisään, niin pääset heti jatkamaan siitä mihin jäit.' },
+      { ikoni:'⭐', otsikko:'Tämä on jäsenetu ja se on ilmainen', teksti:'Kirjaudu sisään, niin pääset heti jatkamaan siitä mihin jäit.' },
       { ikoni:'📈', otsikko:'Haluatko nähdä edistymisesi?', teksti:'Kirjaudu, niin Cognio seuraa osaamistasi ja kertoo mitä kannattaa kerrata seuraavaksi.' },
       { ikoni:'🔑', otsikko:'Yksi klikkaus, ja olet sisällä', teksti:'Kirjaudu Google-tilillä tai sähköpostilla. Ilmaista, eikä korttitietoja kysytä.' },
-      { ikoni:'🌙', otsikko:'Tämä osa nukkuu vielä', teksti:'Herätä se kirjautumalla — ilmaiseksi, ja koko YO-kertaus on käytettävissäsi.' },
+      { ikoni:'🌙', otsikko:'Tämä osa nukkuu vielä', teksti:'Herätä se kirjautumalla. Se on ilmaista ja saat koko YO-kertauksen käyttöösi.' },
     ];
     function naytaLukkoViesti(){
       const v = LUKKO_VIESTIT[Math.floor(Math.random()*LUKKO_VIESTIT.length)];
@@ -1748,7 +1748,7 @@
       const nappi = document.getElementById('esittelyKirjaudu');
       if(kirjautunut){
         const u = window.cognioKayttaja;
-        tila.innerHTML = 'Kirjautuneena: <b>'+suojaa((u&&u.email)||'')+'</b> — datasi synkkaantuu laitteidesi välillä.';
+        tila.innerHTML = 'Kirjautuneena: <b>'+suojaa((u&&u.email)||'')+'</b>. Datasi synkkaantuu laitteidesi välillä.';
         if(nappi) nappi.textContent = 'Siirry etusivulle';
       } else {
         tila.textContent = 'Vinkki: kääntökortteja ja opintojaksoja voi kokeilla ilman kirjautumista.';
@@ -1912,33 +1912,33 @@
           { nimi:'Project Gutenberg (suomeksi)', url:'https://www.gutenberg.org/browse/languages/fi', kuvaus:'Ilmaisia klassikkoteoksia luettavaksi' }] },
       'RUB': { vinkit:'Kieltä oppii käyttämällä: lue helppolukuisia ruotsinkielisiä tekstejä, kuuntele ruotsia ja kirjoita itse.',
         tavat:[{ ikoni:'📖', otsikko:'Lukeminen', teksti:'Lue selkokielisiä uutisia ruotsiksi' }],
-        linkit:[{ nimi:'8 Sidor - lätt svenska', url:'https://8sidor.se/', kuvaus:'Selkokieliset uutiset ruotsiksi' },
+        linkit:[{ nimi:'8 Sidor: lätt svenska', url:'https://8sidor.se/', kuvaus:'Selkokieliset uutiset ruotsiksi' },
           { nimi:'SVT Nyheter', url:'https://www.svt.se/', kuvaus:'Ruotsinkielisiä uutisia' }] },
       'ENA': { vinkit:'Englannissa laaja sanavarasto ja tekstin ymmärtäminen ratkaisevat. Lue, kuuntele ja kirjoita englanniksi säännöllisesti.',
         tavat:[{ ikoni:'📖', otsikko:'Lukeminen & kuuntelu', teksti:'Kuluta englanninkielistä mediaa päivittäin' }],
         linkit:[{ nimi:'BBC Learning English', url:'https://www.bbc.co.uk/learningenglish', kuvaus:'Kielitaidon harjoituksia' },
           { nimi:'Merriam-Webster', url:'https://www.merriam-webster.com/', kuvaus:'Sanakirja ja synonyymit' }] },
       'BI': { vinkit:'Biologiassa auttaa ilmiöiden ymmärtäminen ja käsitteiden yhdistäminen kokonaisuuksiksi.',
-        linkit:[{ nimi:'Khan Academy - Biology', url:'https://www.khanacademy.org/science/biology', kuvaus:'Videoita ja harjoituksia (englanniksi)' },
-          { nimi:'Wikipedia - Biologia', url:'https://fi.wikipedia.org/wiki/Biologia', kuvaus:'Yleiskatsaus aiheeseen' }] },
+        linkit:[{ nimi:'Khan Academy: Biology', url:'https://www.khanacademy.org/science/biology', kuvaus:'Videoita ja harjoituksia (englanniksi)' },
+          { nimi:'Wikipedia: Biologia', url:'https://fi.wikipedia.org/wiki/Biologia', kuvaus:'Yleiskatsaus aiheeseen' }] },
       'GE': { vinkit:'Maantieteessä yhdistä ilmiöt karttoihin ja ajankohtaisiin tapahtumiin.',
         linkit:[{ nimi:'Our World in Data', url:'https://ourworldindata.org/', kuvaus:'Dataa ja kuvaajia globaaleista ilmiöistä' },
           { nimi:'Tilastokeskus', url:'https://www.stat.fi/', kuvaus:'Suomen tilastotietoa' }] },
       'FY': { vinkit:'Fysiikassa ymmärrä ilmiöt ja harjoittele soveltamista. Piirrä kuvia ja mieti suuruusluokkia.',
-        linkit:[{ nimi:'Khan Academy - Physics', url:'https://www.khanacademy.org/science/physics', kuvaus:'Videoita ja harjoituksia (englanniksi)' },
-          { nimi:'Wikipedia - Fysiikka', url:'https://fi.wikipedia.org/wiki/Fysiikka', kuvaus:'Yleiskatsaus' }] },
+        linkit:[{ nimi:'Khan Academy: Physics', url:'https://www.khanacademy.org/science/physics', kuvaus:'Videoita ja harjoituksia (englanniksi)' },
+          { nimi:'Wikipedia: Fysiikka', url:'https://fi.wikipedia.org/wiki/Fysiikka', kuvaus:'Yleiskatsaus' }] },
       'KE': { vinkit:'Kemiassa yhdistä käsitteet reaktioihin ja rakenteisiin. Harjoittele kaavojen tulkintaa.',
-        linkit:[{ nimi:'Khan Academy - Chemistry', url:'https://www.khanacademy.org/science/chemistry', kuvaus:'Videoita ja harjoituksia (englanniksi)' },
-          { nimi:'Ptable - jaksollinen järjestelmä', url:'https://ptable.com/?lang=fi', kuvaus:'Interaktiivinen jaksollinen järjestelmä' }] },
+        linkit:[{ nimi:'Khan Academy: Chemistry', url:'https://www.khanacademy.org/science/chemistry', kuvaus:'Videoita ja harjoituksia (englanniksi)' },
+          { nimi:'Ptable: jaksollinen järjestelmä', url:'https://ptable.com/?lang=fi', kuvaus:'Interaktiivinen jaksollinen järjestelmä' }] },
       'HI': { vinkit:'Historiassa hahmota syy-seuraussuhteet ja aikajanat. Harjoittele lähteiden tulkintaa.',
         linkit:[{ nimi:'Yle Elävä arkisto', url:'https://yle.fi/aihe/elava-arkisto', kuvaus:'Historiallista arkistomateriaalia' },
-          { nimi:'Wikipedia - Historia', url:'https://fi.wikipedia.org/wiki/Historia', kuvaus:'Yleiskatsaus' }] },
+          { nimi:'Wikipedia: Historia', url:'https://fi.wikipedia.org/wiki/Historia', kuvaus:'Yleiskatsaus' }] },
       'YH': { vinkit:'Yhteiskuntaopissa seuraa ajankohtaisia asioita ja yhdistä ne käsitteisiin.',
         linkit:[{ nimi:'Eduskunta', url:'https://www.eduskunta.fi/', kuvaus:'Suomen poliittinen järjestelmä' },
           { nimi:'Tilastokeskus', url:'https://www.stat.fi/', kuvaus:'Yhteiskunnan tilastotietoa' }] },
       'PS': { vinkit:'Psykologiassa yhdistä teoriat tutkimuksiin ja arjen esimerkkeihin.',
         linkit:[{ nimi:'Verywell Mind', url:'https://www.verywellmind.com/', kuvaus:'Psykologian artikkeleita (englanniksi)' },
-          { nimi:'Wikipedia - Psykologia', url:'https://fi.wikipedia.org/wiki/Psykologia', kuvaus:'Yleiskatsaus' }] },
+          { nimi:'Wikipedia: Psykologia', url:'https://fi.wikipedia.org/wiki/Psykologia', kuvaus:'Yleiskatsaus' }] },
       'FI': { vinkit:'Filosofiassa harjoittele argumentointia ja käsitteiden erittelyä. Kirjoita jäsenneltyjä esseitä.',
         linkit:[{ nimi:'Stanford Encyclopedia of Philosophy', url:'https://plato.stanford.edu/', kuvaus:'Syvälliset artikkelit (englanniksi)' },
           { nimi:'Filosofia.fi', url:'https://filosofia.fi/', kuvaus:'Suomenkielistä filosofiaa' }] },
@@ -1946,10 +1946,10 @@
         linkit:[{ nimi:'Terveyskirjasto (Duodecim)', url:'https://www.terveyskirjasto.fi/', kuvaus:'Luotettavaa terveystietoa' },
           { nimi:'THL', url:'https://thl.fi/', kuvaus:'Terveyden ja hyvinvoinnin laitos' }] },
       'UE': { vinkit:'Uskonnossa vertaile maailmankatsomuksia ja hahmota niiden historiaa ja vaikutuksia.',
-        linkit:[{ nimi:'Wikipedia - Uskonto', url:'https://fi.wikipedia.org/wiki/Uskonto', kuvaus:'Yleiskatsaus maailmanuskontoihin' }] },
+        linkit:[{ nimi:'Wikipedia: Uskonto', url:'https://fi.wikipedia.org/wiki/Uskonto', kuvaus:'Yleiskatsaus maailmanuskontoihin' }] },
       'ET': { vinkit:'Elämänkatsomustiedossa harjoittele eettistä pohdintaa ja argumentointia.',
         linkit:[{ nimi:'Filosofia.fi', url:'https://filosofia.fi/', kuvaus:'Etiikkaa ja ajattelun perusteita' },
-          { nimi:'Wikipedia - Etiikka', url:'https://fi.wikipedia.org/wiki/Etiikka', kuvaus:'Yleiskatsaus' }] },
+          { nimi:'Wikipedia: Etiikka', url:'https://fi.wikipedia.org/wiki/Etiikka', kuvaus:'Yleiskatsaus' }] },
     };
     function piirraSyventava(koodi){
       const s = SYVENTAVA[koodi] || {};
@@ -1990,7 +1990,7 @@
       document.getElementById('ainePalkki').style.width = h.pros + '%';
       document.getElementById('aineTilaTeksti').textContent = h.kortteja
         ? `${h.opittu}/${h.kortteja} ${matikka?'tehtävää':'korttia'} osattu (${h.pros} %)`
-        : 'Ei vielä sisältöä - valitse kurssi ja lisää kortteja.';
+        : 'Ei vielä sisältöä. Valitse kurssi ja lisää kortteja.';
 
       // Countdown lähimpään tulevaan YO-kokeeseen tässä aineessa
       const koeLaskuri = document.getElementById('aineKoeLaskuri');
@@ -2021,7 +2021,7 @@
         const pros = kort ? Math.round(op/kort*100) : 0;
         return `<div class="aine-kortti" data-kurssi="${kk}" style="--aine-vari:${a.vari}; text-align:center">
           <span class="aine-koodi" style="background:${a.vari}; width:auto; padding:0 10px; border-radius:12px">${kk}</span>
-          <div class="aine-tila">${kort ? kort+' '+yks+' · '+pros+' %' : 'tyhjä - lisää sisältöä'}</div>
+          <div class="aine-tila">${kort ? kort+' '+yks+' · '+pros+' %' : 'lisää sisältöä'}</div>
         </div>`;
       }).join('');
       alue.querySelectorAll('.aine-kortti').forEach(el=>{ el.onclick=()=>avaaKurssi(koodi, el.dataset.kurssi); });
@@ -2128,7 +2128,7 @@
       }).join('');
       alue.querySelectorAll('[data-poista]').forEach(b => { b.onclick = () => { const k=haeKokeet(); k.sort((a,b)=>a.pvm.localeCompare(b.pvm)); k.splice(Number(b.dataset.poista),1); tallennaKokeet(k); piirraKoeLista(); }; });
     }
-    function taytaAineValikko(sel){ sel.innerHTML = AINEET.map(a=>`<option value="${a.koodi}">${a.koodi} - ${a.nimi}</option>`).join(''); }
+    function taytaAineValikko(sel){ sel.innerHTML = AINEET.map(a=>`<option value="${a.koodi}">${a.koodi} ${a.nimi}</option>`).join(''); }
 
     /* Iso kalenteri (hotellisivujen tyyli) */
     let kalKuukausi = (function(){ const d=new Date(); return new Date(d.getFullYear(), d.getMonth(), 1); })();
@@ -2260,7 +2260,7 @@
     function tallennaKurssiLinkit(o){ localStorage.setItem('cognio_kurssi_linkit', JSON.stringify(o)); }
     const KURSSI_MAT = {
       'ENA1': [{ nimi:'Cambridge Dictionary', url:'https://dictionary.cambridge.org/' },
-               { nimi:'BBC Learning English - Vocabulary', url:'https://www.bbc.co.uk/learningenglish/english/course/lower-intermediate' }],
+               { nimi:'BBC Learning English: Vocabulary', url:'https://www.bbc.co.uk/learningenglish/english/course/lower-intermediate' }],
     };
     let nykyKurssiKoodi = null;
     function piirraKurssiMateriaalit(){
@@ -2330,7 +2330,7 @@
       const flip = document.getElementById('flip'); korttiKaannetty=false; flip.classList.remove('kaannetty');
       if (korttiJarjestys.length === 0) {
         document.getElementById('flipEtu').textContent='Ei kortteja'; document.getElementById('flipTaka').textContent='Lisää kortteja alta';
-        document.getElementById('laskuTeksti').textContent = laskut ? 'Ei tehtäviä - lisää alta' : '';
+        document.getElementById('laskuTeksti').textContent = laskut ? 'Ei tehtäviä. Lisää alta.' : '';
         document.getElementById('korttiEdistys').textContent='Tämä setti on tyhjä'; return;
       }
       const k = korttiJarjestys[korttiIndeksi];
@@ -2453,7 +2453,7 @@
       const nimet = {}; peliLahteet().forEach(l=> nimet[l.avain]=l.nimi);
       const rivit = Object.keys(e).map(avain=>({ nimi: nimet[avain] || 'Poistettu pakka', pisteet: e[avain] }))
         .sort((a,b)=> b.pisteet - a.pisteet).slice(0,8);
-      if(!rivit.length){ alue.innerHTML = '<h3>🏆 Parhaat ennätykset</h3><p class="pieni himmea" style="text-align:center; margin:0">Ei vielä ennätyksiä - pelaa ensimmäinen pelisi!</p>'; return; }
+      if(!rivit.length){ alue.innerHTML = '<h3>🏆 Parhaat ennätykset</h3><p class="pieni himmea" style="text-align:center; margin:0">Ei vielä ennätyksiä. Pelaa ensimmäinen pelisi!</p>'; return; }
       const mitalit = ['🥇','🥈','🥉'];
       alue.innerHTML = '<h3>🏆 Parhaat ennätykset</h3>' + rivit.map((r,i)=>
         `<div class="ennatys-rivi${i===0?' top1':''}">
@@ -2465,7 +2465,7 @@
     function peliAloita(){
       const avain = document.getElementById('peliLahde').value;
       const lahde = peliLahteet().find(l=>l.avain===avain) || peliLahteet()[0];
-      if(!lahde){ dlgViesti('Lisää ensin kortteja johonkin aineeseen (väh. 2), niin voit pelata.', 'Ei kortteja'); return; }
+      if(!lahde){ dlgViesti('Lisää ensin kortteja johonkin aineeseen. Kortteja tarvitaan vähintään kaksi.', 'Ei kortteja'); return; }
       const pool = lahde.kortit.filter(c=>c.etu&&c.taka);
       if(pool.length < 2){ dlgViesti('Tarvitset vähintään 2 korttia pelataksesi. Lisää kortteja aineiden kursseille.', 'Ei tarpeeksi kortteja'); return; }
       peli = { avain, pool, jono: sekoita(pool), pisteet:0, combo:0, sydamet:3, vastattu:false, timer:null, kesto:10000, jaljella:10000, oikeat:0, yhteensa:0, nykyinen:null };
@@ -2762,14 +2762,14 @@
       document.getElementById('koeKaynnissa').hidden=true; document.getElementById('koeTulos').hidden=false;
       const yht=koeKysymykset.length; document.getElementById('koePisteet').textContent=`${koePisteet} / ${yht}`;
       const pros=Math.round((koePisteet/yht)*100); let arvio='Jatka harjoittelua!';
-      if(pros===100)arvio='Täydet pisteet! 🎉'; else if(pros>=80)arvio='Hienoa työtä!'; else if(pros>=60)arvio='Hyvä - vielä vähän kertausta.';
+      if(pros===100)arvio='Täydet pisteet! 🎉'; else if(pros>=80)arvio='Hienoa työtä!'; else if(pros>=60)arvio='Hyvä! Vielä vähän kertausta.';
       document.getElementById('koeArvio').textContent=`${pros}% oikein. ${arvio}`;
     }
 
     /* ============ Vanhat kokeet / tehtävät ============ */
     const OLETUS_TEHTAVAT = [
-      { otsikko:'Sanasto asiayhteydessä', merkki:'ENA', kysymys:'Choose the best word: "Despite the ___ evidence, the committee remained unconvinced." (a) compelling (b) reluctant (c) scarce (d) ambiguous', vastaus:'(a) compelling - "vakuuttava". Muut eivät sovi lauseyhteyteen.' },
-      { otsikko:'Kielioppi: aikamuoto', merkki:'ENA', kysymys:'Complete: "By the time we arrived, the film ___ (already / start)."', vastaus:'"had already started" (pluskvamperfekti - tapahtui ennen toista mennyttä tapahtumaa).' },
+      { otsikko:'Sanasto asiayhteydessä', merkki:'ENA', kysymys:'Choose the best word: "Despite the ___ evidence, the committee remained unconvinced." (a) compelling (b) reluctant (c) scarce (d) ambiguous', vastaus:'(a) compelling tarkoittaa "vakuuttava". Muut eivät sovi lauseyhteyteen.' },
+      { otsikko:'Kielioppi: aikamuoto', merkki:'ENA', kysymys:'Complete: "By the time we arrived, the film ___ (already / start)."', vastaus:'"had already started" eli pluskvamperfekti. Se tapahtui ennen toista mennyttä tapahtumaa.' },
       { otsikko:'Käännös suomi→englanti', merkki:'ENA', kysymys:'Käännä: "Mitä pidemmälle opinnot etenevät, sitä vaativammiksi tehtävät muuttuvat."', vastaus:'The further the studies progress, the more demanding the tasks become.' },
       { otsikko:'Biologia: käsite', merkki:'BI', kysymys:'Selitä ero mitoosin ja meioosin välillä.', vastaus:'Mitoosi tuottaa kaksi identtistä tytärsolua (kasvu, uusiutuminen). Meioosi tuottaa neljä perimältään erilaista sukusolua, joissa on puolikas kromosomisto.' },
     ];
@@ -2799,7 +2799,7 @@
     function haeMuistiot(){ const d=localStorage.getItem('cognio_muistiot'); return d?JSON.parse(d):{}; }
     function avaaMuistio() {
       const sel=document.getElementById('muistioAine');
-      sel.innerHTML=AINEET.map(a=>`<option value="${a.koodi}">${a.koodi} - ${a.nimi}</option>`).join('') + '<option value="yleinen">Yleiset</option>';
+      sel.innerHTML=AINEET.map(a=>`<option value="${a.koodi}">${a.koodi} ${a.nimi}</option>`).join('') + '<option value="yleinen">Yleiset</option>';
       const tallennettu=localStorage.getItem('cognio_muistio_aine'); if(tallennettu) sel.value=tallennettu;
       naytaMuistio();
     }
@@ -2924,7 +2924,7 @@
     function arvioArvosana(pros) {
       if (pros>=95) return 'L (laudatur)'; if (pros>=88) return 'E (eximia)'; if (pros>=78) return 'M (magna)';
       if (pros>=63) return 'C (cum laude)'; if (pros>=45) return 'B (lubenter)'; if (pros>=30) return 'A (approbatur)';
-      return 'I (hylätty - kertaa lisää)';
+      return 'I (hylätty, kertaa lisää)';
     }
 
     /* ============ Esseet ============ */
@@ -3012,7 +3012,7 @@
         <div class="rivi-vali" data-id="${x.p.id}" style="cursor:pointer">
           <div><div class="sana-etu">${suojaa(x.p.nimi)}</div>
           <div class="sana-taka">${x.jaljella} ${x.p.tyyppi==='laskut'?'tehtävää':'korttia'} vielä kerrattavana</div></div>
-          <span class="merkki-pill">${x.p.aine}</span></div>`).join('') : '<div class="tyhja pieni">Hienoa - ei kerrattavaa juuri nyt! 🎉</div>';
+          <span class="merkki-pill">${x.p.aine}</span></div>`).join('') : '<div class="tyhja pieni">Hienoa! Ei kerrattavaa juuri nyt. 🎉</div>';
       document.getElementById('kerrattavaaAlue').querySelectorAll('[data-id]').forEach(el=>{ el.onclick=()=>{ asetaAktiivinen(Number(el.dataset.id)); korttiLahde=null; korttiPaluuAine=null; siirryOpiskeluun=true; naytaNakyma('kortit'); }; });
     }
 
@@ -3090,9 +3090,9 @@
 
     // Logo → etusivu, hero-napit, pikasiirrot
     document.getElementById('brandiKoti').onclick=()=>naytaNakyma(kirjautunut?'koti':'esittely');
-    document.getElementById('esittelyKirjaudu').onclick=()=>{ if(kirjautunut) naytaNakyma('koti'); else if(window.pyydaKirjautuminen) window.pyydaKirjautuminen('Luo tili tai kirjaudu — saat pilvisynkan ja henkilökohtaiset ominaisuudet.'); };
+    document.getElementById('esittelyKirjaudu').onclick=()=>{ if(kirjautunut) naytaNakyma('koti'); else if(window.pyydaKirjautuminen) window.pyydaKirjautuminen('Luo tili tai kirjaudu. Saat pilvisynkan ja henkilökohtaiset ominaisuudet.'); };
     document.getElementById('esittelyKirjaudu2').onclick=()=>{ if(kirjautunut) naytaNakyma('koti'); else if(window.pyydaKirjautuminen) window.pyydaKirjautuminen('Luo tili tai kirjaudu aloittaaksesi.'); };
-    document.getElementById('lukkoKirjaudu').onclick=()=>{ if(window.pyydaKirjautuminen) window.pyydaKirjautuminen('Kirjaudu ilmaiseksi — opiskelusi tallentuu ja synkkaantuu laitteidesi välillä.'); };
+    document.getElementById('lukkoKirjaudu').onclick=()=>{ if(window.pyydaKirjautuminen) window.pyydaKirjautuminen('Kirjaudu ilmaiseksi. Opiskelusi tallentuu ja synkkaantuu laitteidesi välillä.'); };
     document.getElementById('lukkoTakaisin').onclick=()=>naytaNakyma('esittely');
     document.querySelectorAll('[data-siirry]').forEach(b=>{ b.onclick=()=>{ if(b.dataset.siirry==='kortit'){ korttiLahde=null; korttiPaluuAine=null; siirryOpiskeluun=false; } naytaNakyma(b.dataset.siirry); }; });
     document.getElementById('lisaaKortti').onclick=lisaaKortti;
