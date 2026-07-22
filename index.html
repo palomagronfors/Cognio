@@ -1752,6 +1752,22 @@
       if(lukossa){ naytaLukkoViesti(); verho.classList.add('nakyy'); }
       else verho.classList.remove('nakyy');
     }
+    // Onko selaimessa voimassa oleva istunto? Tarkistetaan heti (ilman verkkoa),
+    // jotta sivun päivitys ei näytä hetkeksi uloskirjautuneelta.
+    function onkoTallennettuIstunto(){
+      try{
+        for(let i=0;i<localStorage.length;i++){
+          const k = localStorage.key(i);
+          if(k && /^sb-.*-auth-token$/.test(k)){
+            const v = JSON.parse(localStorage.getItem(k) || 'null');
+            const exp = v && (v.expires_at || (v.currentSession && v.currentSession.expires_at));
+            if(!exp) return true;                      // ei vanhenemistietoa: oletetaan voimassa
+            return (Number(exp) * 1000) > Date.now();  // vanheneeko vasta tulevaisuudessa?
+          }
+        }
+      }catch(e){}
+      return false;
+    }
     // Päivitä UI kun kirjautumistila muuttuu (kutsutaan auth-osiosta)
     function paivitaKirjautuminen(sisaan){
       kirjautunut = !!sisaan;
@@ -3187,7 +3203,18 @@
 
     /* ============ Alustus ============ */
     piirraIkonit();
-    naytaNakyma('esittely');   // aloita aina esittelysivulta, ei hypätä suoraan tilastoihin
+    // Tunnista tallennettu istunto heti, jottei päivitys näytä uloskirjautumiselta
+    kirjautunut = onkoTallennettuIstunto();
+    if(kirjautunut){
+      const n = document.getElementById('authNappi');
+      if(n){ n.textContent = '👤 …'; n.classList.add('kirjautunut'); }
+    }
+    // Kirjautunut palaa siihen näkymään jossa oli; uusi kävijä aloittaa esittelystä
+    (function(){
+      const viimeisin = localStorage.getItem('cognio_nakyma');
+      const kohde = (kirjautunut && viimeisin && NAKYMAT.includes(viimeisin)) ? viimeisin : 'esittely';
+      naytaNakyma(kohde);
+    })();
 
     /* ============ Kirjautuminen ja pilvisynkka (Supabase) ============ */
     (function(){
