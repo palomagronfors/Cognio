@@ -1353,32 +1353,89 @@
     function onkoMatikka(koodi){ return MATIKKA.includes(koodi); }
     const OLETUS_PAKAT = [
       { nimi:'ENA1 perussanasto', aine:'ENA', kurssi:'ENA1', tyyppi:'kortit', parit:[
-        ['ubiquitous','kaikkialla esiintyvä'],['meticulous','pikkutarkka'],['inevitable','väistämätön'],
-        ['profound','syvällinen'],['reluctant','vastahakoinen'],['diverse','monimuotoinen'],
-        ['sustainable','kestävä'],['controversial','kiistanalainen'],['significant','merkittävä'],
-        ['fluctuate','vaihdella'],['comprehensive','kattava'],['deteriorate','heikentyä'],
-        ['ambiguous','monitulkintainen'],['resilient','sinnikäs'],['scarce','niukka'],
-        ['abundant','runsas'],['crucial','ratkaiseva'],['deliberate','tarkoituksellinen'],
-        ['feasible','toteutettavissa oleva'],['inherent','luontainen'],['prevalent','yleinen, vallitseva'],
-        ['tedious','puuduttava'],['vital','elintärkeä'],['notion','käsitys, ajatus'],
+        ['abundant','runsas'],['accurate','tarkka'],['acknowledge','myöntää, tunnustaa'],['adequate','riittävä'],
+        ['advocate','puolustaa; kannattaja'],['ambiguous','monitulkintainen'],['anticipate','ennakoida'],['apparent','ilmeinen'],
+        ['appropriate','sopiva'],['assess','arvioida'],['assume','olettaa'],['attain','saavuttaa'],
+        ['beneficial','hyödyllinen'],['bias','ennakkoluulo'],['capable','kykenevä'],['cease','lakata'],
+        ['coherent','johdonmukainen'],['compelling','vakuuttava'],['complex','monimutkainen'],['comprehensive','kattava'],
+        ['conceal','salata'],['consequence','seuraus'],['considerable','huomattava'],['consistent','johdonmukainen'],
+        ['constrain','rajoittaa'],['contradict','olla ristiriidassa'],['controversial','kiistanalainen'],['convey','välittää'],
+        ['crucial','ratkaiseva'],['cumulative','kertyvä'],['declare','julistaa'],['decline','vähentyä; kieltäytyä'],
+        ['dedicate','omistaa'],['deliberate','tarkoituksellinen'],['demonstrate','osoittaa'],['deteriorate','heikentyä'],
+        ['determine','määrittää'],['deviate','poiketa'],['diminish','vähentyä'],['discrepancy','ristiriita, ero'],
+        ['distinct','selvästi erottuva'],['diverse','monimuotoinen'],['dominant','hallitseva'],['elaborate','yksityiskohtainen'],
+        ['eliminate','poistaa'],['emerge','ilmaantua'],['emphasise','korostaa'],['enhance','parantaa'],
+        ['ensure','varmistaa'],['essential','välttämätön'],['evident','ilmeinen'],['exceed','ylittää'],
+        ['exclude','sulkea pois'],['explicit','nimenomainen, selkeä'],['extensive','laaja'],['feasible','toteutettavissa oleva'],
+        ['fluctuate','vaihdella'],['foster','edistää'],['fundamental','perustavanlaatuinen'],['generate','tuottaa'],
+        ['genuine','aito'],['gradual','asteittainen'],['hinder','haitata'],['hypothesis','hypoteesi'],
+        ['identical','identtinen'],['illustrate','havainnollistaa'],['imply','vihjata'],['inclined','taipuvainen'],
+        ['indicate','osoittaa'],['inevitable','väistämätön'],['inherent','luontainen'],['initiate','käynnistää'],
+        ['integrate','yhdistää'],['intense','voimakas'],['interpret','tulkita'],['justify','perustella'],
+        ['maintain','ylläpitää; väittää'],['meticulous','pikkutarkka'],['mitigate','lieventää'],['modify','muokata'],
+        ['notion','käsitys, ajatus'],['obtain','hankkia'],['obvious','ilmeinen'],['occur','tapahtua'],
+        ['persist','jatkua sinnikkäästi'],['perspective','näkökulma'],['phenomenon','ilmiö'],['plausible','uskottava'],
+        ['precise','täsmällinen'],['predominant','vallitseva'],['prevalent','yleinen, vallitseva'],['profound','syvällinen'],
+        ['prohibit','kieltää'],['prominent','merkittävä, näkyvä'],['pursue','tavoitella'],['reluctant','vastahakoinen'],
+        ['resilient','sinnikäs'],['restrain','hillitä'],['reveal','paljastaa'],['scarce','niukka'],
+        ['significant','merkittävä'],['subsequent','myöhempi'],['substantial','huomattava'],['sufficient','riittävä'],
+        ['sustain','ylläpitää'],['tedious','puuduttava'],['tendency','taipumus'],['thorough','perusteellinen'],
+        ['transform','muuttaa'],['ubiquitous','kaikkialla esiintyvä'],['undermine','heikentää'],['utilise','hyödyntää'],
+        ['vague','epämääräinen'],['vary','vaihdella'],['vital','elintärkeä'],['widespread','laajalle levinnyt'],
       ]},
       { nimi:'ENA2 verbit ja ilmaukset', aine:'ENA', kurssi:'ENA2', tyyppi:'kortit', parit:[
-        ['account for','selittää'],['carry out','toteuttaa'],['come across','törmätä johonkin'],
-        ['figure out','selvittää, tajuta'],['give up','luovuttaa'],['look into','tutkia'],
-        ['point out','huomauttaa'],['rely on','luottaa johonkin'],['set up','perustaa'],
-        ['turn down','hylätä, kieltäytyä'],['bring about','saada aikaan'],['put off','lykätä'],
-        ['run out of','loppua kesken'],['take on','ottaa hoitaakseen'],['work out','onnistua; treenata'],
-        ['cope with','selviytyä jostakin'],['deal with','käsitellä'],['look forward to','odottaa innolla'],
-        ['make up for','hyvittää'],['stand out','erottua'],
+        ['account for','selittää'],['adhere to','noudattaa'],['aim at','pyrkiä johonkin'],['allow for','ottaa huomioon'],
+        ['amount to','olla yhteensä'],['apply for','hakea (paikkaa)'],['approve of','hyväksyä'],['back up','tukea; varmuuskopioida'],
+        ['bring about','saada aikaan'],['bring up','ottaa esiin; kasvattaa'],['call off','perua'],['carry out','toteuttaa'],
+        ['catch up','saada kiinni'],['come across','törmätä johonkin'],['come up with','keksiä'],['consist of','koostua jostakin'],
+        ['cope with','selviytyä jostakin'],['count on','luottaa johonkin'],['cut down on','vähentää'],['deal with','käsitellä'],
+        ['depend on','riippua jostakin'],['draw attention to','kiinnittää huomiota'],['end up','päätyä'],['figure out','selvittää, tajuta'],
+        ['fill in','täyttää (lomake)'],['find out','saada selville'],['focus on','keskittyä'],['get along','tulla toimeen'],
+        ['get rid of','päästä eroon'],['give in','antaa periksi'],['give up','luovuttaa'],['go through','käydä läpi'],
+        ['grow up','kasvaa aikuiseksi'],['hand in','palauttaa (tehtävä)'],['hold back','pidätellä'],['keep up with','pysyä perässä'],
+        ['lead to','johtaa johonkin'],['look after','huolehtia'],['look forward to','odottaa innolla'],['look into','tutkia'],
+        ['look up','etsiä (tieto)'],['make up','keksiä; muodostaa'],['make up for','hyvittää'],['object to','vastustaa'],
+        ['participate in','osallistua'],['pay attention to','kiinnittää huomiota'],['point out','huomauttaa'],['put off','lykätä'],
+        ['put up with','sietää'],['rely on','luottaa johonkin'],['result in','johtaa johonkin'],['rule out','sulkea pois'],
+        ['run out of','loppua kesken'],['set up','perustaa'],['sort out','selvittää'],['stand for','tarkoittaa; puolustaa'],
+        ['stand out','erottua'],['take advantage of','hyödyntää'],['take into account','ottaa huomioon'],['take on','ottaa hoitaakseen'],
+        ['take over','ottaa haltuun'],['take part in','osallistua'],['turn down','hylätä, kieltäytyä'],['turn out','osoittautua'],
+        ['work out','onnistua; treenata'],['be aware of','olla tietoinen'],['be based on','perustua'],['be capable of','kyetä'],
+        ['be concerned about','olla huolissaan'],['be exposed to','altistua'],['be involved in','olla mukana'],['be responsible for','olla vastuussa'],
+        ['in terms of','suhteessa johonkin'],['on behalf of','jonkun puolesta'],['due to','johtuen'],['regardless of','riippumatta'],
+        ['in spite of','huolimatta'],['as a result of','seurauksena'],['with regard to','koskien'],['to some extent','jossain määrin'],
+        ['by means of','avulla'],['in accordance with','mukaisesti'],['for the sake of','vuoksi'],['on the contrary','päinvastoin'],
+        ['nevertheless','siitä huolimatta'],['furthermore','lisäksi'],['moreover','lisäksi'],['therefore','siksi'],
+        ['however','kuitenkin'],['whereas','kun taas'],['although','vaikka'],['consequently','näin ollen'],
+        ['in addition','lisäksi'],['for instance','esimerkiksi'],['in conclusion','lopuksi'],['on the other hand','toisaalta'],
+        ['namely','nimittäin'],['thus','siten'],['hence','siksi'],['meanwhile','sillä välin'],
       ]},
       { nimi:'ENA3 yhteiskunta ja ympäristö', aine:'ENA', kurssi:'ENA3', tyyppi:'kortit', parit:[
-        ['climate change','ilmastonmuutos'],['poverty','köyhyys'],['inequality','eriarvoisuus'],
-        ['biodiversity','luonnon monimuotoisuus'],['renewable energy','uusiutuva energia'],['greenhouse gas','kasvihuonekaasu'],
-        ['unemployment','työttömyys'],['welfare','hyvinvointi'],['democracy','demokratia'],
-        ['legislation','lainsäädäntö'],['immigration','maahanmuutto'],['sustainability','kestävyys'],
-        ['consumption','kulutus'],['pollution','saastuminen'],['deforestation','metsäkato'],
-        ['recycling','kierrätys'],['economy','talous'],['wealth','varallisuus'],
-        ['citizen','kansalainen'],['policy','politiikka, toimintalinja'],
+        ['climate change','ilmastonmuutos'],['global warming','ilmaston lämpeneminen'],['greenhouse gas','kasvihuonekaasu'],['carbon footprint','hiilijalanjälki'],
+        ['emissions','päästöt'],['renewable energy','uusiutuva energia'],['fossil fuels','fossiiliset polttoaineet'],['sustainability','kestävyys'],
+        ['biodiversity','luonnon monimuotoisuus'],['deforestation','metsäkato'],['pollution','saastuminen'],['waste','jäte'],
+        ['recycling','kierrätys'],['conservation','suojelu'],['endangered species','uhanalainen laji'],['ecosystem','ekosysteemi'],
+        ['drought','kuivuus'],['flood','tulva'],['natural disaster','luonnonkatastrofi'],['natural resource','luonnonvara'],
+        ['consumption','kulutus'],['overpopulation','ylikansoitus'],['urbanisation','kaupungistuminen'],['poverty','köyhyys'],
+        ['inequality','eriarvoisuus'],['wealth','varallisuus'],['unemployment','työttömyys'],['welfare','hyvinvointi'],
+        ['health care','terveydenhuolto'],['education','koulutus'],['literacy','lukutaito'],['discrimination','syrjintä'],
+        ['equality','tasa-arvo'],['human rights','ihmisoikeudet'],['freedom of speech','sananvapaus'],['democracy','demokratia'],
+        ['election','vaalit'],['government','hallitus'],['parliament','parlamentti'],['legislation','lainsäädäntö'],
+        ['policy','toimintalinja, politiikka'],['citizen','kansalainen'],['immigration','maahanmuutto'],['refugee','pakolainen'],
+        ['integration','kotoutuminen'],['diversity','monimuotoisuus'],['globalisation','globalisaatio'],['economy','talous'],
+        ['trade','kauppa'],['industry','teollisuus'],['labour','työvoima'],['taxation','verotus'],
+        ['budget','budjetti'],['inflation','inflaatio'],['investment','sijoitus'],['charity','hyväntekeväisyys'],
+        ['volunteer','vapaaehtoinen'],['crime','rikollisuus'],['punishment','rangaistus'],['justice','oikeudenmukaisuus'],
+        ['court','oikeusistuin'],['media','media'],['journalism','journalismi'],['propaganda','propaganda'],
+        ['censorship','sensuuri'],['privacy','yksityisyys'],['surveillance','valvonta'],['social media','sosiaalinen media'],
+        ['influence','vaikutusvalta'],['advertising','mainonta'],['consumerism','kulutuskeskeisyys'],['technology','teknologia'],
+        ['artificial intelligence','tekoäly'],['automation','automaatio'],['innovation','innovaatio'],['research','tutkimus'],
+        ['evidence','todiste'],['statistics','tilastot'],['survey','kysely'],['population','väestö'],
+        ['birth rate','syntyvyys'],['life expectancy','elinajanodote'],['ageing population','ikääntyvä väestö'],['rural','maaseutu-'],
+        ['infrastructure','infrastruktuuri'],['public transport','julkinen liikenne'],['housing','asuminen'],['sustainable development','kestävä kehitys'],
+        ['awareness','tietoisuus'],['campaign','kampanja'],['protest','mielenosoitus'],['activist','aktivisti'],
+        ['responsibility','vastuu'],['solution','ratkaisu'],['challenge','haaste'],['impact','vaikutus'],
+        ['threat','uhka'],['poverty line','köyhyysraja'],
       ]},
       { nimi:'RUB11 perussanasto', aine:'RUB', kurssi:'RUB11', tyyppi:'kortit', parit:[
         ['viktig','tärkeä'],['svår','vaikea'],['lätt','helppo'],['möjlig','mahdollinen'],
@@ -1419,14 +1476,34 @@
     let idLaskuri = 1;
     // Siivoa erotinviivat nimistä (esim. "ENA1 - perussanasto" -> "ENA1 perussanasto")
     function siivoaNimi(n){ return String(n).replace(/\s+[—–-]\s+/g, ' ').replace(/\s{2,}/g, ' ').trim(); }
+    // Sisältöversio: kun tätä kasvatetaan, uudet oletuskortit lisätään myös vanhoille käyttäjille (kerran)
+    const SISALTO_VERSIO = 2;
+    function paivitaOletusSisalto(pakat){
+      if (Number(localStorage.getItem('cognio_sisalto_versio') || 1) >= SISALTO_VERSIO) return false;
+      const avain = (e,t) => String(e).trim().toLowerCase().replace(/\s+/g,' ') + ' ' + String(t).trim().toLowerCase().replace(/\s+/g,' ');
+      let muuttui = false;
+      OLETUS_PAKAT.forEach(pk=>{
+        let p = pakat.find(x=>x.aine===pk.aine && x.kurssi===pk.kurssi);
+        if(!p){ p = { id:uusiId(), nimi:pk.nimi, aine:pk.aine, kurssi:pk.kurssi||null, tyyppi:pk.tyyppi||'kortit', kortit:[] }; pakat.push(p); muuttui=true; }
+        const olemassa = new Set(p.kortit.map(k=>avain(k.etu,k.taka)));
+        pk.parit.forEach(par=>{
+          const a = avain(par[0], par[1]);
+          if(!olemassa.has(a)){ p.kortit.push({ id:uusiId(), etu:par[0], taka:par[1], opittu:false }); olemassa.add(a); muuttui=true; }
+        });
+      });
+      localStorage.setItem('cognio_sisalto_versio', String(SISALTO_VERSIO));
+      return muuttui;
+    }
     function haePakat() {
       const data = localStorage.getItem('cognio_pakat');
       if (data) {
         const p = JSON.parse(data); let muuttui=false;
         p.forEach(x=>{ if(!x.tyyppi) x.tyyppi = onkoMatikka(x.aine) ? 'laskut' : 'kortit'; if(!('kurssi' in x)) x.kurssi = null;
           const puhdas = siivoaNimi(x.nimi); if(puhdas!==x.nimi){ x.nimi=puhdas; muuttui=true; } });
-        if(muuttui) localStorage.setItem('cognio_pakat', JSON.stringify(p));
-        laskeId(p); return p;
+        laskeId(p);                                   // uniikit id:t ennen uusien korttien lisäystä
+        if(paivitaOletusSisalto(p)) muuttui = true;    // tuo uudet oletuskortit myös vanhoille käyttäjille
+        if(muuttui){ localStorage.setItem('cognio_pakat', JSON.stringify(p)); laskeId(p); }
+        return p;
       }
       let id = 1;
       const oletus = OLETUS_PAKAT.map(pk => ({
@@ -1435,6 +1512,7 @@
       }));
       laskeId(oletus);
       localStorage.setItem('cognio_pakat', JSON.stringify(oletus));
+      localStorage.setItem('cognio_sisalto_versio', String(SISALTO_VERSIO));
       return oletus;
     }
     function laskeId(pakat){ let m=0; pakat.forEach(p=>{ m=Math.max(m,p.id); p.kortit.forEach(k=>m=Math.max(m,k.id)); }); idLaskuri=m+1; }
@@ -2800,7 +2878,7 @@
     function nollaaEdistys(){ const pakat=haePakat(); pakat.forEach(p=>p.kortit.forEach(k=>k.opittu=false)); tallennaPakat(pakat);
       localStorage.removeItem('cognio_tilastot'); piirraKoti(); dlgViesti('Edistys ja tilastot nollattu.'); }
     async function nollaaKaikki(){ if(!(await dlgVahvista('Palautetaanko kaikki oletukset? Omat pakat, tehtävät, esseet ja muistiinpanot poistetaan. Tätä ei voi perua.', 'Palauta oletukset'))) return;
-      ['cognio_pakat','cognio_pakka','cognio_tehtavat','cognio_esseet','cognio_essee_aihe','cognio_muistiot','cognio_muistio_aine','cognio_tilastot','cognio_kokeet','cognio_kurssi_linkit','cognio_peli_ennatys','cognio_pikamuistiot'].forEach(k=>localStorage.removeItem(k));
+      ['cognio_pakat','cognio_pakka','cognio_tehtavat','cognio_esseet','cognio_essee_aihe','cognio_muistiot','cognio_muistio_aine','cognio_tilastot','cognio_kokeet','cognio_kurssi_linkit','cognio_peli_ennatys','cognio_pikamuistiot','cognio_sisalto_versio'].forEach(k=>localStorage.removeItem(k));
       location.reload(); }
 
     /* ============ Pikamuistiinpano ============ */
