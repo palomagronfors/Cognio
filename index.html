@@ -3199,7 +3199,11 @@
     (function(){
       const SB_URL = "https://lyzawkkibuidquqbyeko.supabase.co";
       const SB_KEY = "sb_publishable_ZoNXTylNOt6kS9rMeoRsQw_8gmu9HIn";
-      if(!window.supabase){ return; }   // kirjasto ei latautunut -> sovellus toimii silti paikallisesti
+      if(!window.supabase){   // kirjasto ei latautunut: kerro se käyttäjälle äläkä jää hiljaiseksi
+        const n = document.getElementById('authNappi');
+        if(n) n.onclick = ()=>dlgViesti('Kirjautumispalvelua ei saatu ladattua. Tarkista verkkoyhteys ja päivitä sivu.', 'Kirjautuminen ei ole käytettävissä');
+        return;
+      }
       const sb = window.supabase.createClient(SB_URL, SB_KEY, {
         auth: { flowType: 'implicit', detectSessionInUrl: true, persistSession: true, autoRefreshToken: true }
       });
@@ -3293,6 +3297,22 @@
         }
       });
       sb.auth.getSession().then(({data})=>{ paivitaNakyma(data.session && data.session.user); });
+
+      // Jos palattiin kirjautumisesta virheellä, näytä se selkokielellä (ei jäädä hiljaiseksi)
+      (function naytaPaluuVirhe(){
+        const puhdista = t => decodeURIComponent(String(t||'').replace(/\+/g,' '));
+        const h = new URLSearchParams(location.hash.replace(/^#/,''));
+        const q = new URLSearchParams(location.search);
+        const virhe = h.get('error_description') || h.get('error') || q.get('error_description') || q.get('error');
+        if(!virhe) return;
+        const koodi = h.get('error_code') || q.get('error_code') || '';
+        let teksti = puhdista(virhe);
+        if(koodi === 'otp_expired') teksti = 'Kirjautumislinkki oli vanhentunut tai jo käytetty. Pyydä uusi linkki.';
+        if(koodi === 'access_denied') teksti = 'Kirjautuminen keskeytyi tai se estettiin. Yritä uudelleen.';
+        viesti('Kirjautuminen ei onnistunut. ' + teksti);
+        avaa();
+        history.replaceState(null, '', paluuOsoite);
+      })();
     })();
   </script>
 </body>
