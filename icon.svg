@@ -1,18 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120" role="img" aria-label="Cognio">
   <defs>
-    <linearGradient id="ci" x1="20" y1="12" x2="120" y2="132" gradientUnits="userSpaceOnUse">
+    <linearGradient id="ci" x1="24" y1="20" x2="96" y2="100" gradientUnits="userSpaceOnUse">
       <stop offset="0" stop-color="#F5409B"/>
-      <stop offset=".55" stop-color="#C42E8A"/>
-      <stop offset="1" stop-color="#7C3AED"/>
+      <stop offset="1" stop-color="#B3315F"/>
     </linearGradient>
   </defs>
   <rect width="120" height="120" rx="26" fill="#FFFFFF"/>
-  <path d="M92 36 A40 40 0 1 0 92 84" fill="none" stroke="url(#ci)" stroke-width="18" stroke-linecap="round"/>
-  <g fill="none" stroke="url(#ci)" stroke-width="4.5" stroke-linecap="round">
-    <ellipse cx="60" cy="60" rx="22" ry="18"/>
-    <path d="M55 49 a11 11 0 0 0 0 22"/>
-    <path d="M65 49 a11 11 0 0 1 0 22"/>
-  </g>
-  <path d="M60 50.5 L62.8 57.2 L69.5 60 L62.8 62.8 L60 69.5 L57.2 62.8 L50.5 60 L57.2 57.2 Z"
-        fill="url(#ci)" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/>
+  <path d="M90 37 A38 38 0 1 0 90 83" fill="none" stroke="url(#ci)" stroke-width="22" stroke-linecap="round"/>
 </svg>
