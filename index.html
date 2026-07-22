@@ -1837,16 +1837,28 @@
     }
     // Onko selaimessa voimassa oleva istunto? Tarkistetaan heti (ilman verkkoa),
     // jotta sivun päivitys ei näytä hetkeksi uloskirjautuneelta.
+    function lueIstuntoTiedot(raw){
+      if(!raw) return null;
+      let teksti = raw;
+      // Uudempi Supabase tallentaa istunnon muodossa "base64-<data>"
+      if(teksti.indexOf('base64-')===0){
+        try{ teksti = decodeURIComponent(escape(atob(teksti.slice(7)))); }catch(e){ return {}; }
+      }
+      try{ const v = JSON.parse(teksti); return (v && v.currentSession) ? v.currentSession : v; }
+      catch(e){ return {}; }   // ei saatu luettua, mutta jotain on tallessa
+    }
     function onkoTallennettuIstunto(){
       try{
         for(let i=0;i<localStorage.length;i++){
           const k = localStorage.key(i);
-          if(k && /^sb-.*-auth-token$/.test(k)){
-            const v = JSON.parse(localStorage.getItem(k) || 'null');
-            const exp = v && (v.expires_at || (v.currentSession && v.currentSession.expires_at));
-            if(!exp) return true;                      // ei vanhenemistietoa: oletetaan voimassa
-            return (Number(exp) * 1000) > Date.now();  // vanheneeko vasta tulevaisuudessa?
-          }
+          // Istunto voi olla myös pilkottuna osiin: sb-xxx-auth-token.0, .1 jne.
+          if(!k || !/^sb-.*-auth-token(\.\d+)?$/.test(k)) continue;
+          const s = lueIstuntoTiedot(localStorage.getItem(k));
+          if(!s) continue;
+          // Päivitystunnus pitää kirjautumisen voimassa, vaikka pääsytunnus olisi jo vanhentunut
+          if(s.refresh_token) return true;
+          if(!s.expires_at) return true;                      // ei vanhenemistietoa: oletetaan voimassa
+          if(Number(s.expires_at) * 1000 > Date.now()) return true;
         }
       }catch(e){}
       return false;
@@ -3523,7 +3535,9 @@
     // Kirjautunut palaa siihen näkymään jossa oli; uusi kävijä aloittaa esittelystä
     (function(){
       const viimeisin = localStorage.getItem('cognio_nakyma');
-      const kohde = (kirjautunut && viimeisin && NAKYMAT.includes(viimeisin)) ? viimeisin : 'esittely';
+      // Talteen ennen naytaNakyma-kutsua, joka kirjoittaa arvon yli
+      window.cognioViimeisinNakyma = (viimeisin && NAKYMAT.includes(viimeisin)) ? viimeisin : null;
+      const kohde = (kirjautunut && window.cognioViimeisinNakyma) ? window.cognioViimeisinNakyma : 'esittely';
       naytaNakyma(kohde);
     })();
 
@@ -3562,7 +3576,16 @@
           $('authSisaan').hidden = false; $('authUlos').hidden = true;
         }
         if(typeof paivitaKirjautuminen==='function') paivitaKirjautuminen(user);
+        // Istunto vahvistui vasta nyt: palaa siihen näkymään jossa käyttäjä oli,
+        // mutta vain jos hän ei ole ehtinyt itse siirtyä muualle.
+        if(user && !palautusTehty){
+          palautusTehty = true;
+          const akt = document.querySelector('.nakyma:not([hidden])');
+          const paluu = window.cognioViimeisinNakyma;
+          if(akt && akt.id==='nakyma-esittely' && paluu && paluu!=='esittely') naytaNakyma(paluu);
+        }
       }
+      let palautusTehty = false;
       // Laitekohtainen tila, jota EI synkata (muuten sivu latautuisi uudelleen loputtomiin)
       const EI_SYNKATA = ['cognio_nakyma'];
       const synkattava = k => typeof k==='string' && k.indexOf('cognio_')===0 && EI_SYNKATA.indexOf(k)===-1;
