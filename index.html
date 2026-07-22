@@ -106,11 +106,15 @@
       gap: var(--v3); padding: var(--v3) var(--v5); background: color-mix(in srgb, var(--md-surface-container) 88%, transparent);
       backdrop-filter: saturate(180%) blur(12px); -webkit-backdrop-filter: saturate(180%) blur(12px);
       border-bottom: 1px solid var(--md-outline-variant); flex-wrap: wrap; }
-    .brandi { font-size: 22px; font-weight: 800; letter-spacing: -0.02em; cursor: pointer; user-select: none;
-      display: inline-flex; align-items: center; gap: 7px; }
-    .brandi .tagline { font-size: 13px; font-weight: 400; color: var(--md-on-surface-variant); }
-    .logo-mark { width: 30px; height: 30px; flex-shrink: 0; }
-    @media (max-width: 640px){ .logo-mark { width: 26px; height: 26px; } .brandi { gap: 6px; } }
+    /* Tekstilogo: sama pinkki liukuväri kuin merkissä */
+    .brandi { font-size: 25px; font-weight: 800; letter-spacing: -0.035em; cursor: pointer; user-select: none;
+      display: inline-flex; align-items: center; line-height: 1; padding: 2px 0;
+      background-image: linear-gradient(120deg, #F5409B, #B3315F);
+      -webkit-background-clip: text; background-clip: text;
+      color: transparent; -webkit-text-fill-color: transparent; }
+    :root[data-theme="dark"] .brandi { background-image: linear-gradient(120deg, #FFC2D6, #FF8FB0); }
+    .brandi:focus-visible { -webkit-text-fill-color: currentColor; color: var(--md-primary); }
+    @media (max-width: 640px){ .brandi { font-size: 22px; } }
 
     /* Etusivun hero */
     .hero { background: linear-gradient(120deg,
@@ -738,14 +742,7 @@
 </head>
 <body>
   <div class="topbar">
-    <div class="brandi" id="brandiKoti" title="Etusivulle">
-      <svg class="logo-mark" viewBox="0 0 120 120" aria-hidden="true">
-        <defs><linearGradient id="brandG" x1="24" y1="20" x2="96" y2="100" gradientUnits="userSpaceOnUse">
-          <stop offset="0" stop-color="#F5409B"/><stop offset="1" stop-color="#B3315F"/>
-        </linearGradient></defs>
-        <path d="M90 37 A38 38 0 1 0 90 83" fill="none" stroke="url(#brandG)" stroke-width="22" stroke-linecap="round"/>
-      </svg>Cognio
-    </div>
+    <div class="brandi" id="brandiKoti" title="Etusivulle">Cognio</div>
     <nav class="ylanavi">
       <div class="navi-kohta">
         <button class="navi-otsikko" data-ryhma="aine"><span class="ikoni" data-ikoni="book"></span> Aineet <span class="nuoli">▾</span></button>
