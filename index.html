@@ -484,6 +484,26 @@
     .pika-muistio .poista:hover { color: #d93a4e; }
     @media (max-width: 640px){ .pika-fab { right: 16px; bottom: 16px; width: 52px; height: 52px; } }
 
+    /* ===== Kirjautumislukko: sumennettu sisältö + kehotus ===== */
+    .sisalto.sumea { filter: blur(6px) saturate(.75); pointer-events: none; user-select: none;
+      transition: filter .35s var(--helppo); }
+    @media (prefers-reduced-motion: reduce){ .sisalto.sumea { transition: none; } }
+    /* z-index 18 = topbarin (20) alle, joten navigointi toimii yhä */
+    .lukko-verho { position: fixed; inset: 0; z-index: 18; display: none; align-items: center; justify-content: center;
+      padding: var(--v5); background: color-mix(in srgb, var(--md-surface) 55%, transparent); }
+    .lukko-verho.nakyy { display: flex; animation: lukkoSisaan .35s var(--helppo); }
+    @keyframes lukkoSisaan { from { opacity: 0; } to { opacity: 1; } }
+    .lukko-kortti { background: var(--md-surface-container); border: 1px solid var(--md-outline-variant);
+      border-radius: var(--r-lg); box-shadow: var(--varjo-hover); padding: var(--v6) var(--v5);
+      max-width: 480px; width: 100%; text-align: center; animation: lukkoNousu .35s var(--helppo); }
+    @keyframes lukkoNousu { from { opacity: 0; transform: translateY(14px) scale(.97); } to { opacity: 1; transform: none; } }
+    @media (prefers-reduced-motion: reduce){ .lukko-verho.nakyy, .lukko-kortti { animation: none; } }
+    .lukko-ikoni { font-size: 52px; line-height: 1; margin-bottom: var(--v3); }
+    .lukko-kortti h2 { justify-content: center; font-size: var(--fs-xl); margin-bottom: var(--v2); }
+    .lukko-kortti p { margin-left: auto; margin-right: auto; }
+    .lukko-napit { display: flex; flex-direction: column; gap: var(--v2); margin-top: var(--v5); }
+    .lukko-napit .nappi { width: 100%; }
+
     /* ===== Kirjautuminen ===== */
     .auth-verho{position:fixed;inset:0;background:var(--md-scrim);z-index:50;display:none;
       align-items:center;justify-content:center;padding:20px}
@@ -1272,6 +1292,20 @@
     <div class="pika-lista" id="pikaLista"></div>
   </aside>
 
+  <!-- ===== Kirjautumislukko (sumennettu sisältö) ===== -->
+  <div class="lukko-verho" id="lukkoVerho" aria-hidden="true">
+    <div class="lukko-kortti">
+      <div class="lukko-ikoni" id="lukkoIkoni">🔒</div>
+      <h2 id="lukkoOtsikko">Tämä on vain kirjautuneille</h2>
+      <p class="himmea" id="lukkoTeksti">Kirjaudu sisään ja nauti ilmaiseksi.</p>
+      <div class="lukko-napit">
+        <button class="nappi iso" id="lukkoKirjaudu">Kirjaudu ilmaiseksi →</button>
+        <button class="nappi outline" id="lukkoTakaisin">Palaa etusivulle</button>
+      </div>
+      <p class="pieni himmea" style="margin:var(--v3) 0 0">Ilmainen · ei korttitietoja · kirjautuminen vie ~10 sekuntia</p>
+    </div>
+  </div>
+
   <!-- ===== Kirjautuminen ===== -->
   <div class="auth-verho" id="authVerho">
     <div class="auth-modaali" role="dialog" aria-modal="true">
@@ -1642,10 +1676,7 @@
     function suljeValikot(){ document.querySelectorAll('.navi-kohta.auki').forEach(k=>k.classList.remove('auki')); }
     function naytaNakyma(nimi){
       if(!NAKYMAT.includes(nimi)) nimi='esittely';
-      if(LUKITUT.includes(nimi) && !kirjautunut){   // lukittu näkymä ilman kirjautumista
-        if(window.pyydaKirjautuminen) window.pyydaKirjautuminen('Kirjaudu käyttääksesi tätä ominaisuutta — silloin data myös tallentuu ja synkkaantuu laitteidesi välillä.');
-        nimi = 'esittely';
-      }
+      // Lukitut näkymät saa avata, mutta sisältö sumennetaan ja päälle tulee kirjautumiskehotus
       if(nimi!=='peli' && typeof peliLopeta==='function') peliLopeta();   // pysäytä peli poistuttaessa
       NAKYMAT.forEach(n=>{ document.getElementById('nakyma-'+n).hidden=(n!==nimi); });
       document.querySelectorAll('.navi-otsikko').forEach(o=>{
@@ -1668,15 +1699,47 @@
       if(nimi==='esittely') piirraEsittely();
       if(nimi==='opintojaksot') piirraOpintojaksot();
       if(nimi==='profiili') piirraProfiili();
+      paivitaLukko(nimi);
+    }
+
+    /* --- Kirjautumislukko: sumennettu sisältö + vaihtuva kehotus --- */
+    const LUKKO_VIESTIT = [
+      { ikoni:'🔒', otsikko:'Oho! Tämä on vain kirjautuneille', teksti:'Kirjaudu sisään ja nauti ilmaiseksi — opiskelusi tallentuu ja kulkee mukanasi joka laitteella.' },
+      { ikoni:'✨', otsikko:'Melkein perillä!', teksti:'Tämä osio avautuu kirjautumalla. Se on täysin ilmaista eikä vie kuin hetken.' },
+      { ikoni:'🎓', otsikko:'Tässä piilee paras osa', teksti:'Kirjautuneena saat omat tilastot, muistiinpanot ja henkilökohtaisen opintosuunnitelman. Ilmaiseksi.' },
+      { ikoni:'🚀', otsikko:'Valmiina lähtöön?', teksti:'Luo tili sekunneissa, niin edistymisesi tallentuu etkä menetä yhtään kerrattua korttia.' },
+      { ikoni:'💾', otsikko:'Muistetaanko sinut ensi kerralla?', teksti:'Kirjaudu, niin kaikki kerrattu säilyy — myös puhelimella ja koulun koneella.' },
+      { ikoni:'🧠', otsikko:'Aivot valmiina, tili puuttuu', teksti:'Kirjaudu ilmaiseksi ja avaa kaikki Cognion ominaisuudet käyttöösi.' },
+      { ikoni:'⭐', otsikko:'Tämä on jäsenetu — ja se on ilmainen', teksti:'Kirjaudu sisään, niin pääset heti jatkamaan siitä mihin jäit.' },
+      { ikoni:'📈', otsikko:'Haluatko nähdä edistymisesi?', teksti:'Kirjaudu, niin Cognio seuraa osaamistasi ja kertoo mitä kannattaa kerrata seuraavaksi.' },
+      { ikoni:'🔑', otsikko:'Yksi klikkaus, ja olet sisällä', teksti:'Kirjaudu Google-tilillä tai sähköpostilla. Ilmaista, eikä korttitietoja kysytä.' },
+      { ikoni:'🌙', otsikko:'Tämä osa nukkuu vielä', teksti:'Herätä se kirjautumalla — ilmaiseksi, ja koko YO-kertaus on käytettävissäsi.' },
+    ];
+    function naytaLukkoViesti(){
+      const v = LUKKO_VIESTIT[Math.floor(Math.random()*LUKKO_VIESTIT.length)];
+      document.getElementById('lukkoIkoni').textContent = v.ikoni;
+      document.getElementById('lukkoOtsikko').textContent = v.otsikko;
+      document.getElementById('lukkoTeksti').textContent = v.teksti;
+    }
+    function paivitaLukko(nimi){
+      const kohde = nimi || localStorage.getItem('cognio_nakyma') || 'esittely';
+      const lukossa = LUKITUT.includes(kohde) && !kirjautunut;
+      const sisalto = document.querySelector('.sisalto');
+      const verho = document.getElementById('lukkoVerho');
+      if(!sisalto || !verho) return;
+      sisalto.classList.toggle('sumea', lukossa);
+      verho.setAttribute('aria-hidden', lukossa ? 'false' : 'true');
+      if(lukossa){ naytaLukkoViesti(); verho.classList.add('nakyy'); }
+      else verho.classList.remove('nakyy');
     }
     // Päivitä UI kun kirjautumistila muuttuu (kutsutaan auth-osiosta)
     function paivitaKirjautuminen(sisaan){
       kirjautunut = !!sisaan;
       document.body.classList.toggle('kirjautunut', kirjautunut);
-      const nyt = localStorage.getItem('cognio_nakyma') || 'esittely';
-      // jos ollaan lukitussa näkymässä eikä olla kirjautuneita, siirry esittelyyn
-      if(!kirjautunut && LUKITUT.includes(nyt)) naytaNakyma('esittely');
-      else { const akt=document.querySelector('.nakyma:not([hidden])'); if(akt && akt.id==='nakyma-esittely') piirraEsittely(); if(akt && akt.id==='nakyma-profiili') piirraProfiili(); }
+      const akt = document.querySelector('.nakyma:not([hidden])');
+      if(akt && akt.id==='nakyma-esittely') piirraEsittely();
+      if(akt && akt.id==='nakyma-profiili') piirraProfiili();
+      paivitaLukko(akt ? akt.id.replace('nakyma-','') : null);
     }
 
     /* ============ Esittely, opintojaksot, profiili ============ */
@@ -3029,6 +3092,8 @@
     document.getElementById('brandiKoti').onclick=()=>naytaNakyma(kirjautunut?'koti':'esittely');
     document.getElementById('esittelyKirjaudu').onclick=()=>{ if(kirjautunut) naytaNakyma('koti'); else if(window.pyydaKirjautuminen) window.pyydaKirjautuminen('Luo tili tai kirjaudu — saat pilvisynkan ja henkilökohtaiset ominaisuudet.'); };
     document.getElementById('esittelyKirjaudu2').onclick=()=>{ if(kirjautunut) naytaNakyma('koti'); else if(window.pyydaKirjautuminen) window.pyydaKirjautuminen('Luo tili tai kirjaudu aloittaaksesi.'); };
+    document.getElementById('lukkoKirjaudu').onclick=()=>{ if(window.pyydaKirjautuminen) window.pyydaKirjautuminen('Kirjaudu ilmaiseksi — opiskelusi tallentuu ja synkkaantuu laitteidesi välillä.'); };
+    document.getElementById('lukkoTakaisin').onclick=()=>naytaNakyma('esittely');
     document.querySelectorAll('[data-siirry]').forEach(b=>{ b.onclick=()=>{ if(b.dataset.siirry==='kortit'){ korttiLahde=null; korttiPaluuAine=null; siirryOpiskeluun=false; } naytaNakyma(b.dataset.siirry); }; });
     document.getElementById('lisaaKortti').onclick=lisaaKortti;
     document.getElementById('joukkoLisaaNappi').onclick=joukkoLisaa;
