@@ -3231,12 +3231,15 @@
         }
         if(typeof paivitaKirjautuminen==='function') paivitaKirjautuminen(user);
       }
+      // Laitekohtainen tila, jota EI synkata (muuten sivu latautuisi uudelleen loputtomiin)
+      const EI_SYNKATA = ['cognio_nakyma'];
+      const synkattava = k => typeof k==='string' && k.indexOf('cognio_')===0 && EI_SYNKATA.indexOf(k)===-1;
       let synkAjastin;
       function tallennaPilveen(user){
         clearTimeout(synkAjastin);
         synkAjastin = setTimeout(async ()=>{
           const blob={};
-          for(let i=0;i<localStorage.length;i++){ const k=localStorage.key(i); if(k&&k.indexOf('cognio_')===0) blob[k]=localStorage.getItem(k); }
+          for(let i=0;i<localStorage.length;i++){ const k=localStorage.key(i); if(synkattava(k)) blob[k]=localStorage.getItem(k); }
           await sb.from('kayttaja_data').upsert({ user_id:user.id, data:blob, updated_at:new Date().toISOString() });
         }, 1500);
       }
@@ -3244,15 +3247,22 @@
         if(window.__cognioPeilaus) return; window.__cognioPeilaus=true;
         const setOrig = localStorage.setItem.bind(localStorage);
         const remOrig = localStorage.removeItem.bind(localStorage);
-        localStorage.setItem = (k,v)=>{ setOrig(k,v); if(String(k).indexOf('cognio_')===0) tallennaPilveen(user); };
-        localStorage.removeItem = (k)=>{ remOrig(k); if(String(k).indexOf('cognio_')===0) tallennaPilveen(user); };
+        localStorage.setItem = (k,v)=>{ setOrig(k,v); if(synkattava(k)) tallennaPilveen(user); };
+        localStorage.removeItem = (k)=>{ remOrig(k); if(synkattava(k)) tallennaPilveen(user); };
       }
       async function lataaPilvesta(user){
         const { data } = await sb.from('kayttaja_data').select('data').eq('user_id', user.id).maybeSingle();
         if(data && data.data && Object.keys(data.data).length){
           let muutos=false;
-          Object.entries(data.data).forEach(([k,v])=>{ if(localStorage.getItem(k)!==v){ localStorage.setItem(k, v); muutos=true; } });
-          if(muutos){ location.reload(); return true; }
+          Object.entries(data.data).forEach(([k,v])=>{
+            if(!synkattava(k)) return;                       // ohita laitekohtaiset avaimet
+            if(localStorage.getItem(k)!==v){ localStorage.setItem(k, v); muutos=true; }
+          });
+          // Varmistus: sivu ladataan uudelleen korkeintaan kerran istunnossa
+          if(muutos && !sessionStorage.getItem('cognio_synk_ladattu')){
+            sessionStorage.setItem('cognio_synk_ladattu','1');
+            location.reload(); return true;
+          }
         } else {
           tallennaPilveen(user);   // ensimmäinen kirjautuminen: vie nykyinen data pilveen
         }
