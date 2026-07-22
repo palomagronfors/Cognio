@@ -40,8 +40,17 @@
       --md-scrim: rgba(45,20,30,0.34);
       /* Muoto ja varjot */
       --r-sm:12px; --r:16px; --r-lg:20px;
-      --varjo: 0 1px 2px rgba(60,20,35,.05), 0 4px 16px rgba(60,20,35,.07);
-      --varjo-hover: 0 2px 6px rgba(60,20,35,.07), 0 14px 32px rgba(60,20,35,.14);
+      /* Varjoasteikko: hienovarainen, kerroksellinen (SaaS-tyyli) */
+      --varjo-xs: 0 1px 2px rgba(60,20,35,.06);
+      --varjo: 0 1px 2px rgba(60,20,35,.05), 0 2px 10px rgba(60,20,35,.05);
+      --varjo-md: 0 2px 4px rgba(60,20,35,.05), 0 8px 24px rgba(60,20,35,.08);
+      --varjo-hover: 0 4px 8px rgba(60,20,35,.06), 0 18px 44px rgba(60,20,35,.13);
+      --varjo-cta: 0 2px 6px color-mix(in srgb, var(--md-primary) 24%, transparent), 0 10px 22px color-mix(in srgb, var(--md-primary) 20%, transparent);
+      /* Typografia-asteikko */
+      --fs-xs:12.5px; --fs-sm:13.5px; --fs-base:15.5px; --fs-md:17px;
+      --fs-lg:20px; --fs-xl:25px; --fs-2xl:clamp(26px, 3vw, 32px); --fs-hero:clamp(30px, 4.2vw, 44px);
+      --lh-tight:1.16; --lh-snug:1.35; --lh-base:1.6;
+      --helppo: cubic-bezier(0.2, 0.7, 0.2, 1);
       /* Välistysasteikko: yksi lähde kaikille marginaaleille ja väleille */
       --v1:4px; --v2:8px; --v3:12px; --v4:18px; --v5:24px; --v6:36px; --v7:56px;
       /* Komponenttitokenit: yhtenäinen korkeus, pyöristys ja siirtymä */
@@ -65,8 +74,11 @@
       --md-surface-container-high:#2E2226; --md-surface-container-highest:#3A292E;
       --md-inverse-surface:#F0DDE0; --md-inverse-on-surface:#382E30;
       --md-scrim: rgba(0,0,0,0.55);
-      --varjo: 0 1px 2px rgba(0,0,0,.35), 0 8px 24px rgba(0,0,0,.4);
-      --varjo-hover: 0 2px 6px rgba(0,0,0,.4), 0 16px 36px rgba(0,0,0,.5);
+      --varjo-xs: 0 1px 2px rgba(0,0,0,.3);
+      --varjo: 0 1px 2px rgba(0,0,0,.32), 0 2px 10px rgba(0,0,0,.32);
+      --varjo-md: 0 2px 6px rgba(0,0,0,.36), 0 10px 28px rgba(0,0,0,.42);
+      --varjo-hover: 0 4px 10px rgba(0,0,0,.4), 0 20px 46px rgba(0,0,0,.5);
+      --varjo-cta: 0 2px 8px color-mix(in srgb, var(--md-primary) 22%, transparent), 0 12px 26px rgba(0,0,0,.4);
     }
     * { box-sizing: border-box; }
     .ikoni { display: inline-flex; align-items: center; justify-content: center; vertical-align: -0.15em; }
@@ -76,8 +88,14 @@
     .icon-nappi svg, .icon-nappi .ikoni svg { width: 22px; height: 22px; }
 
     body { margin: 0; font-family: 'Inter', system-ui, -apple-system, sans-serif;
-      background: var(--md-surface); color: var(--md-on-surface); line-height: 1.55; -webkit-font-smoothing: antialiased;
-      letter-spacing: -0.01em; }
+      background: var(--md-surface); color: var(--md-on-surface);
+      font-size: var(--fs-base); line-height: var(--lh-base); letter-spacing: -0.01em;
+      -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+      font-feature-settings: 'cv05' 1, 'ss01' 1; text-rendering: optimizeLegibility; }
+    /* Numerot linjaan tilastoissa ja laskureissa */
+    .tilasto-arvo, .kaavio-arvo, .peli-pisteet, .ennatys-pisteet, .koe-laskuri-nro, .tk-koko-num { font-variant-numeric: tabular-nums; }
+    /* Näkyvä fokus kaikille interaktiivisille elementeille (saavutettavuus) */
+    :focus-visible { outline: 2px solid var(--md-primary); outline-offset: 2px; border-radius: 6px; }
 
     /* Näkymän pehmeä ilmestyminen */
     .nakyma:not([hidden]) { animation: nakymaSisaan 0.28s cubic-bezier(0.2,0.6,0.2,1); }
@@ -189,15 +207,18 @@
     .haku-tyyppi { margin-left: auto; font-size: 11px; color: var(--md-on-surface-variant); background: var(--md-surface-container-high); padding: 3px 8px; border-radius: 999px; }
     .haku-otsake { font-size: 12px; font-weight: 700; color: var(--md-on-surface-variant); text-transform: uppercase; letter-spacing: 0.04em; padding: 10px 12px 4px; }
     .navi-kohta { position: relative; }
-    .navi-otsikko { background: transparent; border: none; color: var(--md-on-surface); font-family: inherit;
-      font-size: 15px; font-weight: 500; padding: 10px 14px; border-radius: 999px; cursor: pointer;
-      display: inline-flex; align-items: center; gap: 6px; }
-    .navi-otsikko .nuoli { font-size: 11px; color: var(--md-on-surface-variant); }
-    .navi-otsikko:hover { background: color-mix(in srgb, var(--md-on-surface) 8%, transparent); }
-    .navi-otsikko.aktiivinen { background: var(--md-secondary-container); color: var(--md-on-secondary-container); }
-    .navi-alavalikko { position: absolute; top: calc(100% + 4px); left: 0; min-width: 210px;
-      background: var(--md-surface-container-high); border: 1px solid var(--md-outline-variant); border-radius: 14px;
-      box-shadow: 0 8px 28px rgba(0,0,0,0.28); padding: 8px; display: none; z-index: 30; }
+    .navi-otsikko { background: transparent; border: none; color: var(--md-on-surface-variant); font-family: inherit;
+      font-size: 14.5px; font-weight: 600; letter-spacing: -0.01em; padding: 9px 14px; border-radius: var(--r-pilleri);
+      cursor: pointer; min-height: 40px; display: inline-flex; align-items: center; gap: 7px;
+      transition: background .16s var(--helppo), color .16s var(--helppo); }
+    .navi-otsikko .nuoli { font-size: 10px; opacity: .7; transition: transform .18s var(--helppo); }
+    .navi-kohta.auki .navi-otsikko .nuoli { transform: rotate(180deg); }
+    .navi-otsikko:hover { background: color-mix(in srgb, var(--md-on-surface) 7%, transparent); color: var(--md-on-surface); }
+    /* Aktiivinen sivu erottuu selvästi brändivärillä */
+    .navi-otsikko.aktiivinen { background: var(--md-primary-container); color: var(--md-on-primary-container); font-weight: 700; }
+    .navi-alavalikko { position: absolute; top: calc(100% + 6px); left: 0; min-width: 224px;
+      background: var(--md-surface-container); border: 1px solid var(--md-outline-variant); border-radius: var(--r);
+      box-shadow: var(--varjo-hover); padding: var(--v2); display: none; z-index: 30; }
     .navi-kohta.auki .navi-alavalikko { display: block; }
     /* Hover-avaus vain hiirilaitteilla; kosketuslaitteilla vain napautus (.auki) ohjaa */
     @media (hover: hover) and (pointer: fine) { .navi-kohta:hover .navi-alavalikko { display: block; } }
@@ -212,11 +233,13 @@
     .lasku-kortti { background: var(--md-surface-container-high); border: 1px solid var(--md-outline-variant); border-radius: 16px; padding: 24px; text-align: center; min-height: 120px; display: flex; align-items: center; justify-content: center; }
     .lasku-teksti { font-size: 22px; font-weight: 600; white-space: pre-wrap; }
     .ratkaisu-laatikko { background: var(--md-primary-container); color: var(--md-on-primary-container); border-radius: 12px; padding: 16px; margin-top: 14px; white-space: pre-wrap; font-size: 16px; }
-    .navi-alavalikko button { display: flex; align-items: center; gap: 10px; width: 100%; text-align: left;
-      background: transparent; border: none; color: var(--md-on-surface); font-family: inherit; font-size: 14px;
-      font-weight: 500; padding: 11px 14px; border-radius: 10px; cursor: pointer; }
-    .navi-alavalikko button:hover { background: color-mix(in srgb, var(--md-on-surface) 8%, transparent); }
-    .navi-alavalikko .ikoni { color: var(--md-on-surface-variant); }
+    .navi-alavalikko button { display: flex; align-items: center; gap: var(--v3); width: 100%; text-align: left;
+      background: transparent; border: none; color: var(--md-on-surface); font-family: inherit; font-size: 14.5px;
+      font-weight: 550; padding: 11px var(--v3); border-radius: 10px; cursor: pointer; min-height: 44px;
+      transition: background .14s var(--helppo), color .14s var(--helppo); }
+    .navi-alavalikko button:hover { background: var(--md-primary-container); color: var(--md-on-primary-container); }
+    .navi-alavalikko button:hover .ikoni { color: var(--md-on-primary-container); }
+    .navi-alavalikko .ikoni { color: var(--md-on-surface-variant); transition: color .14s var(--helppo); }
     .icon-nappi { width: 40px; height: 40px; padding: 0; border-radius: 999px; background: transparent;
       color: var(--md-on-surface-variant); display: flex; align-items: center; justify-content: center; cursor: pointer; border: none; transition: background 0.2s; }
     .icon-nappi:hover { background: color-mix(in srgb, var(--md-on-surface) 8%, transparent); }
@@ -250,31 +273,41 @@
     .kortti > :last-child { margin-bottom: 0; }
 
     /* --- Typografinen hierarkia --- */
-    h1 { margin: 0 0 var(--v3); font-size: 28px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.2; text-wrap: balance; }
-    h2 { margin: 0 0 var(--v3); font-size: 19px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.3;
-      display: flex; align-items: center; gap: var(--v2); }
+    h1 { margin: 0 0 var(--v3); font-size: var(--fs-2xl); font-weight: 800; letter-spacing: -0.03em;
+      line-height: var(--lh-tight); text-wrap: balance; }
+    h2 { margin: 0 0 var(--v3); font-size: var(--fs-lg); font-weight: 700; letter-spacing: -0.022em;
+      line-height: var(--lh-snug); display: flex; align-items: center; gap: var(--v2); text-wrap: balance; }
     h2 .ikoni { margin-right: 0; }
-    h3 { margin: var(--v4) 0 var(--v2); font-size: 15px; font-weight: 700; color: var(--md-on-surface); letter-spacing: -0.01em; }
-    p { margin: 0 0 var(--v3); }
+    h3 { margin: var(--v4) 0 var(--v2); font-size: var(--fs-md); font-weight: 700; color: var(--md-on-surface);
+      letter-spacing: -0.015em; line-height: var(--lh-snug); }
+    p { margin: 0 0 var(--v3); max-width: 72ch; }
     .himmea { color: var(--md-on-surface-variant); }
-    .pieni { font-size: 13.5px; line-height: 1.5; }
-    a { color: var(--md-primary); }
+    .pieni { font-size: var(--fs-sm); line-height: 1.5; }
+    a { color: var(--md-primary); text-underline-offset: 3px; text-decoration-thickness: 1.5px; }
+    a:hover { text-decoration-color: color-mix(in srgb, var(--md-primary) 55%, transparent); }
 
     /* --- Painikkeet: yksi kokoasteikko, sama korkeus kuin kentillä --- */
+    /* Ensisijainen CTA: korostettu varjo ja selkeä nosto hoverissa ohjaa huomion */
     button.nappi, a.nappi { background: var(--md-primary); color: var(--md-on-primary); border: 1px solid transparent;
-      border-radius: var(--r-nappi); padding: 0 var(--v4); min-height: var(--kentta-korkeus);
-      font-family: inherit; font-size: 15px; font-weight: 600; letter-spacing: -0.01em; cursor: pointer; text-decoration: none;
-      transition: transform var(--siirtyma), box-shadow var(--siirtyma), background var(--siirtyma);
+      border-radius: var(--r-nappi); padding: 0 var(--v5); min-height: var(--kentta-korkeus);
+      font-family: inherit; font-size: var(--fs-base); font-weight: 650; letter-spacing: -0.011em;
+      cursor: pointer; text-decoration: none; white-space: nowrap; box-shadow: var(--varjo-cta);
+      transition: transform .18s var(--helppo), box-shadow .22s var(--helppo), background .18s var(--helppo), border-color .18s var(--helppo);
       display: inline-flex; align-items: center; justify-content: center; gap: var(--v2); }
-    button.nappi:hover, a.nappi:hover { box-shadow: 0 6px 18px color-mix(in srgb, var(--md-primary) 32%, transparent); transform: translateY(-1px); }
-    button.nappi:active, a.nappi:active { transform: translateY(0); }
-    button.nappi:focus-visible, a.nappi:focus-visible { outline: none; box-shadow: var(--rengas); }
-    button.nappi.tonal { background: var(--md-secondary-container); color: var(--md-on-secondary-container); }
-    button.nappi.tonal:hover { box-shadow: var(--varjo); }
-    button.nappi.outline, a.nappi.outline { background: var(--md-surface-container); color: var(--md-primary); border-color: var(--md-outline); }
-    button.nappi.outline:hover, a.nappi.outline:hover { box-shadow: var(--varjo); background: var(--md-surface-container-high); border-color: var(--md-primary); }
-    button.nappi.error { background: var(--md-error-container); color: var(--md-on-error-container); }
-    button.nappi.error:hover { box-shadow: var(--varjo); }
+    button.nappi:hover, a.nappi:hover { transform: translateY(-2px);
+      box-shadow: 0 4px 10px color-mix(in srgb, var(--md-primary) 28%, transparent), 0 16px 32px color-mix(in srgb, var(--md-primary) 26%, transparent); }
+    button.nappi:active, a.nappi:active { transform: translateY(0); box-shadow: var(--varjo-xs); }
+    button.nappi:focus-visible, a.nappi:focus-visible { outline: none; box-shadow: var(--rengas), var(--varjo-cta); }
+    /* Toissijaiset: hillityt, eivät kilpaile pääpainikkeen kanssa */
+    button.nappi.tonal { background: var(--md-secondary-container); color: var(--md-on-secondary-container); box-shadow: var(--varjo-xs); }
+    button.nappi.tonal:hover { box-shadow: var(--varjo-md); }
+    button.nappi.outline, a.nappi.outline { background: var(--md-surface-container); color: var(--md-primary);
+      border-color: var(--md-outline-variant); box-shadow: var(--varjo-xs); font-weight: 600; }
+    button.nappi.outline:hover, a.nappi.outline:hover { box-shadow: var(--varjo-md);
+      background: var(--md-surface-container-high); border-color: var(--md-primary); }
+    button.nappi.error { background: var(--md-error-container); color: var(--md-on-error-container); box-shadow: var(--varjo-xs); }
+    button.nappi.error:hover { box-shadow: var(--varjo-md); }
+    @media (prefers-reduced-motion: reduce){ button.nappi, a.nappi { transition: none; } button.nappi:hover, a.nappi:hover { transform: none; } }
     .nappi.pieni { min-height: 38px; padding: 0 var(--v3); font-size: 14px; }
     .nappi.iso { min-height: 54px; padding: 0 var(--v5); font-size: 16.5px; }
     button.nappi:disabled { opacity: 0.45; cursor: default; box-shadow: none; transform: none; }
@@ -325,10 +358,16 @@
 
     /* Oppiaineruudukko */
     .aine-ruudukko { display: grid; grid-template-columns: repeat(auto-fill, minmax(124px, 1fr)); gap: var(--v3); }
-    .aine-kortti { border-radius: var(--r-sm); padding: 16px; cursor: pointer; border: 1px solid var(--md-outline-variant);
-      background: color-mix(in srgb, var(--aine-vari) 9%, var(--md-surface-container));
-      transition: transform 0.14s ease, box-shadow 0.2s ease; }
-    .aine-kortti:hover { transform: translateY(-3px); box-shadow: var(--varjo-hover); }
+    .aine-kortti { border-radius: var(--r-sm); padding: var(--v4); cursor: pointer; border: 1px solid var(--md-outline-variant);
+      background: color-mix(in srgb, var(--aine-vari) 9%, var(--md-surface-container)); box-shadow: var(--varjo-xs);
+      transition: transform .18s var(--helppo), box-shadow .22s var(--helppo), border-color .18s var(--helppo); }
+    .aine-kortti:hover { transform: translateY(-3px); box-shadow: var(--varjo-hover);
+      border-color: color-mix(in srgb, var(--aine-vari) 55%, transparent); }
+    .aine-kortti:active { transform: translateY(-1px); }
+    @media (prefers-reduced-motion: reduce){ .aine-kortti, .esittely-kortti { transition: none; } .aine-kortti:hover { transform: none; } }
+    /* Esittelysivun ominaisuuskortit: sama hover-kieli kuin muualla */
+    .esittely-kortti { box-shadow: var(--varjo-xs); transition: transform .18s var(--helppo), box-shadow .22s var(--helppo), border-color .18s var(--helppo); }
+    .esittely-kortti:hover { transform: translateY(-3px); box-shadow: var(--varjo-hover); border-color: color-mix(in srgb, var(--md-primary) 40%, transparent); }
     .aine-koodi { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 12px;
       background: var(--aine-vari); color: #fff; font-weight: 700; font-size: 16px; }
     .aine-nimi { font-weight: 600; margin-top: 10px; }
@@ -569,19 +608,30 @@
     @media (max-width: 560px){ .rivi-2 { grid-template-columns: 1fr; } }
 
     /* Mobiili (mobile-first-viimeistely) */
+    /* --- Tabletti: kevennetään reunuksia, säilytetään kaksi saraketta --- */
+    @media (max-width: 1024px) {
+      .sisalto { padding: var(--v5) var(--v4) var(--v6); }
+      .kortti { padding: var(--v4); }
+      .hero { padding: var(--v5) var(--v5); }
+    }
+    /* --- Mobiili: yksi sarake, isommat kosketusalueet, tiiviimpi typografia --- */
     @media (max-width: 640px) {
-      .topbar { padding: 10px 14px; gap: 8px; }
+      .topbar { padding: var(--v2) var(--v3); gap: var(--v2); }
       .brandi { font-size: 19px; }
       .sisalto { padding: var(--v4) var(--v3) var(--v6); }
-      .kortti { padding: var(--v4); border-radius: var(--r-sm); }
-      .hero { padding: 26px 20px; }
-      .hero h1 { font-size: 25px; }
-      h2 { font-size: 18px; }
-      .aine-ruudukko { grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 10px; }
+      .kortti { padding: var(--v4); border-radius: var(--r-sm); margin-bottom: var(--v3); }
+      .hero { padding: var(--v5) var(--v4); }
+      .hero h1 { font-size: 24px; }
+      .esittely-hero { padding: var(--v6) var(--v4) var(--v5); }
+      .aine-ruudukko { grid-template-columns: repeat(auto-fill, minmax(108px, 1fr)); gap: var(--v2); }
       .ylanavi { gap: 2px; }
-      .navi-otsikko { padding: 9px 11px; font-size: 14px; }
-      .navi-alavalikko { left: 0; right: auto; min-width: 200px; max-width: 80vw; }
-      button.nappi { padding: 12px 16px; }
+      .navi-otsikko { padding: 9px 12px; font-size: 14px; min-height: 44px; }
+      .navi-alavalikko { left: 0; right: auto; min-width: 210px; max-width: 84vw; }
+      /* Kosketuskohteet vähintään 44px (WCAG) */
+      button.nappi, a.nappi { padding: 0 var(--v4); min-height: 46px; width: 100%; }
+      .nappirivi { gap: var(--v2); }
+      .nappirivi .nappi { width: auto; flex: 1 1 auto; }
+      .esittely-napit .nappi { width: 100%; }
     }
     /* Suosikki-tähti */
     .suosikki-nappi { width: 44px; height: 44px; border-radius: 12px; border: 1px solid var(--md-outline-variant);
