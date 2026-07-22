@@ -861,7 +861,10 @@
         <div class="palkki"><div class="palkki-taytto" id="ainePalkki"></div></div>
         <p class="pieni himmea" id="aineTilaTeksti"></p>
         <div id="aineKoeLaskuri" hidden></div>
-        <button class="nappi iso" id="kokoKertaus" style="margin-top:14px"><span class="ikoni" data-ikoni="shuffle"></span> Kokonaisvaltainen kertaus (koko aine)</button>
+        <div class="nappirivi" style="margin-top:var(--v4)">
+          <button class="nappi" id="aineEraantyneet"><span class="ikoni" data-ikoni="idea"></span> Kertaa erääntyneet</button>
+          <button class="nappi outline" id="kokoKertaus"><span class="ikoni" data-ikoni="shuffle"></span> Kertaa koko aine</button>
+        </div>
       </div>
       <div class="kortti">
         <h2 id="aineSettiOtsikko">Kurssit</h2>
@@ -1903,10 +1906,12 @@
           <h2>⚙️ Asetukset</h2>
           <div class="asetus-rivi"><div><b>Teema</b><div class="ala">Vaalea tai tumma ulkoasu</div></div><button class="nappi outline pieni" id="profTeema">${tumma?'☀️ Vaalea':'🌙 Tumma'}</button></div>
           <div class="asetus-rivi"><div><b>Kirjautuminen</b><div class="ala">${suojaa(u.email||'')}</div></div><button class="nappi outline pieni" id="profUlos">Kirjaudu ulos</button></div>
+          <div class="asetus-rivi"><div><b>Nollaa edistys</b><div class="ala">Merkitsee kaikki kortit osaamattomiksi. Pakat ja muistiinpanot säilyvät.</div></div><button class="nappi outline pieni" id="profEdistys">Nollaa</button></div>
           <div class="asetus-rivi"><div><b>Palauta oletukset</b><div class="ala">Poistaa omat pakat, muistiinpanot ja tilastot tältä laitteelta</div></div><button class="nappi outline pieni" id="profNollaa" style="color:#d93a4e; border-color:#d93a4e">Palauta</button></div></div>`;
       document.getElementById('profTilastot').onclick=()=>naytaNakyma('tilastot');
       document.getElementById('profTeema').onclick=()=>{ asetaTeema(tumma?'light':'dark'); piirraProfiili(); };
       document.getElementById('profUlos').onclick=()=>{ if(window.cognioKirjauduUlos) window.cognioKirjauduUlos(); };
+      document.getElementById('profEdistys').onclick=nollaaEdistys;
       document.getElementById('profNollaa').onclick=nollaaKaikki;
     }
 
@@ -2045,6 +2050,13 @@
       } else { koeLaskuri.hidden = true; koeLaskuri.innerHTML = ''; }
 
       const setit = haePakat().filter(p=>p.aine===koodi);
+
+      // Erääntyneiden määrä napissa (välitoisto)
+      const aineKortit = []; setit.forEach(p=>p.kortit.forEach(k=>{ if(k.etu&&k.taka) aineKortit.push(k); }));
+      const eranneita = aineKortit.filter(eraantynyt).length;
+      const eNappi = document.getElementById('aineEraantyneet');
+      eNappi.innerHTML = '<span class="ikoni">'+ikoniHtml('idea')+'</span> Kertaa erääntyneet' + (eranneita ? ' ('+eranneita+')' : '');
+      eNappi.disabled = eranneita === 0;
       const kurssit = aineenKurssit(koodi);
       const yks = matikka ? 'tehtävää' : 'korttia';
 
@@ -2087,6 +2099,17 @@
         pakat.push(p); tallennaPakat(pakat);
       }
       asetaAktiivinen(p.id); korttiLahde=null; korttiPaluuAine=aine; siirryOpiskeluun=true; naytaNakyma('kortit');
+    }
+    // Välitoisto: kertaa vain tämän aineen erääntyneet kortit
+    function kertaaEraantyneet() {
+      const koodi = nykyAine || AINEET[0].koodi;
+      const kaikki = [];
+      haePakat().filter(p=>p.aine===koodi).forEach(p=>p.kortit.forEach(k=>{ if(k.etu&&k.taka) kaikki.push(k); }));
+      const eranneet = kaikki.filter(eraantynyt);
+      if(!eranneet.length){ dlgViesti('Ei erääntyneitä kortteja juuri nyt. Kaikki on ajan tasalla.', 'Hienoa!'); return; }
+      korttiLahde = { nimi: aineNimi(koodi) + ' kertaus', kortit: sekoita(eranneet), tyyppi:'kortit' };
+      korttiPaluuAine = koodi;
+      naytaNakyma('kortit');
     }
     // Kokonaisvaltainen kertaus: sekoita kaikki aineen kortit
     function kokoAineenKertaus() {
@@ -3191,6 +3214,7 @@
 
     // Aine-sivu, laskun ratkaisu
     document.getElementById('kokoKertaus').onclick=kokoAineenKertaus;
+    document.getElementById('aineEraantyneet').onclick=kertaaEraantyneet;
     document.getElementById('naytaRatkaisu').onclick=naytaLaskunRatkaisu;
 
     // Aineet-vetolaatikko (aakkosjärjestyksessä)
