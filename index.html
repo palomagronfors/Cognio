@@ -356,12 +356,16 @@
     /* --- Opintosuunnitelma --- */
     .sn-lomake { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: var(--v3); }
     .sn-lomake input[type="number"] { width: 100%; }
-    .sn-aineet { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: var(--v2); }
+    .sn-aineet { display: grid; grid-template-columns: repeat(auto-fit, minmax(310px, 1fr)); gap: var(--v2); }
     .sn-aine { display: flex; align-items: center; gap: var(--v2); padding: var(--v2) var(--v3);
-      border: 1px solid var(--md-outline-variant); border-radius: var(--r-sm); background: var(--md-surface-container); }
-    .sn-aine.valittu { border-color: var(--md-primary); background: var(--md-surface-container-high); }
-    .sn-aine input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--md-primary); flex: none; margin: 0; }
-    .sn-aine .sn-nimi { flex: 1; font-weight: 600; font-size: 14px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      border: 1px solid var(--md-outline-variant); border-left: 4px solid var(--aine-vari, var(--md-outline-variant));
+      border-radius: var(--r-sm); background: var(--md-surface-container); }
+    .sn-aine.valittu { border-color: var(--md-primary); border-left-color: var(--aine-vari, var(--md-primary));
+      background: var(--md-surface-container-high); }
+    .sn-aine input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--md-primary); flex: none; margin: 0; cursor: pointer; }
+    .sn-aine .sn-nimi { flex: 1; font-size: 13.5px; color: var(--md-on-surface-variant); cursor: pointer;
+      min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .sn-aine .sn-nimi b { color: var(--md-on-surface); }
     .sn-aine select { width: auto; min-width: 62px; min-height: 34px; padding: 4px 30px 4px 10px; margin: 0; font-size: 13px;
       background-position: right 9px center; background-size: 13px; }
     .sn-aine .sn-nuoli { color: var(--md-on-surface-variant); font-size: 13px; }
@@ -1163,6 +1167,7 @@
             <div><label for="snTunnit">Tunteja viikossa</label><input type="number" id="snTunnit" min="1" max="60" value="10"></div>
           </div>
           <label style="margin-top:var(--v3)">Kirjoitettavat aineet, nykyinen taso ja tavoite</label>
+          <p class="pieni himmea" style="margin:0 0 var(--v2)">Rastita aineet jotka kirjoitat. Vasen valinta on nykyinen tasosi, oikea tavoitteesi.</p>
           <div id="snAineet" class="sn-aineet"></div>
           <div class="nappirivi" style="margin-top:var(--v4)">
             <button class="nappi" id="snLuo"><span class="ikoni" data-ikoni="check"></span> Tallenna ja luo suunnitelma</button>
@@ -3069,24 +3074,27 @@
         kaudet.map(k=>`<option value="${k.pvm}"${k.pvm===a.kausi?' selected':''}>${suojaa(k.nimi)}</option>`).join('');
       document.getElementById('snTunnit').value = a.tunnit;
 
-      const arvoValikko = (id, arvo) => `<select data-kentta="${id}">` +
+      const arvoValikko = (id, arvo, selite) => `<select data-kentta="${id}" aria-label="${selite}" title="${selite}">` +
         SN_ARVOSANAT.map(g=>`<option value="${g}"${g===arvo?' selected':''}>${SN_ARVONIMET[g]}</option>`).join('') + '</select>';
 
       document.getElementById('snAineet').innerHTML = AINEET.map(ai=>{
         const s = a.aineet[ai.koodi] || {};
         const on = !!s.valittu;
-        return `<div class="sn-aine${on?' valittu':''}" data-koodi="${ai.koodi}">
+        return `<div class="sn-aine${on?' valittu':''}" data-koodi="${ai.koodi}" style="--aine-vari:${ai.vari}">
           <input type="checkbox" data-kentta="valittu"${on?' checked':''} aria-label="${suojaa(ai.nimi)}">
-          <span class="sn-nimi" title="${suojaa(ai.nimi)}"><span class="sn-piste" style="background:${ai.vari}"></span> ${suojaa(ai.koodi)}</span>
-          ${arvoValikko('nyt', s.nyt||'C')}<span class="sn-nuoli">→</span>${arvoValikko('tavoite', s.tavoite||'E')}
+          <span class="sn-nimi" title="${suojaa(ai.nimi)}"><b>${suojaa(ai.koodi)}</b> ${suojaa(ai.nimi)}</span>
+          ${arvoValikko('nyt', s.nyt||'C', 'Nykyinen taso: '+suojaa(ai.nimi))}<span class="sn-nuoli">→</span>${arvoValikko('tavoite', s.tavoite||'E', 'Tavoite: '+suojaa(ai.nimi))}
         </div>`;
       }).join('');
 
       document.getElementById('snAineet').querySelectorAll('.sn-aine').forEach(el=>{
-        el.querySelectorAll('[data-kentta]').forEach(kentta=>{
-          kentta.onchange = ()=>{ el.classList.toggle('valittu', el.querySelector('[data-kentta="valittu"]').checked); };
-        });
+        const ruutu = el.querySelector('[data-kentta="valittu"]');
+        const paivita = ()=> el.classList.toggle('valittu', ruutu.checked);
+        ruutu.onchange = paivita;
+        el.querySelector('.sn-nimi').onclick = ()=>{ ruutu.checked = !ruutu.checked; paivita(); };
       });
+      // Ensimmäisellä kerralla lomake on auki, jotta tiedot tulee täytettyä
+      if(!AINEET.some(x=>a.aineet[x.koodi] && a.aineet[x.koodi].valittu)) document.getElementById('snAsetukset').open = true;
       document.getElementById('snLuo').onclick = ()=>{
         const uusi = { vuosi: vs.value, kausi: ks.value, tunnit: Math.min(60, Math.max(1, Number(document.getElementById('snTunnit').value)||10)), aineet: {} };
         document.getElementById('snAineet').querySelectorAll('.sn-aine').forEach(el=>{
@@ -3199,7 +3207,20 @@
       const pros = t.kysymyksia ? Math.round((t.oikein/t.kysymyksia)*100) : null;
       const ennuste = document.getElementById('ennusteArvo'); const eteksti = document.getElementById('ennusteTeksti');
       if (pros === null) { ennuste.textContent='–'; eteksti.textContent='Tee harjoituskokeita, niin arvioin tasosi.'; }
-      else { ennuste.textContent = arvioArvosana(pros); eteksti.textContent = `Perustuu ${t.kysymyksia} kysymykseen, joista ${pros}% oikein.`; }
+      else {
+        ennuste.textContent = arvioArvosana(pros);
+        let teksti = `Perustuu ${t.kysymyksia} kysymykseen, joista ${pros} % oikein.`;
+        // Vertaa keskimääräiseen tavoitteeseesi, jos aineet on valittu
+        const tavoitteet = rivit.filter(r=>r.tavoite).map(r=>SN_ARVOSANAT.indexOf(r.tavoite));
+        if (tavoitteet.length) {
+          const keski = SN_ARVOSANAT[Math.round(tavoitteet.reduce((s,x)=>s+x,0)/tavoitteet.length)];
+          const nyky = arvioArvosana(pros).charAt(0);
+          const ero = SN_ARVOSANAT.indexOf(keski) - SN_ARVOSANAT.indexOf(nyky);
+          teksti += ero > 0 ? ` Tavoitteesi on keskimäärin ${keski}, eli matkaa on ${ero} arvosanaa.`
+                  : ` Olet jo keskimääräisen tavoitteesi (${keski}) tasolla. Pidä taso yllä kertaamalla.`;
+        }
+        eteksti.textContent = teksti;
+      }
     }
     function snPiirraViikot(rivit, viikkoja, kohdePvm){
       const kortti = document.getElementById('snViikkoKortti');
@@ -3215,10 +3236,12 @@
         const koeviikko = kohde && kohde >= alkuPvm && kohde <= loppuPvm;
         html += `<tr class="${koeviikko?'vk-koeviikko':''}">
           <td><span class="vk-nimi">Vko ${vi+1}${koeviikko?' · kirjoitukset':''}</span><span class="vk-alku">${snPvmTeksti(alkuPvm)}–${snPvmTeksti(loppuPvm)}</span></td>`;
+        // Kaksi viimeistä viikkoa ennen kirjoituksia ovat pelkkää kertausta
+        const loppusuora = kohde && vi >= kaikki - 2;
         html += rivit.map(r=>{
           const kurssit = aineenKurssit(r.koodi);
           const idx = kurssit.length ? Math.min(kurssit.length-1, Math.floor(vi * kurssit.length / Math.max(1, kaikki))) : -1;
-          const aihe = idx >= 0 ? kurssit[idx] : 'kertaus';
+          const aihe = loppusuora ? 'kertaus + harjoituskoe' : (idx >= 0 ? kurssit[idx] : 'kertaus');
           return `<td><b>${r.tunnit} h</b><span class="vk-aihe">${suojaa(aihe)}</span></td>`;
         }).join('');
         html += '</tr>';
