@@ -526,6 +526,23 @@
     .auth-viesti{font-size:13.5px;margin:12px 0 0;color:var(--md-on-surface-variant);min-height:18px}
     .auth-viesti.ok{color:var(--md-ok,#1f8a52)}
     #authNappi.kirjautunut{background:var(--md-primary-container);color:var(--md-on-primary-container);border-color:transparent}
+    /* Käyttäjävalikko: avautuu omasta nimestä */
+    .kayttaja-kohta { position: relative; }
+    .kayttaja-valikko { position: absolute; top: calc(100% + 6px); right: 0; min-width: 236px; display: none; z-index: 31;
+      background: var(--md-surface-container); border: 1px solid var(--md-outline-variant); border-radius: var(--r);
+      box-shadow: var(--varjo-hover); padding: var(--v2); }
+    .kayttaja-kohta.auki .kayttaja-valikko { display: block; }
+    .kv-yla { padding: var(--v3) var(--v3) var(--v2); border-bottom: 1px solid var(--md-outline-variant); margin-bottom: var(--v2); }
+    .kv-nimi { font-weight: 700; font-size: 15px; }
+    .kv-email { font-size: 13px; color: var(--md-on-surface-variant); word-break: break-all; }
+    .kayttaja-valikko button { display: flex; align-items: center; gap: var(--v3); width: 100%; text-align: left;
+      background: transparent; border: none; color: var(--md-on-surface); font-family: inherit; font-size: 14.5px;
+      font-weight: 550; padding: 11px var(--v3); border-radius: 10px; cursor: pointer; min-height: 44px;
+      transition: background .14s var(--helppo), color .14s var(--helppo); }
+    .kayttaja-valikko button:hover { background: var(--md-primary-container); color: var(--md-on-primary-container); }
+    .kayttaja-valikko button:hover .ikoni { color: var(--md-on-primary-container); }
+    .kayttaja-valikko .ikoni { color: var(--md-on-surface-variant); transition: color .14s var(--helppo); }
+    @media (max-width: 640px){ .kayttaja-valikko { right: 0; min-width: 210px; max-width: 84vw; } }
 
     /* ===== Esittelysivu ===== */
     .esittely-hero { text-align: center; padding: 40px 24px 34px; margin-bottom: 22px; border-radius: 24px; color: #fff;
@@ -749,12 +766,11 @@
       <button class="navi-otsikko" data-nakyma="opintojaksot"><span class="ikoni" data-ikoni="book"></span> Opintojaksot</button>
       <button class="navi-otsikko" data-nakyma="tilastot"><span class="ikoni" data-ikoni="chart"></span> Tilastot</button>
       <div class="navi-kohta">
-        <button class="navi-otsikko" data-ryhma="kokeet,suunnitelma,muistio,apu,profiili"><span class="ikoni" data-ikoni="tasks"></span> Lisää <span class="nuoli">▾</span></button>
+        <button class="navi-otsikko" data-ryhma="kokeet,suunnitelma,muistio,apu"><span class="ikoni" data-ikoni="tasks"></span> Lisää <span class="nuoli">▾</span></button>
         <div class="navi-alavalikko">
           <button data-nakyma="kokeet"><span class="ikoni" data-ikoni="tasks"></span> Vanhat kokeet</button>
           <button data-nakyma="suunnitelma"><span class="ikoni" data-ikoni="chart"></span> Opintosuunnitelma</button>
           <button data-nakyma="muistio"><span class="ikoni" data-ikoni="note"></span> Muistiinpanot</button>
-          <button data-nakyma="profiili"><span class="ikoni" data-ikoni="settings"></span> Profiili</button>
           <button data-nakyma="apu"><span class="ikoni" data-ikoni="idea"></span> Apu ja palaute</button>
         </div>
       </div>
@@ -765,7 +781,17 @@
       <span class="haku-pikanappain">/</span>
     </button>
     <div class="topbar-oikea">
-      <button class="nappi outline pieni" id="authNappi" style="padding:8px 14px">Kirjaudu</button>
+      <div class="kayttaja-kohta" id="kayttajaKohta">
+        <button class="nappi outline pieni" id="authNappi" style="padding:8px 14px">Kirjaudu</button>
+        <div class="kayttaja-valikko" id="kayttajaValikko">
+          <div class="kv-yla">
+            <div class="kv-nimi" id="kvNimi"></div>
+            <div class="kv-email" id="kvEmail"></div>
+          </div>
+          <button id="kvProfiili"><span class="ikoni" data-ikoni="settings"></span> Profiili</button>
+          <button id="kvUlos"><span class="ikoni" data-ikoni="x"></span> Kirjaudu ulos</button>
+        </div>
+      </div>
       <button class="icon-nappi" id="teemaVaihto" title="Vaihda teema"></button>
     </div>
   </div>
@@ -1673,7 +1699,7 @@
     const LUKITUT = ['koti','koe','kokeet','muistio','suunnitelma','tilastot','esseet','peli','profiili'];
     let kirjautunut = false;
     let nykyAine = null;
-    function suljeValikot(){ document.querySelectorAll('.navi-kohta.auki').forEach(k=>k.classList.remove('auki')); }
+    function suljeValikot(){ document.querySelectorAll('.navi-kohta.auki, .kayttaja-kohta.auki').forEach(k=>k.classList.remove('auki')); }
     function naytaNakyma(nimi){
       if(!NAKYMAT.includes(nimi)) nimi='esittely';
       // Lukitut näkymät saa avata, mutta sisältö sumennetaan ja päälle tulee kirjautumiskehotus
@@ -3187,11 +3213,16 @@
         window.cognioKayttaja = user || null;
         const nappi=$('authNappi');
         if(user){
-          nappi.textContent = '👤 ' + (user.email ? user.email.split('@')[0] : 'Tili');
+          const meta = user.user_metadata || {};
+          const nimi = meta.full_name || (user.email ? user.email.split('@')[0] : 'Tili');
+          nappi.textContent = '👤 ' + nimi + ' ▾';
           nappi.classList.add('kirjautunut');
+          $('kvNimi').textContent = nimi;
+          $('kvEmail').textContent = user.email || '';
           $('authSisaan').hidden = true; $('authUlos').hidden = false; $('authKuka').textContent = user.email || '';
         } else {
           nappi.textContent = 'Kirjaudu'; nappi.classList.remove('kirjautunut');
+          $('kayttajaKohta').classList.remove('auki');
           $('authSisaan').hidden = false; $('authUlos').hidden = true;
         }
         if(typeof paivitaKirjautuminen==='function') paivitaKirjautuminen(user);
@@ -3223,7 +3254,16 @@
         }
         return false;
       }
-      $('authNappi').onclick = ()=>{ if(kirjautunut) naytaNakyma('profiili'); else avaa(); };
+      // Kirjautuneena oma nimi avaa käyttäjävalikon, muuten kirjautumisikkunan
+      $('authNappi').onclick = (e)=>{
+        e.stopPropagation();
+        if(!kirjautunut){ suljeValikot(); avaa(); return; }
+        const kohta = $('kayttajaKohta'); const oliAuki = kohta.classList.contains('auki');
+        suljeValikot(); if(!oliAuki) kohta.classList.add('auki');
+      };
+      $('kayttajaValikko').onclick = (e)=>e.stopPropagation();
+      $('kvProfiili').onclick = ()=>{ suljeValikot(); naytaNakyma('profiili'); };
+      $('kvUlos').onclick = async ()=>{ suljeValikot(); await sb.auth.signOut(); location.reload(); };
       window.pyydaKirjautuminen = (m)=>{ if(m) viesti(m); avaa(); };
       window.cognioKirjauduUlos = async ()=>{ await sb.auth.signOut(); location.reload(); };
       $('authSulje').onclick = sulje;
