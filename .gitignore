@@ -1,0 +1,11 @@
+# macOS
+.DS_Store
+
+# Editorit
+.vscode/
+.idea/
+
+# Salaisuudet (ÄLÄ vie näitä GitHubiin)
+.env
+.env.local
+salaisuudet.txt
