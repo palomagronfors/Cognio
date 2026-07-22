@@ -1,0 +1,20 @@
+{
+  "name": "Cognio",
+  "short_name": "Cognio",
+  "description": "Henkilökohtainen YO-valmentajasi: kääntökortit, kokeet, esseet ja opintosuunnitelma.",
+  "lang": "fi",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FBF6F8",
+  "theme_color": "#B3315F",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

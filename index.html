@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Cognio - YO-valmistautuminen</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><defs><linearGradient id='g' x1='20' y1='12' x2='120' y2='132' gradientUnits='userSpaceOnUse'><stop offset='0' stop-color='%23F5409B'/><stop offset='.55' stop-color='%23C42E8A'/><stop offset='1' stop-color='%237C3AED'/></linearGradient></defs><path d='M92 36 A40 40 0 1 0 92 84' fill='none' stroke='url(%23g)' stroke-width='18' stroke-linecap='round'/><g fill='none' stroke='url(%23g)' stroke-width='4.5' stroke-linecap='round'><ellipse cx='60' cy='60' rx='22' ry='18'/><path d='M55 49 a11 11 0 0 0 0 22'/><path d='M65 49 a11 11 0 0 1 0 22'/></g><path d='M60 50.5 L62.8 57.2 L69.5 60 L62.8 62.8 L60 69.5 L57.2 62.8 L50.5 60 L57.2 57.2 Z' fill='url(%23g)' stroke='%23fff' stroke-width='1.4' stroke-linejoin='round'/></svg>">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#B3315F">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Cognio">
+  <link rel="apple-touch-icon" href="icon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -1352,7 +1357,7 @@
     const MATIKKA = [];   // ei matemaattisia aineita - vain lukuaineet
     function onkoMatikka(koodi){ return MATIKKA.includes(koodi); }
     const OLETUS_PAKAT = [
-      { nimi:'ENA1 perussanasto', aine:'ENA', kurssi:'ENA1', tyyppi:'kortit', parit:[
+      { nimi:'ENA1', aine:'ENA', kurssi:'ENA1', tyyppi:'kortit', parit:[
         ['abundant','runsas'],['accurate','tarkka'],['acknowledge','myöntää, tunnustaa'],['adequate','riittävä'],
         ['advocate','puolustaa; kannattaja'],['ambiguous','monitulkintainen'],['anticipate','ennakoida'],['apparent','ilmeinen'],
         ['appropriate','sopiva'],['assess','arvioida'],['assume','olettaa'],['attain','saavuttaa'],
@@ -1383,7 +1388,7 @@
         ['transform','muuttaa'],['ubiquitous','kaikkialla esiintyvä'],['undermine','heikentää'],['utilise','hyödyntää'],
         ['vague','epämääräinen'],['vary','vaihdella'],['vital','elintärkeä'],['widespread','laajalle levinnyt'],
       ]},
-      { nimi:'ENA2 verbit ja ilmaukset', aine:'ENA', kurssi:'ENA2', tyyppi:'kortit', parit:[
+      { nimi:'ENA2', aine:'ENA', kurssi:'ENA2', tyyppi:'kortit', parit:[
         ['account for','selittää'],['adhere to','noudattaa'],['aim at','pyrkiä johonkin'],['allow for','ottaa huomioon'],
         ['amount to','olla yhteensä'],['apply for','hakea (paikkaa)'],['approve of','hyväksyä'],['back up','tukea; varmuuskopioida'],
         ['bring about','saada aikaan'],['bring up','ottaa esiin; kasvattaa'],['call off','perua'],['carry out','toteuttaa'],
@@ -1410,7 +1415,7 @@
         ['in addition','lisäksi'],['for instance','esimerkiksi'],['in conclusion','lopuksi'],['on the other hand','toisaalta'],
         ['namely','nimittäin'],['thus','siten'],['hence','siksi'],['meanwhile','sillä välin'],
       ]},
-      { nimi:'ENA3 yhteiskunta ja ympäristö', aine:'ENA', kurssi:'ENA3', tyyppi:'kortit', parit:[
+      { nimi:'ENA3', aine:'ENA', kurssi:'ENA3', tyyppi:'kortit', parit:[
         ['climate change','ilmastonmuutos'],['global warming','ilmaston lämpeneminen'],['greenhouse gas','kasvihuonekaasu'],['carbon footprint','hiilijalanjälki'],
         ['emissions','päästöt'],['renewable energy','uusiutuva energia'],['fossil fuels','fossiiliset polttoaineet'],['sustainability','kestävyys'],
         ['biodiversity','luonnon monimuotoisuus'],['deforestation','metsäkato'],['pollution','saastuminen'],['waste','jäte'],
@@ -1437,7 +1442,7 @@
         ['responsibility','vastuu'],['solution','ratkaisu'],['challenge','haaste'],['impact','vaikutus'],
         ['threat','uhka'],['poverty line','köyhyysraja'],
       ]},
-      { nimi:'RUB11 perussanasto', aine:'RUB', kurssi:'RUB11', tyyppi:'kortit', parit:[
+      { nimi:'RUB11', aine:'RUB', kurssi:'RUB11', tyyppi:'kortit', parit:[
         ['viktig','tärkeä'],['svår','vaikea'],['lätt','helppo'],['möjlig','mahdollinen'],
         ['nödvändig','välttämätön'],['tillsammans','yhdessä'],['ungefär','suunnilleen'],['verklig','todellinen'],
         ['tydlig','selkeä'],['allvarlig','vakava'],['vanlig','tavallinen'],['ovanlig','epätavallinen'],
@@ -1445,7 +1450,7 @@
         ['trots','huolimatta'],['själv','itse'],['ganska','melko'],['knappast','tuskin'],
         ['förstås','tietysti'],['åtminstone','ainakin'],['särskilt','erityisesti'],['numera','nykyään'],
       ]},
-      { nimi:'RUB12 verbit ja ilmaukset', aine:'RUB', kurssi:'RUB12', tyyppi:'kortit', parit:[
+      { nimi:'RUB12', aine:'RUB', kurssi:'RUB12', tyyppi:'kortit', parit:[
         ['att bli','tulla joksikin'],['att behöva','tarvita'],['att tycka','pitää (mielipide)'],
         ['att tänka','ajatella'],['att försöka','yrittää'],['att lyckas','onnistua'],
         ['att hända','tapahtua'],['att bruka','olla tapana'],['att märka','huomata'],
@@ -1454,20 +1459,20 @@
         ['att erbjuda','tarjota'],['att undvika','välttää'],['att våga','uskaltaa'],
         ['att förklara','selittää'],['att beskriva','kuvailla'],
       ]},
-      { nimi:'RUB13 arki ja yhteiskunta', aine:'RUB', kurssi:'RUB13', tyyppi:'kortit', parit:[
+      { nimi:'RUB13', aine:'RUB', kurssi:'RUB13', tyyppi:'kortit', parit:[
         ['samhälle','yhteiskunta'],['miljö','ympäristö'],['utbildning','koulutus'],['arbete','työ'],
         ['hälsa','terveys'],['framtid','tulevaisuus'],['förändring','muutos'],['möjlighet','mahdollisuus'],
         ['befolkning','väestö'],['invandring','maahanmuutto'],['jämställdhet','tasa-arvo'],['utveckling','kehitys'],
         ['ekonomi','talous'],['klimat','ilmasto'],['ansvar','vastuu'],['rättighet','oikeus'],
         ['lag','laki'],['företag','yritys'],['nyheter','uutiset'],['åsikt','mielipide'],
       ]},
-      { nimi:'BI1 peruskäsitteet', aine:'BI', kurssi:'BI1', tyyppi:'kortit', parit:[
+      { nimi:'BI1', aine:'BI', kurssi:'BI1', tyyppi:'kortit', parit:[
         ['Fotosynteesi','yhteyttäminen, jossa tuotetaan glukoosia'],['Mitoosi','tavallinen solunjakautuminen'],
         ['Meioosi','sukusolujen muodostumisjakautuminen'],['DNA','perimäaine'],['Entsyymi','reaktiota nopeuttava proteiini'],
         ['Ekosysteemi','eliöyhteisö ja eloton ympäristö'],['Evoluutio','lajien kehittyminen'],['Homeostaasi','elimistön tasapainon säätely'],
         ['Osmoosi','veden liike puoliläpäisevän kalvon läpi'],['Alleeli','geenin vaihtoehtoinen muoto'],
       ]},
-      { nimi:'HI1 vuosiluvut', aine:'HI', kurssi:'HI1', tyyppi:'kortit', parit:[
+      { nimi:'HI1', aine:'HI', kurssi:'HI1', tyyppi:'kortit', parit:[
         ['Ranskan suuri vallankumous','1789'],['Ensimmäinen maailmansota','1914-1918'],['Toinen maailmansota','1939-1945'],
         ['Suomen itsenäistyminen','1917'],['Berliinin muurin murtuminen','1989'],['Reformaatio','1517'],
         ['Talvisota','1939-1940'],['YK perustettiin','1945'],
@@ -1477,11 +1482,15 @@
     // Siivoa erotinviivat nimistä (esim. "ENA1 - perussanasto" -> "ENA1 perussanasto")
     function siivoaNimi(n){ return String(n).replace(/\s+[—–-]\s+/g, ' ').replace(/\s{2,}/g, ' ').trim(); }
     // Sisältöversio: kun tätä kasvatetaan, uudet oletuskortit lisätään myös vanhoille käyttäjille (kerran)
-    const SISALTO_VERSIO = 2;
+    const SISALTO_VERSIO = 3;
     function paivitaOletusSisalto(pakat){
       if (Number(localStorage.getItem('cognio_sisalto_versio') || 1) >= SISALTO_VERSIO) return false;
       const avain = (e,t) => String(e).trim().toLowerCase().replace(/\s+/g,' ') + ' ' + String(t).trim().toLowerCase().replace(/\s+/g,' ');
       let muuttui = false;
+      // Nimeä kurssipakat pelkäksi kurssikoodiksi (esim. "ENA1 perussanasto" -> "ENA1")
+      pakat.forEach(x=>{
+        if(x.kurssi && typeof x.nimi==='string' && x.nimi.indexOf(x.kurssi)===0 && x.nimi!==x.kurssi){ x.nimi = x.kurssi; muuttui = true; }
+      });
       OLETUS_PAKAT.forEach(pk=>{
         let p = pakat.find(x=>x.aine===pk.aine && x.kurssi===pk.kurssi);
         if(!p){ p = { id:uusiId(), nimi:pk.nimi, aine:pk.aine, kurssi:pk.kurssi||null, tyyppi:pk.tyyppi||'kortit', kortit:[] }; pakat.push(p); muuttui=true; }
@@ -1902,7 +1911,7 @@
       let p = pakat.find(x=>x.aine===aine && x.kurssi===kurssi);
       if (!p) {
         const matikka = onkoMatikka(aine);
-        p = { id:uusiId(), nimi: kurssi + (matikka?' laskut':' kortit'), aine, kurssi, tyyppi: matikka?'laskut':'kortit', kortit:[] };
+        p = { id:uusiId(), nimi: kurssi, aine, kurssi, tyyppi: matikka?'laskut':'kortit', kortit:[] };
         pakat.push(p); tallennaPakat(pakat);
       }
       asetaAktiivinen(p.id); korttiLahde=null; korttiPaluuAine=aine; siirryOpiskeluun=true; naytaNakyma('kortit');
