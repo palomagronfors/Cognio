@@ -394,6 +394,24 @@
     .sn-lista .sn-otsake { font-weight: 700; display: block; margin-bottom: 2px; }
     .sn-lista .sn-teksti { font-size: 14px; color: var(--md-on-surface-variant); }
 
+    /* --- Työpäiväkirja --- */
+    .pk-paiva { border: 1px solid var(--md-outline-variant); border-radius: var(--r-sm); margin-bottom: var(--v3); overflow: hidden; }
+    .pk-paiva-otsikko { display: flex; align-items: center; gap: var(--v3); padding: var(--v3) var(--v4);
+      background: var(--md-surface-container); }
+    .pk-paiva-pvm { font-weight: 700; }
+    .pk-paiva-summa { margin-left: auto; font-weight: 800; color: var(--md-primary); font-size: 16px; }
+    .pk-palkki { height: 6px; border-radius: 999px; background: var(--md-surface-container-high); overflow: hidden; }
+    .pk-palkki span { display: block; height: 100%; background: var(--md-primary); }
+    .pk-merkinnat { list-style: none; padding: 0; margin: 0; }
+    .pk-merkinta { display: flex; align-items: center; gap: var(--v3); padding: 10px var(--v4); border-top: 1px solid var(--md-outline-variant); font-size: 14px; }
+    .pk-merkinta .pk-koodi { flex: none; width: 34px; height: 26px; border-radius: 7px; display: inline-flex; align-items: center;
+      justify-content: center; font-size: 11px; font-weight: 700; color: #fff; }
+    .pk-merkinta .pk-teksti { flex: 1; min-width: 0; }
+    .pk-merkinta .pk-teksti .pk-mtapa { color: var(--md-on-surface-variant); font-size: 12.5px; }
+    .pk-merkinta .pk-min { font-weight: 700; white-space: nowrap; }
+    .pk-merkinta .roska { flex: none; }
+    .pk-auto { font-size: 12px; color: var(--md-on-surface-variant); font-style: italic; }
+
     /* Haku */
     .haku { position: relative; margin-bottom: 18px; }
     .haku .ikoni { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--md-on-surface-variant); }
@@ -814,6 +832,7 @@
           <button data-nakyma="kokeet"><span class="ikoni" data-ikoni="tasks"></span> Vanhat kokeet</button>
           <button data-nakyma="suunnitelma"><span class="ikoni" data-ikoni="chart"></span> Opintosuunnitelma</button>
           <button data-nakyma="muistio"><span class="ikoni" data-ikoni="note"></span> Muistiinpanot</button>
+          <button data-nakyma="paivakirja"><span class="ikoni" data-ikoni="calendar"></span> Työpäiväkirja</button>
           <button data-nakyma="apu"><span class="ikoni" data-ikoni="idea"></span> Apu ja palaute</button>
         </div>
       </div>
@@ -1151,6 +1170,31 @@
         </div>
         <p class="pieni himmea">Kirjoita muistiinpanoja aineittain. Maalaa tekstiä ja käytä työkaluja kuten tekstinkäsittelyssä. Muutokset tallentuvat automaattisesti.</p>
         <div class="muistio" id="muistio" contenteditable="true"></div>
+      </div>
+    </section>
+
+    <!-- ===== TYÖPÄIVÄKIRJA ===== -->
+    <section class="nakyma sarakkeet" id="nakyma-paivakirja" hidden>
+      <div class="kortti taysleveys">
+        <h2><span class="ikoni" data-ikoni="calendar"></span> Työpäiväkirja</h2>
+        <p class="himmea">Opiskeluaikasi kirjautuu tänne itsestään kun harjoittelet kortteja tai teet kokeita. Voit myös lisätä oman merkinnän vaikka lukemisesta tai muistiinpanoista.</p>
+        <div class="sn-luvut" id="pkLuvut"></div>
+        <details class="joukko-lisays" id="pkLisays">
+          <summary><span class="ikoni" data-ikoni="plus"></span> Lisää oma merkintä</summary>
+          <div class="sn-lomake">
+            <div><label for="pkPvm">Päivä</label><input type="date" id="pkPvm"></div>
+            <div><label for="pkAine">Aine</label><select id="pkAine"></select></div>
+            <div><label for="pkMin">Minuutteja</label><input type="number" id="pkMin" min="1" max="1440" value="30"></div>
+          </div>
+          <div><label for="pkTeksti">Mitä teit? (valinnainen)</label><input type="text" id="pkTeksti" maxlength="120" placeholder="esim. Luin biologian solubiologia-luvun"></div>
+          <div class="nappirivi" style="margin-top:var(--v3)">
+            <button class="nappi" id="pkLisaa"><span class="ikoni" data-ikoni="check"></span> Lisää merkintä</button>
+          </div>
+        </details>
+      </div>
+      <div class="kortti taysleveys">
+        <h2>📆 Päiväkohtainen loki</h2>
+        <div id="pkLoki"></div>
       </div>
     </section>
 
@@ -1765,7 +1809,116 @@
         t.viimeisinPaiva = d;
       }
       tallennaTilastot(t);
+      if (min > 0) pkLisaaAuto(min);
     }
+
+    /* ============ Työpäiväkirja ============ */
+    function haePaivakirja(){ const d=localStorage.getItem('cognio_paivakirja'); return d?JSON.parse(d):{}; }
+    function tallennaPaivakirja(o){ localStorage.setItem('cognio_paivakirja', JSON.stringify(o)); }
+    // Automaattinen opiskeluaika kertyy päivän "auto"-summaan
+    function pkLisaaAuto(min){
+      const pk = haePaivakirja(); const d = tanaan();
+      if(!pk[d]) pk[d] = { auto:0, merkinnat:[] };
+      pk[d].auto = Math.round(((pk[d].auto||0) + min) * 100) / 100;
+      tallennaPaivakirja(pk);
+    }
+    function pkPaivanMinuutit(paiva){
+      return (paiva.auto||0) + (paiva.merkinnat||[]).reduce((s,m)=>s+(m.min||0), 0);
+    }
+    function pkMinTeksti(min){
+      const m = Math.round(min);
+      if (m < 60) return m + ' min';
+      const h = Math.floor(m/60), j = m%60;
+      return j ? `${h} h ${j} min` : `${h} h`;
+    }
+    function pkPvmTeksti(pvm){
+      const [v,k,p] = pvm.split('-').map(Number);
+      const paivat=['su','ma','ti','ke','to','pe','la'];
+      const d = new Date(v, k-1, p);
+      const tanaanPvm = tanaan();
+      if (pvm === tanaanPvm) return 'Tänään';
+      const eilen = new Date(); eilen.setDate(eilen.getDate()-1);
+      if (pvm === eilen.toISOString().slice(0,10)) return 'Eilen';
+      return `${paivat[d.getDay()]} ${p}.${k}.${v}`;
+    }
+    function piirraPaivakirja(){
+      const pk = haePaivakirja();
+      const paivat = Object.keys(pk).sort().reverse();
+      // Aine-valikko
+      const sel = document.getElementById('pkAine');
+      if(sel && !sel.options.length){
+        sel.innerHTML = '<option value="">Ei ainetta</option>' + AINEET.map(a=>`<option value="${a.koodi}">${suojaa(a.koodi)} · ${suojaa(a.nimi)}</option>`).join('');
+      }
+      const pvmKentta = document.getElementById('pkPvm');
+      if(pvmKentta && !pvmKentta.value) pvmKentta.value = tanaan();
+
+      // Yhteenvetoluvut
+      const nyt = tanaan();
+      const alku7 = new Date(); alku7.setDate(alku7.getDate()-6);
+      const raja7 = alku7.toISOString().slice(0,10);
+      let min7=0, minKaikki=0, aktiivisiaPaivia=0;
+      paivat.forEach(d=>{ const m = pkPaivanMinuutit(pk[d]); minKaikki+=m; if(m>0) aktiivisiaPaivia++; if(d>=raja7) min7+=m; });
+      const paivaKa = aktiivisiaPaivia ? min7/Math.min(7, Math.max(1, aktiivisiaPaivia)) : 0;
+      document.getElementById('pkLuvut').innerHTML = `
+        <div class="sn-luku"><b>${pkMinTeksti(min7)}</b><span>viimeiset 7 päivää</span></div>
+        <div class="sn-luku"><b>${pkMinTeksti(pk[nyt]?pkPaivanMinuutit(pk[nyt]):0)}</b><span>tänään</span></div>
+        <div class="sn-luku"><b>${(minKaikki/60).toFixed(1).replace('.0','')} h</b><span>yhteensä</span></div>
+        <div class="sn-luku"><b>${aktiivisiaPaivia}</b><span>opiskelupäivää</span></div>`;
+
+      // Loki
+      const loki = document.getElementById('pkLoki');
+      if(!paivat.length){ loki.innerHTML = '<div class="tyhja">Ei merkintöjä vielä. Harjoittele kortteja tai lisää oma merkintä, niin päiväsi näkyvät tässä.</div>'; return; }
+      const maxMin = Math.max(...paivat.map(d=>pkPaivanMinuutit(pk[d])), 1);
+      loki.innerHTML = paivat.map(d=>{
+        const paiva = pk[d]; const min = pkPaivanMinuutit(paiva);
+        const merk = (paiva.merkinnat||[]).map(m=>{
+          const vari = m.aine ? aineVari(m.aine) : 'var(--md-outline)';
+          const koodi = m.aine ? suojaa(m.aine) : '•';
+          return `<li class="pk-merkinta">
+            <span class="pk-koodi" style="background:${vari}">${koodi}</span>
+            <span class="pk-teksti">${m.teksti?suojaa(m.teksti):(m.aine?aineNimi(m.aine):'Opiskelua')}<span class="pk-mtapa"> · oma merkintä</span></span>
+            <span class="pk-min">${pkMinTeksti(m.min)}</span>
+            <button class="roska" data-pk-poista="${d}|${m.id}" title="Poista merkintä">${ikoniHtml('trash')}</button>
+          </li>`;
+        }).join('');
+        const autoRivi = (paiva.auto>0) ? `<li class="pk-merkinta">
+            <span class="pk-koodi" style="background:var(--md-primary)">⚡</span>
+            <span class="pk-teksti">Harjoittelu Cogniossa<span class="pk-mtapa"> · kirjautui automaattisesti</span></span>
+            <span class="pk-min">${pkMinTeksti(paiva.auto)}</span></li>` : '';
+        return `<div class="pk-paiva">
+          <div class="pk-paiva-otsikko">
+            <span class="pk-paiva-pvm">${pkPvmTeksti(d)}</span>
+            <span class="pk-paiva-summa">${pkMinTeksti(min)}</span>
+          </div>
+          <div style="padding:0 var(--v4) var(--v2)"><div class="pk-palkki" style="margin-top:var(--v2)"><span style="width:${Math.round(min/maxMin*100)}%"></span></div></div>
+          <ul class="pk-merkinnat">${autoRivi}${merk || (autoRivi?'':'<li class="pk-merkinta pk-auto">Ei erillisiä merkintöjä.</li>')}</ul>
+        </div>`;
+      }).join('');
+      loki.querySelectorAll('[data-pk-poista]').forEach(b=>{
+        b.onclick = ()=>{
+          const [d,id] = b.dataset.pkPoista.split('|');
+          const p = haePaivakirja();
+          if(p[d]){ p[d].merkinnat = (p[d].merkinnat||[]).filter(m=>String(m.id)!==id);
+            if(!p[d].merkinnat.length && !p[d].auto) delete p[d];
+            tallennaPaivakirja(p); piirraPaivakirja(); }
+        };
+      });
+    }
+    function pkLisaaMerkinta(){
+      const pvm = document.getElementById('pkPvm').value || tanaan();
+      const min = Math.min(1440, Math.max(1, Math.round(Number(document.getElementById('pkMin').value)||0)));
+      const aine = document.getElementById('pkAine').value || '';
+      const teksti = document.getElementById('pkTeksti').value.trim();
+      if(!min){ dlgViesti('Anna kesto minuutteina.'); return; }
+      const pk = haePaivakirja();
+      if(!pk[pvm]) pk[pvm] = { auto:0, merkinnat:[] };
+      pk[pvm].merkinnat.push({ id: Date.now()+'-'+Math.floor(Math.random()*1000), min, aine, teksti });
+      tallennaPaivakirja(pk);
+      document.getElementById('pkTeksti').value = '';
+      document.getElementById('pkLisays').open = false;
+      piirraPaivakirja();
+    }
+
     function hallussaProsentti(pakat) {
       let k=0, o=0; (pakat||haePakat()).forEach(p=>{ k+=p.kortit.length; o+=p.kortit.filter(c=>c.opittu).length; });
       return k ? Math.round((o/k)*100) : 0;
@@ -1776,9 +1929,9 @@
     }
 
     /* ============ Navigointi ============ */
-    const NAKYMAT = ['esittely','koti','aine','kortit','koe','kokeet','muistio','suunnitelma','tilastot','esseet','peli','apu','opintojaksot','profiili'];
+    const NAKYMAT = ['esittely','koti','aine','kortit','koe','kokeet','muistio','paivakirja','suunnitelma','tilastot','esseet','peli','apu','opintojaksot','profiili'];
     // Näkymät jotka vaativat kirjautumisen (julkiset: esittely, kortit, aine, opintojaksot, apu)
-    const LUKITUT = ['koti','koe','kokeet','muistio','suunnitelma','tilastot','esseet','peli','profiili'];
+    const LUKITUT = ['koti','koe','kokeet','muistio','paivakirja','suunnitelma','tilastot','esseet','peli','profiili'];
     let kirjautunut = false;
     let nykyAine = null;
     function suljeValikot(){ document.querySelectorAll('.navi-kohta.auki, .kayttaja-kohta.auki').forEach(k=>k.classList.remove('auki')); }
@@ -1800,6 +1953,7 @@
       if(nimi==='koe') avaaKoe();
       if(nimi==='kokeet') piirraTehtavat();
       if(nimi==='muistio') avaaMuistio();
+      if(nimi==='paivakirja') piirraPaivakirja();
       if(nimi==='suunnitelma') piirraSuunnitelma();
       if(nimi==='tilastot') piirraTilastot();
       if(nimi==='esseet') avaaEsseet();
@@ -3452,6 +3606,7 @@
       if(e.key==='Escape' && document.getElementById('hakuVerho').classList.contains('nakyy')) suljeHaku();
     });
     document.getElementById('lisaaKoe').onclick=lisaaKoe;
+    document.getElementById('pkLisaa').onclick=pkLisaaMerkinta;
 
     document.getElementById('flip').onclick=kaannaKortti;
     document.getElementById('osasin').onclick=()=>merkitseKortti(true);
