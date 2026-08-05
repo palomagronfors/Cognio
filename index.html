@@ -412,6 +412,17 @@
     .pk-merkinta .roska { flex: none; }
     .pk-auto { font-size: 12px; color: var(--md-on-surface-variant); font-style: italic; }
 
+    /* --- Pomodoro --- */
+    .pomo-kortti.tyo { border-color: var(--md-primary); }
+    .pomo-kortti.tauko { border-color: #2E9E6B; }
+    .pomo-kello { text-align: center; padding: var(--v4) 0 var(--v3); }
+    .pomo-vaihe { font-size: 14px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; color: var(--md-on-surface-variant); }
+    .pomo-kortti.tyo .pomo-vaihe { color: var(--md-primary); }
+    .pomo-kortti.tauko .pomo-vaihe { color: #2E9E6B; }
+    .pomo-aika { font-size: 68px; font-weight: 800; line-height: 1.05; font-variant-numeric: tabular-nums; letter-spacing: -2px; }
+    .pomo-kierros { font-size: 13px; color: var(--md-on-surface-variant); margin-top: 4px; }
+    @media (max-width: 640px){ .pomo-aika { font-size: 54px; } }
+
     /* Haku */
     .haku { position: relative; margin-bottom: 18px; }
     .haku .ikoni { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--md-on-surface-variant); }
@@ -1244,6 +1255,26 @@
 
     <!-- ===== TYÖPÄIVÄKIRJA ===== -->
     <section class="nakyma sarakkeet" id="nakyma-paivakirja" hidden>
+      <div class="kortti taysleveys pomo-kortti" id="pomoKortti">
+        <h2><span class="ikoni" data-ikoni="play"></span> Pomodoro-ajastin</h2>
+        <p class="pieni himmea">Opiskele keskittyneesti jaksoissa. Työaika kirjautuu automaattisesti päiväkirjaan, ja saat muistutuksen tauoista.</p>
+        <div class="pomo-kello" id="pomoKello">
+          <div class="pomo-vaihe" id="pomoVaihe">Valmis aloittamaan</div>
+          <div class="pomo-aika" id="pomoAika">25:00</div>
+          <div class="pomo-kierros" id="pomoKierros">Ei jaksoja vielä tänään</div>
+        </div>
+        <div class="nappirivi" style="justify-content:center">
+          <button class="nappi iso" id="pomoAloita"><span class="ikoni" data-ikoni="play"></span> Aloita</button>
+          <button class="nappi outline" id="pomoNollaa">Nollaa</button>
+        </div>
+        <details class="joukko-lisays" id="pomoAsetukset">
+          <summary><span class="ikoni" data-ikoni="settings"></span> Jakson pituudet</summary>
+          <div class="sn-lomake">
+            <div><label for="pomoTyoMin">Työjakso (min)</label><input type="number" id="pomoTyoMin" min="5" max="90" value="25"></div>
+            <div><label for="pomoTaukoMin">Tauko (min)</label><input type="number" id="pomoTaukoMin" min="1" max="30" value="5"></div>
+          </div>
+        </details>
+      </div>
       <div class="kortti taysleveys">
         <h2><span class="ikoni" data-ikoni="calendar"></span> Työpäiväkirja</h2>
         <p class="himmea">Opiskeluaikasi kirjautuu tänne itsestään kun harjoittelet kortteja tai teet kokeita. Voit myös lisätä oman merkinnän vaikka lukemisesta tai muistiinpanoista.</p>
@@ -2109,6 +2140,7 @@
       return `${paivat[d.getDay()]} ${p}.${k}.${v}`;
     }
     function piirraPaivakirja(){
+      pomoAlusta();
       const pk = haePaivakirja();
       const paivat = Object.keys(pk).sort().reverse();
       // Aine-valikko
@@ -2184,6 +2216,80 @@
       document.getElementById('pkTeksti').value = '';
       document.getElementById('pkLisays').open = false;
       piirraPaivakirja();
+    }
+    // Alustetaan Pomodoro-kello kun päiväkirja avataan (jos ei jo käynnissä)
+    function pomoAlusta(){ if(typeof pomoPiirra==='function') pomoPiirra(); }
+
+    /* ===== Pomodoro-ajastin ===== */
+    let pomoTila = null;          // null | 'tyo' | 'tauko'
+    let pomoJaljella = 0;         // sekunteja jäljellä nykyisessä vaiheessa
+    let pomoTimer = null;
+    let pomoKaynnissa = false;
+    let pomoLoggaamattaSek = 0;   // työsekunteja, joita ei ole vielä kirjattu päiväkirjaan
+    let pomoKierroksia = 0;       // valmiit työjaksot tässä istunnossa
+    function pomoTyoMinuutit(){ return Math.min(90, Math.max(5, Number(document.getElementById('pomoTyoMin').value)||25)); }
+    function pomoTaukoMinuutit(){ return Math.min(30, Math.max(1, Number(document.getElementById('pomoTaukoMin').value)||5)); }
+    function pomoAikaTeksti(sek){ const m=Math.floor(sek/60), s=sek%60; return String(m).padStart(2,'0')+':'+String(s).padStart(2,'0'); }
+    function pomoPiirra(){
+      const kortti=document.getElementById('pomoKortti');
+      document.getElementById('pomoAika').textContent = pomoAikaTeksti(Math.max(0, pomoJaljella || pomoTyoMinuutit()*60));
+      const vaihe=document.getElementById('pomoVaihe');
+      kortti.classList.remove('tyo','tauko');
+      if(pomoTila==='tyo'){ vaihe.textContent = pomoKaynnissa?'Keskity ✍️':'Työjakso tauolla'; kortti.classList.add('tyo'); }
+      else if(pomoTila==='tauko'){ vaihe.textContent = pomoKaynnissa?'Pidä tauko ☕':'Tauko tauolla'; kortti.classList.add('tauko'); }
+      else vaihe.textContent = 'Valmis aloittamaan';
+      document.getElementById('pomoKierros').textContent = pomoKierroksia ? `${pomoKierroksia} työjaksoa tehty tänään` : 'Ei jaksoja vielä tänään';
+      document.getElementById('pomoAloita').textContent = pomoKaynnissa
+        ? '⏸ Keskeytä'
+        : '▶ ' + (pomoTila ? 'Jatka' : 'Aloita');
+    }
+    function pomoKirjaaTyoaika(){
+      // Kirjaa täydet minuutit päiväkirjaan ja tilastoihin, jätä alle minuutin jäännös
+      const min = Math.floor(pomoLoggaamattaSek/60);
+      if(min>0){ pomoLoggaamattaSek -= min*60; merkitseOpiskelu({min}); if(!document.getElementById('nakyma-paivakirja').hidden) piirraPaivakirja(); }
+    }
+    function pomoVaihdaVaihe(uusi){
+      pomoTila = uusi;
+      pomoJaljella = (uusi==='tyo' ? pomoTyoMinuutit() : pomoTaukoMinuutit()) * 60;
+    }
+    function pomoTiktak(){
+      pomoJaljella--;
+      if(pomoTila==='tyo'){ pomoLoggaamattaSek++; if(pomoLoggaamattaSek>=60) pomoKirjaaTyoaika(); }
+      if(pomoJaljella<=0){
+        try{ soitaValmisAani(); }catch(e){}
+        if(pomoTila==='tyo'){
+          pomoKierroksia++;
+          pomoKirjaaTyoaika();
+          pomoIlmoita('Työjakso valmis! Pidä ' + pomoTaukoMinuutit() + ' minuutin tauko.');
+          pomoVaihdaVaihe('tauko');
+        } else {
+          pomoIlmoita('Tauko ohi. Takaisin hommiin!');
+          pomoVaihdaVaihe('tyo');
+        }
+      }
+      pomoPiirra();
+    }
+    function pomoAloitaTauko(){
+      if(pomoKaynnissa){ // pause
+        clearInterval(pomoTimer); pomoKaynnissa=false; pomoKirjaaTyoaika(); pomoPiirra(); return;
+      }
+      if(!pomoTila) pomoVaihdaVaihe('tyo');
+      pomoKaynnissa=true;
+      try{ audioCtxKortti = audioCtxKortti || new (window.AudioContext||window.webkitAudioContext)(); if(audioCtxKortti.state==='suspended') audioCtxKortti.resume(); }catch(e){}
+      pomoTimer=setInterval(pomoTiktak, 1000);
+      pomoPiirra();
+    }
+    function pomoNollaa(){
+      clearInterval(pomoTimer); pomoKaynnissa=false;
+      pomoKirjaaTyoaika();            // talteen kesken jäänyt työaika
+      pomoLoggaamattaSek=0; pomoTila=null; pomoJaljella=0;
+      pomoPiirra();
+    }
+    function pomoIlmoita(teksti){
+      // Selaimen ilmoitus jos lupa on, muuten hienovarainen dialogi vain työ->tauko-siirtymässä
+      try{
+        if('Notification' in window && Notification.permission==='granted'){ new Notification('Cognio', { body: teksti }); return; }
+      }catch(e){}
     }
 
     function hallussaProsentti(pakat) {
@@ -3972,6 +4078,14 @@
     });
     document.getElementById('lisaaKoe').onclick=lisaaKoe;
     document.getElementById('pkLisaa').onclick=pkLisaaMerkinta;
+    document.getElementById('pomoAloita').onclick=()=>{
+      // Pyydä ilmoituslupa ensimmäisellä käynnistyksellä (tauko­muistutuksia varten)
+      try{ if('Notification' in window && Notification.permission==='default') Notification.requestPermission(); }catch(e){}
+      pomoAloitaTauko();
+    };
+    document.getElementById('pomoNollaa').onclick=pomoNollaa;
+    document.getElementById('pomoTyoMin').onchange=()=>{ if(!pomoKaynnissa && (!pomoTila||pomoTila==='tyo')){ pomoTila=null; pomoJaljella=0; pomoPiirra(); } };
+    document.getElementById('pomoTaukoMin').onchange=()=>{ if(!pomoKaynnissa && !pomoTila) pomoPiirra(); };
 
     document.getElementById('flip').onclick=kaannaKortti;
     document.getElementById('osasin').onclick=()=>merkitseKortti(true);
