@@ -638,30 +638,39 @@
     .esittely-hero, .esittely-ruudukko, .esittely-hyoty { position: relative; z-index: 1; }
     #nakyma-koti .hero, #nakyma-koti .kortti { position: relative; z-index: 1; }
     .esittely-kortti { position: relative; z-index: 1; }
-    .esittely-tausta { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none;
-      filter: hue-rotate(calc(var(--sc) * 55deg)) saturate(calc(1 + var(--sc) * 0.35)); transition: filter .2s linear; }
-    .tausta-blob { position: absolute; border-radius: 50%; filter: blur(60px); opacity: .5; }
-    .tausta-blob.b1 { width: 46vw; height: 46vw; left: -8vw; top: calc(-6vh + var(--sc) * -140px);
+    /* Kevyt: vain compositor-ystävälliset transform/opacity muuttuvat skrollatessa (ei layoutia, ei filttereitä joka framessa) */
+    .esittely-tausta { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+    /* Illan sävy häivähtää päälle mitä alemmas skrollataan (opacity on halpa) */
+    .esittely-tausta::after { content: ''; position: absolute; inset: 0;
+      background: linear-gradient(180deg, transparent 30%, color-mix(in srgb, #7C3AED 20%, transparent));
+      opacity: var(--sc, 0); transition: opacity .25s linear; }
+    .tausta-blob { position: absolute; border-radius: 50%; filter: blur(48px); opacity: .5; will-change: transform; }
+    .tausta-blob.b1 { width: 46vw; height: 46vw; left: -8vw; top: -6vh;
       background: radial-gradient(circle at 30% 30%, var(--md-primary), transparent 70%); animation: blobA 26s ease-in-out infinite; }
-    .tausta-blob.b2 { width: 40vw; height: 40vw; right: -6vw; top: calc(18vh + var(--sc) * -90px);
+    .tausta-blob.b2 { width: 40vw; height: 40vw; right: -6vw; top: 18vh;
       background: radial-gradient(circle at 60% 40%, #7C3AED, transparent 70%); opacity: .4; animation: blobB 32s ease-in-out infinite; }
-    .tausta-blob.b3 { width: 34vw; height: 34vw; left: 30vw; top: calc(52vh + var(--sc) * -60px);
+    .tausta-blob.b3 { width: 34vw; height: 34vw; left: 30vw; top: 52vh;
       background: radial-gradient(circle at 50% 50%, #F5409B, transparent 70%); opacity: .35; animation: blobA 38s ease-in-out infinite reverse; }
-    @keyframes blobA { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(4vw,3vh) scale(1.08); } }
-    @keyframes blobB { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-3vw,4vh) scale(1.1); } }
-    .tausta-vuoret { position: absolute; left: 0; right: 0; bottom: 0; height: 60vh; }
+    @keyframes blobA { 0%,100% { transform: translate3d(0,0,0) scale(1); } 50% { transform: translate3d(4vw,3vh,0) scale(1.08); } }
+    @keyframes blobB { 0%,100% { transform: translate3d(0,0,0) scale(1); } 50% { transform: translate3d(-3vw,4vh,0) scale(1.1); } }
+    .tausta-vuoret { position: absolute; left: 0; right: 0; bottom: 0; height: 60vh;
+      transform: translate3d(0, calc(var(--sc, 0) * -80px), 0); will-change: transform; }
     .vuori { position: absolute; left: -5%; right: -5%; bottom: 0; border-radius: 50% 50% 0 0 / 100% 100% 0 0; }
-    .vuori.v1 { height: 22vh; background: color-mix(in srgb, var(--md-primary) 42%, transparent);
-      transform: translateY(calc(22px - var(--sc) * 40px)); }
+    .vuori.v1 { height: 22vh; background: color-mix(in srgb, var(--md-primary) 42%, transparent); }
     .vuori.v2 { height: 30vh; left: -18%; right: -18%; background: color-mix(in srgb, #7C3AED 30%, transparent);
-      transform: translateY(calc(50px - var(--sc) * 90px)); }
+      transform: translate3d(0, calc(var(--sc, 0) * -40px), 0); }
     .vuori.v3 { height: 40vh; left: -30%; right: -30%; background: color-mix(in srgb, var(--md-primary) 18%, transparent);
-      transform: translateY(calc(80px - var(--sc) * 150px)); }
+      transform: translate3d(0, calc(var(--sc, 0) * -70px), 0); }
     :root[data-theme="dark"] .tausta-blob { opacity: .32; }
+    /* Kevennetään puhelimella: kevyempi sumennus, ei sävykerrosta */
+    @media (max-width: 640px) {
+      .tausta-blob { filter: blur(34px); }
+      .esittely-tausta::after { display: none; }
+    }
     .esittely-nuoli { margin-top: 20px; font-size: 26px; color: #fff; opacity: calc(0.85 - var(--sc, 0) * 2);
       animation: nuoliPomppu 1.8s ease-in-out infinite; }
     @keyframes nuoliPomppu { 0%,100% { transform: translateY(0); } 50% { transform: translateY(8px); } }
-    .reveal { opacity: 0; transform: translateY(32px); transition: opacity .7s var(--helppo), transform .7s var(--helppo); will-change: opacity, transform; }
+    .reveal { opacity: 0; transform: translateY(28px); transition: opacity .6s var(--helppo), transform .6s var(--helppo); }
     .reveal.nakyy { opacity: 1; transform: none; }
     .esittely-ruudukko .reveal:nth-child(1) { transition-delay: .04s; }
     .esittely-ruudukko .reveal:nth-child(2) { transition-delay: .10s; }
@@ -2121,17 +2130,27 @@
       const osio = aktiivinenMaisemaOsio();
       if (!osio) return;
       const vahennaLiike = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      const reveals = osio.querySelectorAll('.reveal');
+      const reveals = Array.prototype.slice.call(osio.querySelectorAll('.reveal'));
       if (vahennaLiike) { reveals.forEach(el=>el.classList.add('nakyy')); return; }
 
-      // Elementit liukuvat esiin kun ne tulevat näkyviin
+      // Näkyvissä olevat kortit tulevat esiin heti, jottei mikään jää tyhjäksi
+      const kh = window.innerHeight || 800;
+      reveals.forEach(el=>{ const r = el.getBoundingClientRect(); if (r.top < kh * 0.92) el.classList.add('nakyy'); });
+
+      // Loput liukuvat esiin kun ne tulevat näkyviin
       if (!maisemaObs && 'IntersectionObserver' in window) {
         maisemaObs = new IntersectionObserver((merkinnat)=>{
           merkinnat.forEach(m=>{ if(m.isIntersecting){ m.target.classList.add('nakyy'); maisemaObs.unobserve(m.target); } });
-        }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
+        }, { threshold: 0.01, rootMargin: '0px 0px -5% 0px' });
       }
       if (maisemaObs) reveals.forEach(el=>{ if(!el.classList.contains('nakyy')) maisemaObs.observe(el); });
       else reveals.forEach(el=>el.classList.add('nakyy'));
+
+      // Varmistus: jos jokin jää havaitsematta, näytetään se joka tapauksessa
+      clearTimeout(window._maisemaVarmistus);
+      window._maisemaVarmistus = setTimeout(()=>{
+        osio.querySelectorAll('.reveal:not(.nakyy)').forEach(el=>el.classList.add('nakyy'));
+      }, 1500);
 
       // Maisema liukuu ja sävy muuttuu sitä enemmän mitä alemmas skrollataan
       if (!maisemaAlustettu) {
