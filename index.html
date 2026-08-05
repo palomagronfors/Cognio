@@ -412,6 +412,33 @@
     .pk-merkinta .roska { flex: none; }
     .pk-auto { font-size: 12px; color: var(--md-on-surface-variant); font-style: italic; }
 
+    /* --- Kelluva Pomodoro --- */
+    .pomo-fab { position: fixed; left: 22px; bottom: 22px; z-index: 30; min-width: 58px; height: 58px; padding: 0 16px;
+      border-radius: 999px; border: none; cursor: pointer; font-size: 24px; line-height: 1;
+      background: linear-gradient(135deg, var(--md-primary), #7C3AED); color: #fff; box-shadow: var(--varjo-md);
+      display: inline-flex; align-items: center; gap: 8px; transition: transform .15s var(--helppo), box-shadow .2s var(--helppo); }
+    .pomo-fab:hover { transform: translateY(-2px); box-shadow: var(--varjo-lg); }
+    .pomo-fab .pomo-fab-aika { font-size: 16px; font-weight: 800; font-variant-numeric: tabular-nums; letter-spacing: -0.5px; }
+    .pomo-fab.tyo { background: linear-gradient(135deg, var(--md-primary), #B3315F); }
+    .pomo-fab.tauko { background: linear-gradient(135deg, #2E9E6B, #1F7A50); }
+    @media (prefers-reduced-motion: reduce){ .pomo-fab:hover { transform: none; } }
+
+    .pomo-kelluva { position: fixed; z-index: 42; width: 200px; border-radius: 18px; overflow: hidden;
+      background: var(--md-surface); border: 1px solid var(--md-outline-variant); box-shadow: var(--varjo-lg);
+      user-select: none; -webkit-user-select: none; touch-action: none; }
+    .pomo-k-yla { display: flex; align-items: center; gap: 8px; padding: 9px 12px; cursor: grab;
+      background: var(--md-surface-container-high); border-bottom: 1px solid var(--md-outline-variant); }
+    .pomo-k-yla:active { cursor: grabbing; }
+    .pomo-kelluva.tyo .pomo-k-yla { background: var(--md-primary-container); }
+    .pomo-kelluva.tauko .pomo-k-yla { background: color-mix(in srgb, #2E9E6B 20%, var(--md-surface-container)); }
+    .pomo-k-vaihe { flex: 1; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: var(--md-on-surface-variant); }
+    .pomo-kelluva.tyo .pomo-k-vaihe { color: var(--md-primary); }
+    .pomo-k-sulje { border: none; background: transparent; cursor: pointer; font-size: 15px; color: var(--md-on-surface-variant); padding: 2px 4px; line-height: 1; }
+    .pomo-k-sulje:hover { color: var(--md-on-surface); }
+    .pomo-k-aika { text-align: center; font-size: 42px; font-weight: 800; font-variant-numeric: tabular-nums; letter-spacing: -1.5px; padding: 12px 0 6px; }
+    .pomo-k-napit { display: flex; gap: 8px; padding: 0 12px 12px; }
+    .pomo-k-napit .nappi { flex: 1; min-height: 36px; padding: 0 8px; font-size: 13px; white-space: nowrap; }
+
     /* --- Pomodoro --- */
     .pomo-kortti.tyo { border-color: var(--md-primary); }
     .pomo-kortti.tauko { border-color: #2E9E6B; }
@@ -1556,6 +1583,20 @@
     <div class="pika-lista" id="pikaLista"></div>
   </aside>
 
+  <!-- ===== Kelluva Pomodoro-ajastin ===== -->
+  <button class="pomo-fab" id="pomoFab" title="Pomodoro-ajastin" aria-label="Pomodoro-ajastin">🍅</button>
+  <div class="pomo-kelluva" id="pomoKelluva" hidden aria-label="Pomodoro-ajastin">
+    <div class="pomo-k-yla" id="pomoKKahva">
+      <span class="pomo-k-vaihe" id="pomoKVaihe">Pomodoro</span>
+      <button class="pomo-k-sulje" id="pomoKSulje" title="Piilota" aria-label="Piilota">✕</button>
+    </div>
+    <div class="pomo-k-aika" id="pomoKAika">25:00</div>
+    <div class="pomo-k-napit">
+      <button class="nappi pieni" id="pomoKAloita">▶ Aloita</button>
+      <button class="nappi outline pieni" id="pomoKNollaa">Nollaa</button>
+    </div>
+  </div>
+
   <!-- ===== Kirjautumislukko (sumennettu sisältö) ===== -->
   <div class="lukko-verho" id="lukkoVerho" aria-hidden="true">
     <div class="lukko-kortti">
@@ -2231,17 +2272,64 @@
     function pomoTaukoMinuutit(){ return Math.min(30, Math.max(1, Number(document.getElementById('pomoTaukoMin').value)||5)); }
     function pomoAikaTeksti(sek){ const m=Math.floor(sek/60), s=sek%60; return String(m).padStart(2,'0')+':'+String(s).padStart(2,'0'); }
     function pomoPiirra(){
-      const kortti=document.getElementById('pomoKortti');
-      document.getElementById('pomoAika').textContent = pomoAikaTeksti(Math.max(0, pomoJaljella || pomoTyoMinuutit()*60));
-      const vaihe=document.getElementById('pomoVaihe');
-      kortti.classList.remove('tyo','tauko');
-      if(pomoTila==='tyo'){ vaihe.textContent = pomoKaynnissa?'Keskity ✍️':'Työjakso tauolla'; kortti.classList.add('tyo'); }
-      else if(pomoTila==='tauko'){ vaihe.textContent = pomoKaynnissa?'Pidä tauko ☕':'Tauko tauolla'; kortti.classList.add('tauko'); }
-      else vaihe.textContent = 'Valmis aloittamaan';
-      document.getElementById('pomoKierros').textContent = pomoKierroksia ? `${pomoKierroksia} työjaksoa tehty tänään` : 'Ei jaksoja vielä tänään';
-      document.getElementById('pomoAloita').textContent = pomoKaynnissa
-        ? '⏸ Keskeytä'
-        : '▶ ' + (pomoTila ? 'Jatka' : 'Aloita');
+      const aikaSek = Math.max(0, pomoJaljella || pomoTyoMinuutit()*60);
+      const aikaTxt = pomoAikaTeksti(aikaSek);
+      const luokka  = pomoTila==='tyo' ? 'tyo' : pomoTila==='tauko' ? 'tauko' : '';
+      const vaihePage = pomoTila==='tyo' ? (pomoKaynnissa?'Keskity ✍️':'Työjakso tauolla')
+                      : pomoTila==='tauko' ? (pomoKaynnissa?'Pidä tauko ☕':'Tauko tauolla')
+                      : 'Valmis aloittamaan';
+      const vaiheLyhyt = pomoTila==='tyo' ? 'Työjakso' : pomoTila==='tauko' ? 'Tauko' : 'Pomodoro';
+      const aloitaTxt = pomoKaynnissa ? '⏸ Keskeytä' : '▶ ' + (pomoTila ? 'Jatka' : 'Aloita');
+      const kierrosTxt = pomoKierroksia ? `${pomoKierroksia} työjaksoa tehty tänään` : 'Ei jaksoja vielä tänään';
+      const aseta = (id,txt)=>{ const el=document.getElementById(id); if(el) el.textContent=txt; };
+      const luokita = (id)=>{ const el=document.getElementById(id); if(el){ el.classList.remove('tyo','tauko'); if(luokka) el.classList.add(luokka); } };
+      // Sivun kortti
+      aseta('pomoAika', aikaTxt); aseta('pomoVaihe', vaihePage); aseta('pomoKierros', kierrosTxt); aseta('pomoAloita', aloitaTxt); luokita('pomoKortti');
+      // Kelluva widget
+      aseta('pomoKAika', aikaTxt); aseta('pomoKVaihe', vaiheLyhyt); aseta('pomoKAloita', aloitaTxt); luokita('pomoKelluva');
+      // FAB näyttää ajan kun ajastin käy
+      const fab=document.getElementById('pomoFab');
+      if(fab){ fab.classList.remove('tyo','tauko'); if(luokka) fab.classList.add(luokka);
+        fab.innerHTML = pomoTila ? `🍅 <span class="pomo-fab-aika">${aikaTxt}</span>` : '🍅'; }
+    }
+    // Kelluvan widgetin näyttö, sijainti ja raahaus
+    function pomoKelluvaNayta(nayta){
+      const w=document.getElementById('pomoKelluva'); if(!w) return;
+      w.hidden = !nayta;
+      if(nayta){ pomoAsetaSijainti(); pomoPiirra(); }
+      try{ localStorage.setItem('cognio_pomo_auki', nayta?'1':'0'); }catch(e){}
+    }
+    function pomoAsetaSijainti(){
+      const w=document.getElementById('pomoKelluva'); if(!w || w.hidden) return;
+      let pos=null; try{ pos=JSON.parse(localStorage.getItem('cognio_pomo_sijainti')||'null'); }catch(e){}
+      const lev=w.offsetWidth||200, kor=w.offsetHeight||160;
+      let x = pos ? pos.x : window.innerWidth - lev - 22;
+      let y = pos ? pos.y : window.innerHeight - kor - 96;
+      x=Math.max(8, Math.min(x, window.innerWidth - lev - 8));
+      y=Math.max(8, Math.min(y, window.innerHeight - kor - 8));
+      w.style.left=x+'px'; w.style.top=y+'px'; w.style.right='auto'; w.style.bottom='auto';
+    }
+    function pomoAlustaRaahaus(){
+      const w=document.getElementById('pomoKelluva'), kahva=document.getElementById('pomoKKahva');
+      if(!w || !kahva) return;
+      let raahaa=false, dx=0, dy=0;
+      kahva.addEventListener('pointerdown', (e)=>{
+        if(e.target.closest('.pomo-k-sulje')) return;
+        raahaa=true; const r=w.getBoundingClientRect(); dx=e.clientX-r.left; dy=e.clientY-r.top;
+        try{ kahva.setPointerCapture(e.pointerId); }catch(err){}
+      });
+      kahva.addEventListener('pointermove', (e)=>{
+        if(!raahaa) return;
+        const lev=w.offsetWidth, kor=w.offsetHeight;
+        const x=Math.max(8, Math.min(e.clientX-dx, window.innerWidth - lev - 8));
+        const y=Math.max(8, Math.min(e.clientY-dy, window.innerHeight - kor - 8));
+        w.style.left=x+'px'; w.style.top=y+'px'; w.style.right='auto'; w.style.bottom='auto';
+      });
+      const lopeta=()=>{ if(!raahaa) return; raahaa=false;
+        try{ localStorage.setItem('cognio_pomo_sijainti', JSON.stringify({ x:parseInt(w.style.left,10), y:parseInt(w.style.top,10) })); }catch(e){} };
+      kahva.addEventListener('pointerup', lopeta);
+      kahva.addEventListener('pointercancel', lopeta);
+      window.addEventListener('resize', ()=>{ if(!w.hidden) pomoAsetaSijainti(); });
     }
     function pomoKirjaaTyoaika(){
       // Kirjaa täydet minuutit päiväkirjaan ja tilastoihin, jätä alle minuutin jäännös
@@ -2277,6 +2365,7 @@
       pomoKaynnissa=true;
       try{ audioCtxKortti = audioCtxKortti || new (window.AudioContext||window.webkitAudioContext)(); if(audioCtxKortti.state==='suspended') audioCtxKortti.resume(); }catch(e){}
       pomoTimer=setInterval(pomoTiktak, 1000);
+      pomoKelluvaNayta(true);   // widget seuraa mukana sivulta toiselle
       pomoPiirra();
     }
     function pomoNollaa(){
@@ -4086,6 +4175,14 @@
     document.getElementById('pomoNollaa').onclick=pomoNollaa;
     document.getElementById('pomoTyoMin').onchange=()=>{ if(!pomoKaynnissa && (!pomoTila||pomoTila==='tyo')){ pomoTila=null; pomoJaljella=0; pomoPiirra(); } };
     document.getElementById('pomoTaukoMin').onchange=()=>{ if(!pomoKaynnissa && !pomoTila) pomoPiirra(); };
+    // Kelluva Pomodoro: FAB avaa/sulkee, widgetin napit jakavat saman logiikan
+    document.getElementById('pomoFab').onclick=()=>{ const w=document.getElementById('pomoKelluva'); pomoKelluvaNayta(!!w.hidden); };
+    document.getElementById('pomoKSulje').onclick=()=>pomoKelluvaNayta(false);
+    document.getElementById('pomoKAloita').onclick=()=>{ try{ if('Notification' in window && Notification.permission==='default') Notification.requestPermission(); }catch(e){} pomoAloitaTauko(); };
+    document.getElementById('pomoKNollaa').onclick=pomoNollaa;
+    pomoAlustaRaahaus();
+    if(localStorage.getItem('cognio_pomo_auki')==='1') pomoKelluvaNayta(true);
+    pomoPiirra();
 
     document.getElementById('flip').onclick=kaannaKortti;
     document.getElementById('osasin').onclick=()=>merkitseKortti(true);
