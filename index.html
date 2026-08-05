@@ -948,6 +948,7 @@
           <button id="kvUlos"><span class="ikoni" data-ikoni="x"></span> Kirjaudu ulos</button>
         </div>
       </div>
+      <button class="nappi outline pieni" id="kieliVaihto" title="Vaihda kieli / Change language" style="padding:8px 12px; min-width:44px">EN</button>
       <button class="icon-nappi" id="teemaVaihto" title="Vaihda teema"></button>
     </div>
   </div>
@@ -2424,6 +2425,7 @@
       if(nimi==='opintojaksot') piirraOpintojaksot();
       if(nimi==='profiili') piirraProfiili();
       paivitaLukko(nimi);
+      if(typeof kaannaSivu==='function' && (localStorage.getItem('cognio_kieli')||'fi')==='en') kaannaSivu('en');
     }
 
     /* --- Kirjautumislukko: sumennettu sisältö + vaihtuva kehotus --- */
@@ -4279,6 +4281,69 @@
     asetaTeema(document.documentElement.getAttribute('data-theme')||'light');
     document.getElementById('teemaVaihto').onclick=()=>{ const nyt=document.documentElement.getAttribute('data-theme'); asetaTeema(nyt==='dark'?'light':'dark'); };
 
+    /* ============ Kielivalinta (FI/EN) ============ */
+    const KAANNOS = {
+      // Navigaatio ja yläpalkki
+      'Aineet':'Subjects','Harjoittele':'Practice','Kääntökortit':'Flashcards','Koe':'Exam','Esseet':'Essays',
+      'Salamavisa ⚡':'Flash Quiz ⚡','Opintojaksot':'Modules','Tilastot':'Statistics','Lisää':'More',
+      'Vanhat kokeet':'Past exams','Opintosuunnitelma':'Study plan','Muistiinpanot':'Notes','Työpäiväkirja':'Study log',
+      'Apu ja palaute':'Help & feedback','Hae aineita, kortteja, muistiinpanoja…':'Search subjects, cards, notes…',
+      'Kirjaudu':'Log in','Kirjaudu ulos':'Log out','Profiili':'Profile','Etusivulle':'Home',
+      // Esittelysivu
+      'Cognio on henkilökohtainen YO-valmentajasi':'Cognio is your personal exam coach',
+      'Kertaa sanastoa ja käsitteitä kääntökorteilla, testaa osaamistasi omilla kokeilla, harjoittele esseitä koeajassa ja seuraa edistymistäsi. Kaikki yhdessä paikassa, suomeksi.':'Revise vocabulary and concepts with flashcards, test yourself with your own exams, practise essays against the clock and track your progress. All in one place.',
+      'Kokeile kääntökortteja →':'Try flashcards →','Kirjaudu / Luo tili':'Log in / Sign up',
+      'Siirry etusivulle':'Go to home','Kirjaudu ja aloita →':'Log in and start →',
+      'Vinkki: kääntökortteja ja opintojaksoja voi kokeilla ilman kirjautumista.':'Tip: you can try flashcards and modules without logging in.',
+      'Omat kokeet':'Your own exams','Rakenna itsellesi koe valitsemastasi aiheesta ja tarkista osaamisesi.':'Build your own exam on any topic and check what you know.',
+      'Harjoittele kirjoittamista ajastettuna, sanamäärä ja koeolosuhteet mukana.':'Practise writing against a timer, with word count and exam conditions.',
+      'Tiivistetyt jaksot ja tärkeimmät aiheet jokaisesta aineesta.':'Concise modules and the key topics of every subject.',
+      'Tilastot ja suunnitelma':'Statistics & plan','Näet edistymisesi ja saat henkilökohtaisen opintosuunnitelman kokeeseen.':'See your progress and get a personal study plan for the exam.',
+      'Testaa muistiasi nopeassa pelissä, kerää comboja ja tee ennätyksiä.':'Test your memory in a fast game, build combos and set records.',
+      'Opettele sanoja ja käsitteitä. Älykäs kertausväli tuo heikot kortit useammin.':'Learn words and concepts. Smart spacing brings weak cards back more often.',
+      '🔓 Näin saat kaiken irti':'🔓 Get the most out of it','🔓 Get the most out of it':'🔓 Get the most out of it',
+      // Etusivu (koti)
+      'Hei ja tervetuloa Cognioon! 👋':'Welcome to Cognio! 👋',
+      'Aloita opiskelu →':'Start studying →','Selaa opintojaksoja':'Browse modules',
+      'Edistyminen':'Progress','Opiskeltu':'Studied','Hallussa':'Mastered','Kysymystä tehty':'Questions done',
+      'Oikein':'Correct','Jatka opiskelua':'Continue studying','Valitse aine ja harjoittele':'Pick a subject and practise',
+      'Oppiaineet':'Subjects','Tulevat YO-kokeet':'Upcoming exams','Aine':'Subject','Lisää koepäivä':'Add exam date',
+      'Valitse päivämäärä':'Choose a date','Ei valittua päivää':'No date selected','Seuraava askel':'Next step','Aloita →':'Start →',
+      // Yleisiä otsikoita ja nappeja
+      'Personoitu opintosuunnitelma':'Personalised study plan','Viikkoaikataulu':'Weekly schedule',
+      'Vahvuutesi':'Your strengths','🏆 Vahvuutesi':'🏆 Your strengths','Pomodoro-ajastin':'Pomodoro timer',
+      'Aloita':'Start','Nollaa':'Reset','Tauko':'Break','Työjakso':'Work','Pomodoro':'Pomodoro',
+      'Kuuntele ääntäminen':'Listen to pronunciation','Takaisin pakkoihin':'Back to decks','‹ Takaisin pakkoihin':'‹ Back to decks',
+      'Klikkaa kääntääksesi':'Click to flip','Osasitko?':'Did you know it?',
+      'Tilastot ja edistyminen':'Statistics & progress','Kertaa erääntyneet':'Review due cards','Kertaa koko aine':'Review whole subject',
+      'Apu':'Help','Kehitysideat ja palaute':'Ideas & feedback',
+      'Kirjoita muistiinpanosi tähän…':'Write your notes here…','Tallenna':'Save','Peruuta':'Cancel','Selvä':'OK','Sulje':'Close','Poista':'Delete'
+    };
+    const KAANNOS_REV = {}; Object.keys(KAANNOS).forEach(k=>{ KAANNOS_REV[KAANNOS[k]] = k; });
+    let kieliNyt = localStorage.getItem('cognio_kieli') || 'fi';
+    function kaannaSivu(kieli){
+      const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
+      const solmut = []; while(w.nextNode()) solmut.push(w.currentNode);
+      solmut.forEach(n=>{
+        // sivele skriptit ja tyylit pois
+        const vanhempi = n.parentNode; if(!vanhempi) return;
+        const tag = vanhempi.nodeName; if(tag==='SCRIPT'||tag==='STYLE') return;
+        if(n.__alkup===undefined){ const t=n.nodeValue.trim(); if(!t) return; n.__alkup=n.nodeValue; }
+        const t = n.__alkup.trim();
+        if(kieli==='en' && KAANNOS[t]) n.nodeValue = n.__alkup.replace(t, KAANNOS[t]);
+        else n.nodeValue = n.__alkup;
+      });
+      const nappi = document.getElementById('kieliVaihto');
+      if(nappi) nappi.textContent = kieli==='en' ? 'FI' : 'EN';
+      document.documentElement.setAttribute('lang', kieli==='en'?'en':'fi');
+    }
+    function vaihdaKieli(){
+      kieliNyt = kieliNyt==='en' ? 'fi' : 'en';
+      localStorage.setItem('cognio_kieli', kieliNyt);
+      kaannaSivu(kieliNyt);
+    }
+    document.getElementById('kieliVaihto').onclick = vaihdaKieli;
+
     /* ============ Alustus ============ */
     // Rekisteröi service worker: offline-tuki ja nopeampi lataus (ei estä sovellusta jos epäonnistuu)
     if('serviceWorker' in navigator){
@@ -4442,6 +4507,8 @@
         history.replaceState(null, '', paluuOsoite);
       })();
     })();
+    // Ota tallennettu kieli käyttöön alkulatauksessa
+    if((localStorage.getItem('cognio_kieli')||'fi')==='en' && typeof kaannaSivu==='function') kaannaSivu('en');
   </script>
 </body>
 </html>
