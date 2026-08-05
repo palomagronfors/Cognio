@@ -4183,6 +4183,10 @@
     document.getElementById('teemaVaihto').onclick=()=>{ const nyt=document.documentElement.getAttribute('data-theme'); asetaTeema(nyt==='dark'?'light':'dark'); };
 
     /* ============ Alustus ============ */
+    // Rekisteröi service worker: offline-tuki ja nopeampi lataus (ei estä sovellusta jos epäonnistuu)
+    if('serviceWorker' in navigator){
+      window.addEventListener('load', ()=>{ navigator.serviceWorker.register('sw.js').catch(()=>{}); });
+    }
     piirraIkonit();
     // Tunnista tallennettu istunto heti, jottei päivitys näytä uloskirjautumiselta
     kirjautunut = onkoTallennettuIstunto();
