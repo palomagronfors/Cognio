@@ -634,8 +634,9 @@
     .hyoty-lista li { font-size: 15px; }
 
     /* --- Etusivun liukuva maisema --- */
-    #nakyma-esittely { position: relative; --sc: 0; }
+    #nakyma-esittely, #nakyma-koti { position: relative; --sc: 0; }
     .esittely-hero, .esittely-ruudukko, .esittely-hyoty { position: relative; z-index: 1; }
+    #nakyma-koti .hero, #nakyma-koti .kortti { position: relative; z-index: 1; }
     .esittely-kortti { position: relative; z-index: 1; }
     .esittely-tausta { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none;
       filter: hue-rotate(calc(var(--sc) * 55deg)) saturate(calc(1 + var(--sc) * 0.35)); transition: filter .2s linear; }
@@ -903,7 +904,17 @@
 
     <!-- ===== KOTI ===== -->
     <section class="nakyma sarakkeet" id="nakyma-koti" hidden>
-      <div class="hero taysleveys">
+      <div class="esittely-tausta" aria-hidden="true">
+        <span class="tausta-blob b1"></span>
+        <span class="tausta-blob b2"></span>
+        <span class="tausta-blob b3"></span>
+        <div class="tausta-vuoret">
+          <span class="vuori v3"></span>
+          <span class="vuori v2"></span>
+          <span class="vuori v1"></span>
+        </div>
+      </div>
+      <div class="hero taysleveys reveal">
         <h1>Hei ja tervetuloa Cognioon! 👋</h1>
         <p>Cognio on henkilökohtainen YO-valmentajasi. Täällä voit kerrata sanastoa ja käsitteitä kääntökorteilla, testata osaamistasi rakentamillasi kokeilla, harjoitella esseitä koeajassa ja pitää muistiinpanoja. Kaikki on yhdessä paikassa.</p>
         <p>Cognio seuraa edistymistäsi, tunnistaa heikot aiheet ja rakentaa sinulle henkilökohtaisen opintosuunnitelman kokeeseen. Aloitetaan opiskelu!</p>
@@ -914,7 +925,7 @@
       </div>
 
       <!-- Suositeltu seuraava askel + päivätavoite -->
-      <div class="kortti taysleveys">
+      <div class="kortti taysleveys reveal">
         <div class="suositus">
           <div class="suositus-ikoni" data-ikoni="idea"></div>
           <div class="suositus-teksti">
@@ -938,7 +949,7 @@
         <div style="margin-top:14px" class="pieni himmea">🔥 Opintoputki: <b id="putkiTeksti">0 päivää</b></div>
       </div>
 
-      <div class="kortti">
+      <div class="kortti reveal">
         <h2 class="otsikko-linkki" data-siirry="kortit" role="button" tabindex="0" title="Siirry kääntökortteihin"><span class="ikoni" data-ikoni="play"></span> Jatka opiskelua</h2>
         <div id="jatkaAlue"></div>
         <div class="nappirivi" style="margin-top:12px">
@@ -946,12 +957,12 @@
         </div>
       </div>
 
-      <div class="kortti taysleveys">
+      <div class="kortti taysleveys reveal">
         <h2 class="otsikko-linkki" data-siirry="opintojaksot" role="button" tabindex="0" title="Selaa opintojaksoja"><span class="ikoni" data-ikoni="book"></span> Oppiaineet</h2>
         <div class="aine-ruudukko" id="aineRuudukko"></div>
       </div>
 
-      <div class="kortti taysleveys">
+      <div class="kortti taysleveys reveal">
         <div class="osio-otsikko"><h2 style="margin:0" class="otsikko-linkki" data-siirry="suunnitelma" role="button" tabindex="0" title="Avaa opintosuunnitelma"><span class="ikoni" data-ikoni="calendar"></span> Tulevat YO-kokeet</h2></div>
         <div id="koeLista" style="margin-top:12px"></div>
         <div style="margin-top:14px"><label for="uusiKoeAine">Aine</label><select id="uusiKoeAine"></select></div>
@@ -2097,43 +2108,49 @@
         tila.textContent = 'Vinkki: kääntökortteja ja opintojaksoja voi kokeilla ilman kirjautumista.';
         if(nappi) nappi.textContent = 'Kirjaudu / Luo tili';
       }
-      kaynnistaEsittelyAnimaatiot();
+      kaynnistaMaisema();
     }
 
-    let esittelyAnimAlustettu = false;
-    function esittelyNakyvissa(){ const s=document.getElementById('nakyma-esittely'); return s && !s.hidden; }
-    function kaynnistaEsittelyAnimaatiot(){
+    // Liukuva maisema toimii sekä esittelyssä että kirjautuneen kotisivulla
+    let maisemaAlustettu = false, maisemaObs = null;
+    function aktiivinenMaisemaOsio(){
+      const s = document.querySelector('.nakyma:not([hidden])');
+      return (s && s.querySelector('.esittely-tausta')) ? s : null;
+    }
+    function kaynnistaMaisema(){
+      const osio = aktiivinenMaisemaOsio();
+      if (!osio) return;
       const vahennaLiike = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      const reveals = document.querySelectorAll('#nakyma-esittely .reveal');
+      const reveals = osio.querySelectorAll('.reveal');
       if (vahennaLiike) { reveals.forEach(el=>el.classList.add('nakyy')); return; }
-      if (esittelyAnimAlustettu) { paivitaEsittelyScroll(); return; }
-      esittelyAnimAlustettu = true;
 
       // Elementit liukuvat esiin kun ne tulevat näkyviin
-      if ('IntersectionObserver' in window) {
-        const obs = new IntersectionObserver((merkinnat)=>{
-          merkinnat.forEach(m=>{ if(m.isIntersecting){ m.target.classList.add('nakyy'); obs.unobserve(m.target); } });
+      if (!maisemaObs && 'IntersectionObserver' in window) {
+        maisemaObs = new IntersectionObserver((merkinnat)=>{
+          merkinnat.forEach(m=>{ if(m.isIntersecting){ m.target.classList.add('nakyy'); maisemaObs.unobserve(m.target); } });
         }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
-        reveals.forEach(el=>obs.observe(el));
-      } else {
-        reveals.forEach(el=>el.classList.add('nakyy'));
       }
+      if (maisemaObs) reveals.forEach(el=>{ if(!el.classList.contains('nakyy')) maisemaObs.observe(el); });
+      else reveals.forEach(el=>el.classList.add('nakyy'));
 
       // Maisema liukuu ja sävy muuttuu sitä enemmän mitä alemmas skrollataan
-      let tikittaa = false;
-      window.addEventListener('scroll', ()=>{
-        if (tikittaa || !esittelyNakyvissa()) return;
-        tikittaa = true;
-        requestAnimationFrame(()=>{ paivitaEsittelyScroll(); tikittaa = false; });
-      }, { passive: true });
-      paivitaEsittelyScroll();
+      if (!maisemaAlustettu) {
+        maisemaAlustettu = true;
+        let tikittaa = false;
+        window.addEventListener('scroll', ()=>{
+          if (tikittaa) return;
+          tikittaa = true;
+          requestAnimationFrame(()=>{ paivitaMaisemaScroll(); tikittaa = false; });
+        }, { passive: true });
+      }
+      paivitaMaisemaScroll();
     }
-    function paivitaEsittelyScroll(){
-      const osio = document.getElementById('nakyma-esittely');
+    function paivitaMaisemaScroll(){
+      const osio = aktiivinenMaisemaOsio();
       if (!osio) return;
       const sc = Math.min(1, (window.scrollY || 0) / (window.innerHeight * 1.15 || 800));
       osio.style.setProperty('--sc', sc.toFixed(3));
-      const merkki = document.getElementById('heroMerkki');
+      const merkki = osio.querySelector('#heroMerkki');
       if (merkki) merkki.style.transform = `translateY(${(window.scrollY||0) * 0.25}px)`;
     }
     const OPINTOJAKSOT = {
@@ -2267,6 +2284,7 @@
       document.getElementById('tasoPill').textContent = 'Taso ' + taso(t.xp);
       document.getElementById('putkiTeksti').textContent = t.putki + ' päivää';
       piirraSuositus(); piirraAineet(); piirraJatka(); piirraKoeLista(); taytaAineValikko(document.getElementById('uusiKoeAine')); piirraKalenteri();
+      kaynnistaMaisema();
     }
     // Etusivun aineet: pelkät otsikot (ei tilaa/prosenttia)
     function piirraAineet() {
