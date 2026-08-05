@@ -1584,7 +1584,7 @@
   </aside>
 
   <!-- ===== Kelluva Pomodoro-ajastin ===== -->
-  <button class="pomo-fab" id="pomoFab" title="Pomodoro-ajastin" aria-label="Pomodoro-ajastin">🍅</button>
+  <button class="pomo-fab" id="pomoFab" title="Pomodoro-ajastin" aria-label="Pomodoro-ajastin">⏰</button>
   <div class="pomo-kelluva" id="pomoKelluva" hidden aria-label="Pomodoro-ajastin">
     <div class="pomo-k-yla" id="pomoKKahva">
       <span class="pomo-k-vaihe" id="pomoKVaihe">Pomodoro</span>
@@ -2290,7 +2290,7 @@
       // FAB näyttää ajan kun ajastin käy
       const fab=document.getElementById('pomoFab');
       if(fab){ fab.classList.remove('tyo','tauko'); if(luokka) fab.classList.add(luokka);
-        fab.innerHTML = pomoTila ? `🍅 <span class="pomo-fab-aika">${aikaTxt}</span>` : '🍅'; }
+        fab.innerHTML = pomoTila ? `⏰ <span class="pomo-fab-aika">${aikaTxt}</span>` : '⏰'; }
     }
     // Kelluvan widgetin näyttö, sijainti ja raahaus
     function pomoKelluvaNayta(nayta){
