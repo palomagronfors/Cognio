@@ -3899,9 +3899,11 @@
       function tallennaPilveen(user){
         clearTimeout(synkAjastin);
         synkAjastin = setTimeout(async ()=>{
-          const blob={};
-          for(let i=0;i<localStorage.length;i++){ const k=localStorage.key(i); if(synkattava(k)) blob[k]=localStorage.getItem(k); }
-          await sb.from('kayttaja_data').upsert({ user_id:user.id, data:blob, updated_at:new Date().toISOString() });
+          try{
+            const blob={};
+            for(let i=0;i<localStorage.length;i++){ const k=localStorage.key(i); if(synkattava(k)) blob[k]=localStorage.getItem(k); }
+            await sb.from('kayttaja_data').upsert({ user_id:user.id, data:blob, updated_at:new Date().toISOString() });
+          }catch(e){ /* verkkokatkos: yritetaan uudelleen seuraavalla muutoksella */ }
         }, 1500);
       }
       function asennaPeilaus(user){
@@ -3912,6 +3914,7 @@
         localStorage.removeItem = (k)=>{ remOrig(k); if(synkattava(k)) tallennaPilveen(user); };
       }
       async function lataaPilvesta(user){
+       try{
         const { data } = await sb.from('kayttaja_data').select('data').eq('user_id', user.id).maybeSingle();
         if(data && data.data && Object.keys(data.data).length){
           let muutos=false;
@@ -3927,6 +3930,7 @@
         } else {
           tallennaPilveen(user);   // ensimmäinen kirjautuminen: vie nykyinen data pilveen
         }
+       }catch(e){ /* verkkokatkos: jatketaan paikallisella datalla */ }
         return false;
       }
       // Kirjautuneena oma nimi avaa käyttäjävalikon, muuten kirjautumisikkunan
