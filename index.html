@@ -2423,24 +2423,72 @@
           pomoVaihdaVaihe('tyo');
         }
       }
+      pomoTallenna();
       pomoPiirra();
     }
     function pomoAloitaTauko(){
       if(pomoKaynnissa){ // pause
-        clearInterval(pomoTimer); pomoKaynnissa=false; pomoKirjaaTyoaika(); pomoPiirra(); return;
+        clearInterval(pomoTimer); pomoKaynnissa=false; pomoKirjaaTyoaika(); pomoTallenna(); pomoPiirra(); return;
       }
       if(!pomoTila) pomoVaihdaVaihe('tyo');
       pomoKaynnissa=true;
       try{ audioCtxKortti = audioCtxKortti || new (window.AudioContext||window.webkitAudioContext)(); if(audioCtxKortti.state==='suspended') audioCtxKortti.resume(); }catch(e){}
       pomoTimer=setInterval(pomoTiktak, 1000);
       pomoKelluvaNayta(true);   // widget seuraa mukana sivulta toiselle
+      pomoTallenna();
       pomoPiirra();
     }
     function pomoNollaa(){
       clearInterval(pomoTimer); pomoKaynnissa=false;
       pomoKirjaaTyoaika();            // talteen kesken jäänyt työaika
       pomoLoggaamattaSek=0; pomoTila=null; pomoJaljella=0;
+      pomoTallenna();
       pomoPiirra();
+    }
+    // Säilytä ajastimen tila sivun päivityksen yli
+    function pomoTallenna(){
+      try{
+        localStorage.setItem('cognio_pomo_tila', JSON.stringify({
+          tila:pomoTila, jaljella:pomoJaljella, kaynnissa:pomoKaynnissa,
+          loggaamattaSek:pomoLoggaamattaSek, kierroksia:pomoKierroksia,
+          tyoMin:pomoTyoMinuutit(), taukoMin:pomoTaukoMinuutit(),
+          pvm:tanaan(), aikaleima:Date.now()
+        }));
+      }catch(e){}
+    }
+    // Kelaa ajastin eteenpäin kuluneella ajalla (ei kirjaa poissaoloaikaa opiskeluksi)
+    function pomoKelaa(kulunutSek){
+      let jaljella = kulunutSek;
+      while(jaljella > 0 && pomoTila){
+        if(jaljella < pomoJaljella){ pomoJaljella -= jaljella; jaljella = 0; }
+        else {
+          jaljella -= pomoJaljella;
+          if(pomoTila==='tyo'){ pomoKierroksia++; pomoKirjaaTyoaika(); pomoVaihdaVaihe('tauko'); }
+          else { pomoVaihdaVaihe('tyo'); }
+        }
+      }
+    }
+    function pomoPalauta(){
+      let d=null; try{ d=JSON.parse(localStorage.getItem('cognio_pomo_tila')||'null'); }catch(e){}
+      if(!d){ pomoPiirra(); return; }
+      if(d.tyoMin) document.getElementById('pomoTyoMin').value = d.tyoMin;
+      if(d.taukoMin) document.getElementById('pomoTaukoMin').value = d.taukoMin;
+      // Nollaa päivän jaksolaskuri jos päivä on vaihtunut
+      pomoKierroksia = (d.pvm===tanaan()) ? (d.kierroksia||0) : 0;
+      pomoLoggaamattaSek = d.loggaamattaSek || 0;
+      pomoTila = d.tila || null;
+      pomoJaljella = d.jaljella || 0;
+      if(d.tila && d.kaynnissa){
+        const kulunut = Math.max(0, Math.floor((Date.now() - (d.aikaleima||Date.now()))/1000));
+        if(kulunut > 6*3600){ pomoNollaa(); return; }   // liian pitkä tauko: aloita puhtaalta
+        pomoKelaa(kulunut);
+        pomoKaynnissa = false;      // varmista että pomoAloitaTauko käynnistää
+        pomoAloitaTauko();          // jatka käyntiä oikeasta kohdasta
+      } else {
+        pomoKaynnissa = false;
+        pomoPiirra();
+        if(d.tila) pomoKelluvaNayta(true);   // näytä keskeytetty ajastin
+      }
     }
     function pomoIlmoita(teksti){
       // Selaimen ilmoitus jos lupa on, muuten hienovarainen dialogi vain työ->tauko-siirtymässä
@@ -4242,8 +4290,8 @@
       pomoAloitaTauko();
     };
     document.getElementById('pomoNollaa').onclick=pomoNollaa;
-    document.getElementById('pomoTyoMin').onchange=()=>{ if(!pomoKaynnissa && (!pomoTila||pomoTila==='tyo')){ pomoTila=null; pomoJaljella=0; pomoPiirra(); } };
-    document.getElementById('pomoTaukoMin').onchange=()=>{ if(!pomoKaynnissa && !pomoTila) pomoPiirra(); };
+    document.getElementById('pomoTyoMin').onchange=()=>{ if(!pomoKaynnissa && (!pomoTila||pomoTila==='tyo')){ pomoTila=null; pomoJaljella=0; pomoPiirra(); } pomoTallenna(); };
+    document.getElementById('pomoTaukoMin').onchange=()=>{ if(!pomoKaynnissa && !pomoTila) pomoPiirra(); pomoTallenna(); };
     // Kelluva Pomodoro: FAB avaa/sulkee, widgetin napit jakavat saman logiikan
     document.getElementById('pomoFab').onclick=()=>{ const w=document.getElementById('pomoKelluva'); pomoKelluvaNayta(!!w.hidden); };
     document.getElementById('pomoKSulje').onclick=()=>pomoKelluvaNayta(false);
@@ -4251,7 +4299,7 @@
     document.getElementById('pomoKNollaa').onclick=pomoNollaa;
     pomoAlustaRaahaus();
     if(localStorage.getItem('cognio_pomo_auki')==='1') pomoKelluvaNayta(true);
-    pomoPiirra();
+    pomoPalauta();
 
     document.getElementById('flip').onclick=kaannaKortti;
     document.getElementById('osasin').onclick=()=>merkitseKortti(true);
@@ -4668,7 +4716,7 @@
       }
       let palautusTehty = false;
       // Laitekohtainen tila, jota EI synkata (muuten sivu latautuisi uudelleen loputtomiin)
-      const EI_SYNKATA = ['cognio_nakyma'];
+      const EI_SYNKATA = ['cognio_nakyma','cognio_pomo_tila','cognio_pomo_sijainti','cognio_pomo_auki','cognio_kieli'];
       const synkattava = k => typeof k==='string' && k.indexOf('cognio_')===0 && EI_SYNKATA.indexOf(k)===-1;
       let synkAjastin;
       function tallennaPilveen(user){
