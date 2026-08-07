@@ -4713,10 +4713,29 @@
       if(nappi) nappi.textContent = kieli==='en' ? 'FI' : 'EN';
       document.documentElement.setAttribute('lang', kieli==='en'?'en':'fi');
     }
+    // Piirrä näkyvä näkymä uudelleen, jotta L()-tekstit syntyvät uudella kielellä (ei jää vanhaa kieltä jumiin)
+    function paivitaNakymaKieli(){
+      const akt = document.querySelector('.nakyma:not([hidden])'); if(!akt) return;
+      const nimi = akt.id.replace('nakyma-','');
+      try{
+        if(nimi==='koti') piirraKoti();
+        else if(nimi==='aine') piirraAine();
+        else if(nimi==='suunnitelma') piirraSuunnitelma();
+        else if(nimi==='tilastot') piirraTilastot();
+        else if(nimi==='paivakirja') piirraPaivakirja();
+        else if(nimi==='opintojaksot') piirraOpintojaksot();
+        else if(nimi==='kokeet') piirraTehtavat();
+        else if(nimi==='esittely') piirraEsittely();
+        else if(nimi==='esseet') avaaEsseet();
+        else if(nimi==='profiili') piirraProfiili();
+        else if(nimi==='kortit' && typeof piirraKortti==='function') piirraKortti();
+      }catch(e){}
+    }
     function vaihdaKieli(){
       kieliNyt = kieliNyt==='en' ? 'fi' : 'en';
       localStorage.setItem('cognio_kieli', kieliNyt);
-      kaannaSivu(kieliNyt);
+      paivitaNakymaKieli();     // ensin uudet L()-tekstit oikealla kielellä
+      kaannaSivu(kieliNyt);     // sitten staattiset osat sanakirjalla
     }
     document.getElementById('kieliVaihto').onclick = vaihdaKieli;
     // Kielitietoinen apu muuttujia sisältäviin teksteihin
