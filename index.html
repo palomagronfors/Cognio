@@ -4677,18 +4677,27 @@
     };
     const KAANNOS_REV = {}; Object.keys(KAANNOS).forEach(k=>{ KAANNOS_REV[KAANNOS[k]] = k; });
     let kieliNyt = localStorage.getItem('cognio_kieli') || 'fi';
-    function kaannaSivu(kieli){
-      const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
-      const solmut = []; while(w.nextNode()) solmut.push(w.currentNode);
+    // Kääntää vain annetun juuren tekstisolmut (kevyt, käytetään myös observerissa)
+    function kaannaAlue(juuri, kieli){
+      if(!juuri) return;
+      let solmut;
+      if(juuri.nodeType === 3){ solmut = [juuri]; }
+      else {
+        const w = document.createTreeWalker(juuri, NodeFilter.SHOW_TEXT, null);
+        solmut = []; while(w.nextNode()) solmut.push(w.currentNode);
+      }
       solmut.forEach(n=>{
-        // sivele skriptit ja tyylit pois
         const vanhempi = n.parentNode; if(!vanhempi) return;
         const tag = vanhempi.nodeName; if(tag==='SCRIPT'||tag==='STYLE') return;
+        if(vanhempi.closest && vanhempi.closest('[contenteditable="true"]')) return;   // ei käännetä käyttäjän omaa tekstiä
         if(n.__alkup===undefined){ const t=n.nodeValue.trim(); if(!t) return; n.__alkup=n.nodeValue; }
         const t = n.__alkup.trim();
         const uusi = (kieli==='en' && KAANNOS[t]) ? n.__alkup.replace(t, KAANNOS[t]) : n.__alkup;
         if(n.nodeValue !== uusi) n.nodeValue = uusi;   // kirjoita vain muuttuessa (estää observer-silmukan)
       });
+    }
+    function kaannaSivu(kieli){
+      kaannaAlue(document.body, kieli);
       // Attribuutit: placeholder, title, aria-label
       ['placeholder','title','aria-label'].forEach(attr=>{
         document.querySelectorAll('['+attr+']').forEach(el=>{
@@ -4712,17 +4721,33 @@
     // Kielitietoinen apu muuttujia sisältäviin teksteihin
     function L(fi, en){ return kieliNyt==='en' ? en : fi; }
     // Automaattikäännin: kääntää myös dynaamisesti luodun tekstin (dialogit, uudelleenpiirrot)
+    // Automaattikäännin: kääntää VAIN muuttuneet kohdat (ei koko sivua), jottei jumita
     let kaannaKesken = false, kaannaAjastin = null;
-    function paivitaKaannos(){
-      if(kieliNyt!=='en') return;
+    const kaannaJono = new Set();
+    function poisSuljettu(node){
+      const el = node && (node.nodeType===1 ? node : node.parentElement);
+      return !!(el && el.closest && el.closest('[contenteditable="true"]'));
+    }
+    function jonotaKaannos(node){
+      if(kieliNyt!=='en' || !node) return;
+      kaannaJono.add(node);
       clearTimeout(kaannaAjastin);
-      kaannaAjastin = setTimeout(()=>{ kaannaKesken = true; try{ kaannaSivu('en'); } finally { kaannaKesken = false; } }, 60);
+      kaannaAjastin = setTimeout(()=>{
+        kaannaKesken = true;
+        try{ kaannaJono.forEach(r=>{ try{ kaannaAlue(r, 'en'); }catch(e){} }); }
+        finally{ kaannaJono.clear(); kaannaKesken = false; }
+      }, 120);
     }
     (function(){
       if(!('MutationObserver' in window)) return;
       const obs = new MutationObserver((muutokset)=>{
         if(kaannaKesken || kieliNyt!=='en') return;
-        for(const m of muutokset){ if(m.type==='childList' && m.addedNodes.length){ paivitaKaannos(); return; } if(m.type==='characterData'){ paivitaKaannos(); return; } }
+        for(const m of muutokset){
+          if(m.type==='characterData'){ if(!poisSuljettu(m.target)) jonotaKaannos(m.target); }
+          else if(m.type==='childList' && m.addedNodes.length){
+            m.addedNodes.forEach(nd=>{ if((nd.nodeType===1||nd.nodeType===3) && !poisSuljettu(nd)) jonotaKaannos(nd); });
+          }
+        }
       });
       obs.observe(document.body, { childList:true, subtree:true, characterData:true });
     })();
