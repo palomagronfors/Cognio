@@ -3440,7 +3440,7 @@
       const alue = document.getElementById('peliEnnatykset');
       const e = peliEnnatykset();
       const nimet = {}; peliLahteet().forEach(l=> nimet[l.avain]=l.nimi);
-      const rivit = Object.keys(e).map(avain=>({ nimi: nimet[avain] || 'Poistettu pakka', pisteet: e[avain] }))
+      const rivit = Object.keys(e).map(avain=>({ nimi: nimet[avain] || L('Poistettu pakka','Deleted deck'), pisteet: e[avain] }))
         .sort((a,b)=> b.pisteet - a.pisteet).slice(0,8);
       if(!rivit.length){ alue.innerHTML = '<h3>🏆 Parhaat ennätykset</h3><p class="pieni himmea" style="text-align:center; margin:0">Ei vielä ennätyksiä. Pelaa ensimmäinen pelisi!</p>'; return; }
       const mitalit = ['🥇','🥈','🥉'];
@@ -3537,9 +3537,9 @@
       document.getElementById('peliLoppu').hidden = false;
       const okP = peli.yhteensa ? Math.round(peli.oikeat/peli.yhteensa*100) : 0;
       document.getElementById('peliLoppuPisteet').textContent = peli.pisteet;
-      document.getElementById('peliLoppuTiedot').textContent = `${peli.oikeat}/${peli.yhteensa} oikein (${okP} %)`;
+      document.getElementById('peliLoppuTiedot').textContent = `${peli.oikeat}/${peli.yhteensa} ${L('oikein','correct')} (${okP} %)`;
       document.getElementById('peliLoppuIkoni').textContent = uusi ? '🏆' : (okP>=70 ? '🎉' : (okP>=40 ? '💪' : '📚'));
-      document.getElementById('peliLoppuOtsikko').textContent = uusi ? 'Uusi ennätys!' : 'Peli päättyi!';
+      document.getElementById('peliLoppuOtsikko').textContent = uusi ? L('Uusi ennätys!','New record!') : L('Peli päättyi!','Game over!');
       document.getElementById('peliUusiEnnatys').hidden = !uusi;
       if(uusi) soitaValmisAani();
     }
@@ -4401,6 +4401,15 @@
 
     /* ============ Kielivalinta (FI/EN) ============ */
     const KAANNOS = {
+      // --- peli & syventava ---
+      'Sekoita kaikki aineen kortit':'Shuffle all the subject\'s cards',
+      'Kirjoita essee':'Write an essay',
+      'Harjoittele kirjoittamista ajastetusti':'Practise writing against the clock',
+      'Pelaa Salamavisa':'Play Flash Quiz',
+      'Testaa muistiasi pelaten':'Test your memory by playing',
+      '🏆 Parhaat ennätykset':'🏆 Best records',
+      'Ei vielä ennätyksiä. Pelaa ensimmäinen pelisi!':'No records yet. Play your first game!',
+      'Syvennä osaamistasi kääntökorttien lisäksi lukemalla, kirjoittamalla ja tutustumalla oppimateriaaleihin muualla.':'Deepen your skills beyond flashcards by reading, writing and exploring learning materials elsewhere.',
       // --- aalto 3: dialogit ja tyhjatilat ---
       'Aineen koodi (esim. BI, ENA, HI):':'Subject code (e.g. BI, ENA, HI):',
       'Anna esseelle nimi:':'Name your essay:',
