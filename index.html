@@ -2911,20 +2911,20 @@
       document.getElementById('aineKoodi').style.background = a.vari;
       document.getElementById('aineNimi').textContent = a.nimi;
       document.getElementById('aineKuvaus').textContent = matikka
-        ? 'Matematiikassa harjoitellaan laskuja kursseittain: ratkaise tehtävä ja tarkista ratkaisu.'
-        : 'Harjoittele kurssien sisällöt kääntökorteilla, sitten kertaa koko aine kerralla.';
+        ? L('Matematiikassa harjoitellaan laskuja kursseittain: ratkaise tehtävä ja tarkista ratkaisu.','In maths you practise problems by course: solve the task and check the solution.')
+        : L('Harjoittele kurssien sisällöt kääntökorteilla, sitten kertaa koko aine kerralla.','Practise the course contents with flashcards, then review the whole subject at once.');
       const h = aineenHallussa(koodi);
       document.getElementById('ainePalkki').style.width = h.pros + '%';
       document.getElementById('aineTilaTeksti').textContent = h.kortteja
-        ? `${h.opittu}/${h.kortteja} ${matikka?'tehtävää':'korttia'} osattu (${h.pros} %)`
-        : 'Ei vielä sisältöä. Valitse kurssi ja lisää kortteja.';
+        ? `${h.opittu}/${h.kortteja} ${matikka?L('tehtävää','tasks'):L('korttia','cards')} ${L('osattu','known')} (${h.pros} %)`
+        : L('Ei vielä sisältöä. Valitse kurssi ja lisää kortteja.','No content yet. Choose a course and add cards.');
 
       // Countdown lähimpään tulevaan YO-kokeeseen tässä aineessa
       const koeLaskuri = document.getElementById('aineKoeLaskuri');
       const tulevat = haeKokeet().filter(k=>k.aine===koodi && paiviaKokeeseen(k.pvm)>=0).sort((x,y)=>x.pvm.localeCompare(y.pvm));
       if (tulevat.length) {
         const k = tulevat[0], pv = paiviaKokeeseen(k.pvm);
-        const otsikko = pv===0 ? 'Koe on tänään! 🎯' : (pv===1 ? 'Koe on huomenna!' : 'päivää YO-kokeeseen');
+        const otsikko = pv===0 ? L('Koe on tänään! 🎯','Exam is today! 🎯') : (pv===1 ? L('Koe on huomenna!','Exam is tomorrow!') : L('päivää YO-kokeeseen','days to the exam'));
         koeLaskuri.hidden = false;
         koeLaskuri.style.setProperty('--aine-vari', a.vari);
         koeLaskuri.innerHTML = `<span class="koe-laskuri-ikoni">⏳</span>
@@ -2941,10 +2941,10 @@
       const aineKortit = []; setit.forEach(p=>p.kortit.forEach(k=>{ if(k.etu&&k.taka) aineKortit.push(k); }));
       const eranneita = aineKortit.filter(eraantynyt).length;
       const eNappi = document.getElementById('aineEraantyneet');
-      eNappi.innerHTML = '<span class="ikoni">'+ikoniHtml('idea')+'</span> Kertaa erääntyneet' + (eranneita ? ' ('+eranneita+')' : '');
+      eNappi.innerHTML = '<span class="ikoni">'+ikoniHtml('idea')+'</span> '+L('Kertaa erääntyneet','Review due') + (eranneita ? ' ('+eranneita+')' : '');
       eNappi.disabled = eranneita === 0;
       const kurssit = aineenKurssit(koodi);
-      const yks = matikka ? 'tehtävää' : 'korttia';
+      const yks = matikka ? L('tehtävää','tasks') : L('korttia','cards');
 
       // Kurssit-ruudukko
       const alue = document.getElementById('aineKurssit');
@@ -2955,7 +2955,7 @@
         const pros = kort ? Math.round(op/kort*100) : 0;
         return `<div class="aine-kortti" data-kurssi="${kk}" style="--aine-vari:${a.vari}; text-align:center">
           <span class="aine-koodi" style="background:${a.vari}; width:auto; padding:0 10px; border-radius:12px">${kk}</span>
-          <div class="aine-tila">${kort ? kort+' '+yks+' · '+pros+' %' : 'lisää sisältöä'}</div>
+          <div class="aine-tila">${kort ? kort+' '+yks+' · '+pros+' %' : L('lisää sisältöä','add content')}</div>
         </div>`;
       }).join('');
       alue.querySelectorAll('.aine-kortti').forEach(el=>{ el.onclick=()=>avaaKurssi(koodi, el.dataset.kurssi); });
@@ -2993,7 +2993,7 @@
       haePakat().filter(p=>p.aine===koodi).forEach(p=>p.kortit.forEach(k=>{ if(k.etu&&k.taka) kaikki.push(k); }));
       const eranneet = kaikki.filter(eraantynyt);
       if(!eranneet.length){ dlgViesti('Ei erääntyneitä kortteja juuri nyt. Kaikki on ajan tasalla.', 'Hienoa!'); return; }
-      korttiLahde = { nimi: aineNimi(koodi) + ' kertaus', kortit: sekoita(eranneet), tyyppi:'kortit' };
+      korttiLahde = { nimi: aineNimi(koodi) + ' ' + L('kertaus','review'), kortit: sekoita(eranneet), tyyppi:'kortit' };
       korttiPaluuAine = koodi;
       naytaNakyma('kortit');
     }
@@ -3004,7 +3004,7 @@
       if (kaikki.length===0){ dlgViesti('Lisää ensin sisältöä kursseihin.'); return; }
       const laskut = onkoMatikka(koodi);
       // Aseta väliaikaisesti "matikka-tyyppi" korttiLahteelle: käytetään flip-tilaa myös laskuille kertauksessa? Ei - käytä tyyppiä.
-      korttiLahde = { nimi: aineNimi(koodi) + ' koko kertaus', kortit: sekoita(kaikki), tyyppi: laskut?'laskut':'kortit' };
+      korttiLahde = { nimi: aineNimi(koodi) + ' ' + L('koko kertaus','full review'), kortit: sekoita(kaikki), tyyppi: laskut?'laskut':'kortit' };
       korttiPaluuAine = koodi; naytaNakyma('kortit');
     }
     function piirraJatka() {
@@ -3129,7 +3129,7 @@
       if (kaikki.length === 0) { dlgViesti('Lisää ensin kortteja aineiden kursseille.'); return; }
       const eranneet = kaikki.filter(eraantynyt);   // spaced repetition: erääntyneet ensin
       const valitut = eranneet.length ? eranneet : kaikki.filter(k=>!k.opittu);
-      korttiLahde = { nimi: 'Päivän kertaus', kortit: sekoita(valitut.length ? valitut : kaikki).slice(0, 20) };
+      korttiLahde = { nimi: L('Päivän kertaus','Daily review'), kortit: sekoita(valitut.length ? valitut : kaikki).slice(0, 20) };
       korttiPaluuAine = null; naytaNakyma('kortit');
     }
     // Etusivun "suositeltu seuraava askel" + päivätavoiterengas
@@ -3324,7 +3324,7 @@
       const p = aktiivinenPakka();
       const suosikit = p.kortit.filter(k=>k.suosikki);
       if (!suosikit.length){ dlgViesti('Tässä pakassa ei ole vielä suosikkeja. Merkitse kortteja tähdellä ☆.', 'Ei suosikkeja'); return; }
-      korttiLahde = { nimi: p.nimi + ' suosikit ⭐', kortit: suosikit.slice(), tyyppi: p.tyyppi };
+      korttiLahde = { nimi: p.nimi + ' ' + L('suosikit ⭐','favourites ⭐'), kortit: suosikit.slice(), tyyppi: p.tyyppi };
       naytaOpiskelu();
     }
     function kaannaKortti(){ korttiKaannetty=!korttiKaannetty; document.getElementById('flip').classList.toggle('kaannetty', korttiKaannetty); }
