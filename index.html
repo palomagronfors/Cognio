@@ -3894,6 +3894,7 @@
     }
     function snPaivia(pvm){ return Math.max(0, Math.ceil((new Date(pvm+'T00:00:00') - new Date(tanaan()+'T00:00:00'))/86400000)); }
     function snPvmTeksti(d){ return d.getDate()+'.'+(d.getMonth()+1)+'.'; }
+    const SN_KUUKAUDET_EN = ['January','February','March','April','May','June','July','August','September','October','November','December'];
     const SN_KUUKAUDET = ['tammikuu','helmikuu','maaliskuu','huhtikuu','toukokuu','kesäkuu','heinäkuu','elokuu','syyskuu','lokakuu','marraskuu','joulukuu'];
 
     function rakennaSnLomake(){
@@ -3994,21 +3995,21 @@
         alue.innerHTML = `
           ${arvioitu ? '<p class="pieni himmea">Et ole vielä valinnut aineita, joten käytän niitä aineita joissa sinulla on kortteja.</p>' : ''}
           <div class="sn-luvut">
-            <div class="sn-luku"><b>${viikkoja || '–'}</b><span>viikkoa jäljellä</span></div>
-            <div class="sn-luku"><b>${a.tunnit} h</b><span>viikossa</span></div>
-            <div class="sn-luku"><b>${kokTunnit || '–'} h</b><span>yhteensä ennen kirjoituksia</span></div>
-            <div class="sn-luku"><b>${opittavaa}</b><span>korttia kerrattavana</span></div>
+            <div class="sn-luku"><b>${viikkoja || '–'}</b><span>${L('viikkoa jäljellä','weeks left')}</span></div>
+            <div class="sn-luku"><b>${a.tunnit} h</b><span>${L('viikossa','per week')}</span></div>
+            <div class="sn-luku"><b>${kokTunnit || '–'} h</b><span>${L('yhteensä ennen kirjoituksia','total before exams')}</span></div>
+            <div class="sn-luku"><b>${opittavaa}</b><span>${L('korttia kerrattavana','cards to review')}</span></div>
           </div>
-          ${kohdePvm ? `<p>Tavoite: <b>${suojaa(kohdePvm)}</b> · ${paivia} päivää jäljellä.</p>`
-                     : `<p class="himmea">Valitse kirjoitusten ajankohta, niin lasken aikataulun päivälleen.</p>`}
+          ${kohdePvm ? `<p>${L('Tavoite','Target')}: <b>${suojaa(kohdePvm)}</b> · ${paivia} ${L('päivää jäljellä','days left')}.</p>`
+                     : `<p class="himmea">${L('Valitse kirjoitusten ajankohta, niin lasken aikataulun päivälleen.','Choose the exam session and I will calculate the schedule to the day.')}</p>`}
           <div class="sn-jakauma">
-            <label>Viikkotuntien jakautuminen</label>
+            <label>${L('Viikkotuntien jakautuminen','Weekly hours split')}</label>
             <div class="sn-jana">${rivit.map(r=>`<span style="width:${(r.osuus*100).toFixed(1)}%;background:${r.vari}" title="${suojaa(r.nimi)}"></span>`).join('')}</div>
             <div class="sn-selite">${rivit.map(r=>`<b><span class="sn-piste" style="background:${r.vari}"></span>${suojaa(r.koodi)} ${r.tunnit} h</b>`).join('')}</div>
           </div>
           <div class="vastaus-laatikko" style="margin-top:var(--v4)">
-            <b>Näin etenet:</b> kertaa noin <b>${viikkoja ? Math.max(1, Math.ceil(opittavaa/Math.max(1,paivia))) : Math.max(1, Math.ceil(opittavaa/30))} korttia päivässä</b>,
-            tee <b>1 harjoituskoe viikossa</b> ja kirjoita <b>1 essee viikossa</b>. Pidä yksi päivä viikossa kokonaan vapaana.
+            <b>${L('Näin etenet','How to proceed')}:</b> ${L('kertaa noin','review about')} <b>${viikkoja ? Math.max(1, Math.ceil(opittavaa/Math.max(1,paivia))) : Math.max(1, Math.ceil(opittavaa/30))} ${L('korttia päivässä','cards per day')}</b>,
+            ${L('tee','do')} <b>1 ${L('harjoituskoe viikossa','practice exam per week')}</b> ${L('ja kirjoita','and write')} <b>1 ${L('essee viikossa','essay per week')}</b>. ${L('Pidä yksi päivä viikossa kokonaan vapaana.','Keep one day a week completely free.')}
           </div>`;
         snPiirraViikot(rivit, viikkoja, kohdePvm);
         snPiirraRytmi(a, rivit);
@@ -4020,7 +4021,7 @@
       value.innerHTML = vahvat.length ? vahvat.map(x=>`
         <div class="rivi-vali" data-aine="${x.a.koodi}" style="cursor:pointer">
           <div><div class="sana-etu"><span class="aine-koodi" style="width:30px;height:30px;font-size:12px;background:${x.a.vari}">${x.a.koodi}</span> &nbsp;${suojaa(x.a.nimi)}</div>
-          <div class="sana-taka">${x.h.opittu}/${x.h.kortteja} korttia hallussa</div></div>
+          <div class="sana-taka">${x.h.opittu}/${x.h.kortteja} ${L('korttia hallussa','cards mastered')}</div></div>
           <b style="color:var(--md-primary)">${x.h.pros} %</b></div>`).join('')
         : '<div class="tyhja pieni">Harjoittele kortteja, niin näet vahvuutesi.</div>';
       value.querySelectorAll('[data-aine]').forEach(el=>{ el.onclick=()=>avaaAine(el.dataset.aine); });
@@ -4030,7 +4031,7 @@
       halue.innerHTML = heikot.length ? heikot.map(x=>`
         <div class="rivi-vali" data-aine="${x.a.koodi}" style="cursor:pointer">
           <div><div class="sana-etu"><span class="aine-koodi" style="width:30px;height:30px;font-size:12px;background:${x.a.vari}">${x.a.koodi}</span> &nbsp;${x.a.nimi}</div>
-          <div class="sana-taka">${x.h.opittu}/${x.h.kortteja} korttia hallussa</div></div>
+          <div class="sana-taka">${x.h.opittu}/${x.h.kortteja} ${L('korttia hallussa','cards mastered')}</div></div>
           <b style="color:${x.h.pros<50?'var(--md-error)':'var(--md-primary)'}">${x.h.pros} %</b></div>`).join('')
         : '<div class="tyhja pieni">Harjoittele kortteja, niin tunnistan heikot aiheet.</div>';
       halue.querySelectorAll('[data-aine]').forEach(el=>{ el.onclick=()=>avaaAine(el.dataset.aine); });
@@ -4038,18 +4039,18 @@
       const t = haeTilastot();
       const pros = t.kysymyksia ? Math.round((t.oikein/t.kysymyksia)*100) : null;
       const ennuste = document.getElementById('ennusteArvo'); const eteksti = document.getElementById('ennusteTeksti');
-      if (pros === null) { ennuste.textContent='–'; eteksti.textContent='Tee harjoituskokeita, niin arvioin tasosi.'; }
+      if (pros === null) { ennuste.textContent='–'; eteksti.textContent=L('Tee harjoituskokeita, niin arvioin tasosi.','Do some practice exams and I will estimate your level.'); }
       else {
         ennuste.textContent = arvioArvosana(pros);
-        let teksti = `Perustuu ${t.kysymyksia} kysymykseen, joista ${pros} % oikein.`;
+        let teksti = `${L('Perustuu','Based on')} ${t.kysymyksia} ${L('kysymykseen, joista','questions, of which')} ${pros} % ${L('oikein','correct')}.`;
         // Vertaa keskimääräiseen tavoitteeseesi, jos aineet on valittu
         const tavoitteet = rivit.filter(r=>r.tavoite).map(r=>SN_ARVOSANAT.indexOf(r.tavoite));
         if (tavoitteet.length) {
           const keski = SN_ARVOSANAT[Math.round(tavoitteet.reduce((s,x)=>s+x,0)/tavoitteet.length)];
           const nyky = arvioArvosana(pros).charAt(0);
           const ero = SN_ARVOSANAT.indexOf(keski) - SN_ARVOSANAT.indexOf(nyky);
-          teksti += ero > 0 ? ` Tavoitteesi on keskimäärin ${keski}, eli matkaa on ${ero} arvosanaa.`
-                  : ` Olet jo keskimääräisen tavoitteesi (${keski}) tasolla. Pidä taso yllä kertaamalla.`;
+          teksti += ero > 0 ? ` ${L('Tavoitteesi on keskimäärin','Your target is on average')} ${keski}, ${L('eli matkaa on','so you are')} ${ero} ${L('arvosanaa.','grade(s) away.')}`
+                  : ` ${L('Olet jo keskimääräisen tavoitteesi','You are already at your average target')} (${keski}) ${L('tasolla. Pidä taso yllä kertaamalla.','level. Keep it up with review.')}`;
         }
         eteksti.textContent = teksti;
       }
@@ -4061,19 +4062,19 @@
       const nayta = Math.min(kaikki, 10);
       const alku = new Date(tanaan()+'T00:00:00');
       const kohde = kohdePvm ? new Date(kohdePvm+'T00:00:00') : null;
-      let html = '<thead><tr><th>Viikko</th>' + rivit.map(r=>`<th><span class="sn-piste" style="background:${r.vari}"></span> ${suojaa(r.koodi)}</th>`).join('') + '</tr></thead><tbody>';
+      let html = '<thead><tr><th>'+L('Viikko','Week')+'</th>' + rivit.map(r=>`<th><span class="sn-piste" style="background:${r.vari}"></span> ${suojaa(r.koodi)}</th>`).join('') + '</tr></thead><tbody>';
       for (let vi = 0; vi < nayta; vi++) {
         const alkuPvm = new Date(alku.getTime() + vi*7*86400000);
         const loppuPvm = new Date(alkuPvm.getTime() + 6*86400000);
         const koeviikko = kohde && kohde >= alkuPvm && kohde <= loppuPvm;
         html += `<tr class="${koeviikko?'vk-koeviikko':''}">
-          <td><span class="vk-nimi">Vko ${vi+1}${koeviikko?' · kirjoitukset':''}</span><span class="vk-alku">${snPvmTeksti(alkuPvm)}–${snPvmTeksti(loppuPvm)}</span></td>`;
+          <td><span class="vk-nimi">${L('Vko','Wk')} ${vi+1}${koeviikko?' · '+L('kirjoitukset','exams'):''}</span><span class="vk-alku">${snPvmTeksti(alkuPvm)}–${snPvmTeksti(loppuPvm)}</span></td>`;
         // Kaksi viimeistä viikkoa ennen kirjoituksia ovat pelkkää kertausta
         const loppusuora = kohde && vi >= kaikki - 2;
         html += rivit.map(r=>{
           const kurssit = aineenKurssit(r.koodi);
           const idx = kurssit.length ? Math.min(kurssit.length-1, Math.floor(vi * kurssit.length / Math.max(1, kaikki))) : -1;
-          const aihe = loppusuora ? 'kertaus + harjoituskoe' : (idx >= 0 ? kurssit[idx] : 'kertaus');
+          const aihe = loppusuora ? L('kertaus + harjoituskoe','review + practice exam') : (idx >= 0 ? kurssit[idx] : L('kertaus','review'));
           return `<td><b>${r.tunnit} h</b><span class="vk-aihe">${suojaa(aihe)}</span></td>`;
         }).join('');
         html += '</tr>';
@@ -4082,7 +4083,7 @@
       taulu.innerHTML = html;
       kortti.hidden = false;
       document.getElementById('snViikkoHuom').textContent = kaikki > nayta
-        ? `Näytetään ${nayta} ensimmäistä viikkoa ${kaikki} viikosta. Aikataulu päivittyy itsestään viikko viikolta.`
+        ? `${L('Näytetään','Showing')} ${nayta} ${L('ensimmäistä viikkoa','of the first weeks of')} ${kaikki} ${L('viikosta. Aikataulu päivittyy itsestään viikko viikolta.','weeks. The schedule updates week by week.')}`
         : '';
     }
 
@@ -4096,16 +4097,16 @@
       const paakohde = rivit[0];
       document.getElementById('snRytmi').innerHTML = `
         <ul class="sn-lista">
-          <li><span class="sn-otsake">${paivia} opiskelupäivää viikossa</span>
-            <span class="sn-teksti">Noin ${Math.round(perPaiva*10)/10} tuntia päivässä. Yksi päivä viikossa on kokonaan vapaa.</span></li>
-          <li><span class="sn-otsake">${jaksoja} × ${jakso} min jaksoa</span>
-            <span class="sn-teksti">Pidä ${tauko} minuutin tauko jokaisen jakson jälkeen ja 20 minuutin tauko puolivälissä. Nouse ylös ja liiku tauolla.</span></li>
-          <li><span class="sn-otsake">Aloita vaikeimmasta</span>
-            <span class="sn-teksti">Tee ensimmäinen jakso aineessa ${suojaa(paakohde.koodi)}. Aivot ovat silloin virkeimmillään.</span></li>
-          <li><span class="sn-otsake">Lopeta kertaukseen</span>
-            <span class="sn-teksti">Käy päivän lopuksi kääntökortit läpi 10 minuuttia. Se siirtää asiat pitkäkestoiseen muistiin.</span></li>
-          <li><span class="sn-otsake">Nuku 8 tuntia</span>
-            <span class="sn-teksti">Uni on osa opiskelua. Valvominen ennen koetta laskee tulosta enemmän kuin yksi kertaamaton aihe.</span></li>
+          <li><span class="sn-otsake">${paivia} ${L('opiskelupäivää viikossa','study days per week')}</span>
+            <span class="sn-teksti">${L('Noin','About')} ${Math.round(perPaiva*10)/10} ${L('tuntia päivässä. Yksi päivä viikossa on kokonaan vapaa.','hours per day. One day a week is completely free.')}</span></li>
+          <li><span class="sn-otsake">${jaksoja} × ${jakso} min ${L('jaksoa','sessions')}</span>
+            <span class="sn-teksti">${L('Pidä','Take a')} ${tauko} ${L('minuutin tauko jokaisen jakson jälkeen ja 20 minuutin tauko puolivälissä. Nouse ylös ja liiku tauolla.','minute break after each session and a 20-minute break halfway. Stand up and move during the break.')}</span></li>
+          <li><span class="sn-otsake">${L('Aloita vaikeimmasta','Start with the hardest')}</span>
+            <span class="sn-teksti">${L('Tee ensimmäinen jakso aineessa','Do your first session in')} ${suojaa(paakohde.koodi)}. ${L('Aivot ovat silloin virkeimmillään.','Your brain is freshest then.')}</span></li>
+          <li><span class="sn-otsake">${L('Lopeta kertaukseen','End with review')}</span>
+            <span class="sn-teksti">${L('Käy päivän lopuksi kääntökortit läpi 10 minuuttia. Se siirtää asiat pitkäkestoiseen muistiin.','Go through your flashcards for 10 minutes at the end of the day. It moves things into long-term memory.')}</span></li>
+          <li><span class="sn-otsake">${L('Nuku 8 tuntia','Sleep 8 hours')}</span>
+            <span class="sn-teksti">${L('Uni on osa opiskelua. Valvominen ennen koetta laskee tulosta enemmän kuin yksi kertaamaton aihe.','Sleep is part of studying. Staying up before an exam lowers your result more than one unreviewed topic.')}</span></li>
         </ul>`;
     }
 
@@ -4121,10 +4122,10 @@
         const paino = rivit[i % rivit.length];
         const toka = rivit[(i+1) % rivit.length];
         const viimeinen = i === kuut.length-1;
-        const nimi = SN_KUUKAUDET[d.getMonth()] + ' ' + d.getFullYear();
+        const nimi = (kieliNyt==='en'?SN_KUUKAUDET_EN:SN_KUUKAUDET)[d.getMonth()] + ' ' + d.getFullYear();
         const teksti = viimeinen
-          ? `Vain kertausta: käy ${suojaa(paino.koodi)} ja ${suojaa(toka.koodi)} kääntökortit läpi kahdesti ja tee kaksi harjoituskoetta. Älä opettele enää uutta.`
-          : `Pääpaino aineessa ${suojaa(paino.nimi)}${paino.tavoite?` (tavoite ${suojaa(paino.tavoite)})`:''}. Vie ${suojaa(paino.koodi)} korttien hallinta ${Math.min(100, paino.hall.pros + 20)} prosenttiin ja pidä ${suojaa(toka.koodi)} yllä viikoittaisella kertauksella. Kirjoita neljä esseetä.`;
+          ? `${L('Vain kertausta: käy','Review only: go through')} ${suojaa(paino.koodi)} ${L('ja','and')} ${suojaa(toka.koodi)} ${L('kääntökortit läpi kahdesti ja tee kaksi harjoituskoetta. Älä opettele enää uutta.','flashcards twice and do two practice exams. Do not learn anything new.')}`
+          : `${L('Pääpaino aineessa','Main focus on')} ${suojaa(paino.nimi)}${paino.tavoite?` (${L('tavoite','target')} ${suojaa(paino.tavoite)})`:''}. ${L('Vie','Take')} ${suojaa(paino.koodi)} ${L('korttien hallinta','card mastery to')} ${Math.min(100, paino.hall.pros + 20)} ${L('prosenttiin ja pidä','percent and keep')} ${suojaa(toka.koodi)} ${L('yllä viikoittaisella kertauksella. Kirjoita neljä esseetä.','up with weekly review. Write four essays.')}`;
         return `<li><span class="sn-otsake">${suojaa(nimi)}</span><span class="sn-teksti">${teksti}</span></li>`;
       }).join('') + '</ul>';
     }
