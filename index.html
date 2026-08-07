@@ -3013,7 +3013,7 @@
       document.getElementById('jatkaAlue').innerHTML = p ? `
         <div class="rivi-vali" style="cursor:pointer; border:none" id="jatkaKortti">
           <div><div class="sana-etu">${suojaa(p.nimi)}</div>
-          <div class="sana-taka">${p.kortit.length} korttia · ${h} % hallussa</div></div>
+          <div class="sana-taka">${p.kortit.length} ${L('korttia','cards')} · ${h} % ${L('hallussa','mastered')}</div></div>
           <span class="merkki-pill">${p.aine}</span>
         </div>` : '<div class="tyhja">Ei pakkoja</div>';
       const jk = document.getElementById('jatkaKortti');
@@ -3029,7 +3029,7 @@
       const pakat = haePakat();
       // Aineet
       const aineet = AINEET.filter(a => a.nimi.toLowerCase().includes(q) || a.koodi.toLowerCase().includes(q))
-        .map(a => ({ ryhma:'Aineet', nimi:a.nimi, ala:'Oppiaine · '+a.koodi, vari:a.vari, merkki:a.koodi, toiminto:()=>{ suljeHaku(); avaaAineSivu(a.koodi); } }));
+        .map(a => ({ ryhma:'Aineet', nimi:a.nimi, ala:L('Oppiaine','Subject')+' · '+a.koodi, vari:a.vari, merkki:a.koodi, toiminto:()=>{ suljeHaku(); avaaAineSivu(a.koodi); } }));
       // Pakat
       const setit = pakat.filter(p => p.nimi.toLowerCase().includes(q))
         .map(p => ({ ryhma:'Pakat', nimi:p.nimi, ala:p.kortit.length+' korttia · '+aineNimi(p.aine), vari:aineVari(p.aine), merkki:p.aine, toiminto:()=>{ suljeHaku(); asetaAktiivinen(p.id); korttiLahde=null; korttiPaluuAine=null; siirryOpiskeluun=true; naytaNakyma('kortit'); } }));
@@ -3040,7 +3040,7 @@
           kortit.push({ ryhma:'Kortit', nimi:k.etu, ala:k.taka+' · '+p.nimi, vari:aineVari(p.aine), merkki:p.aine, toiminto:()=>{ suljeHaku(); asetaAktiivinen(p.id); korttiLahde=null; korttiPaluuAine=null; siirryOpiskeluun=true; naytaNakyma('kortit'); } });
       }));
       const kaikki = [...aineet, ...setit, ...kortit.slice(0,20)];
-      if (kaikki.length === 0) { alue.innerHTML = '<div class="tyhja pieni" style="padding:28px">Ei osumia'+(q?' haulle "'+suojaa(q)+'"':'')+'</div>'; return; }
+      if (kaikki.length === 0) { alue.innerHTML = '<div class="tyhja pieni" style="padding:28px">'+L('Ei osumia','No matches')+(q?' "'+suojaa(q)+'"':'')+'</div>'; return; }
       let html=''; let edRyhma='';
       kaikki.slice(0,40).forEach((o,i)=>{
         if (o.ryhma!==edRyhma){ html+=`<div class="haku-otsake">${o.ryhma}</div>`; edRyhma=o.ryhma; }
@@ -3064,7 +3064,7 @@
       if (kokeet.length === 0) { alue.innerHTML = '<div class="tyhja pieni">Ei lisättyjä koepäiviä. Lisää alta.</div>'; return; }
       alue.innerHTML = kokeet.map((k,i) => {
         const p = paiviaKokeeseen(k.pvm);
-        const teksti = p < 0 ? 'mennyt' : (p === 0 ? 'tänään!' : p + ' päivää');
+        const teksti = p < 0 ? L('mennyt','past') : (p === 0 ? L('tänään!','today!') : p + ' ' + L('päivää','days'));
         return `<div class="rivi-vali">
           <div><div class="sana-etu"><span class="aine-koodi" style="width:32px;height:32px;font-size:13px;background:${aineVari(k.aine)}">${k.aine}</span> &nbsp;${aineNimi(k.aine)}</div>
           <div class="sana-taka">${muotoilePvm(k.pvm)}</div></div>
@@ -3079,6 +3079,7 @@
     let kalKuukausi = (function(){ const d=new Date(); return new Date(d.getFullYear(), d.getMonth(), 1); })();
     let valittuPvm = null;
     const KK_NIMET = ['Tammikuu','Helmikuu','Maaliskuu','Huhtikuu','Toukokuu','Kesäkuu','Heinäkuu','Elokuu','Syyskuu','Lokakuu','Marraskuu','Joulukuu'];
+    const KK_NIMET_EN = ['January','February','March','April','May','June','July','August','September','October','November','December'];
     function muotoilePvm(iso){ const [y,m,d]=iso.split('-'); return `${Number(d)}.${Number(m)}.${y}`; }
     function piirraKalenteri() {
       const kal = document.getElementById('kalenteri'); if(!kal) return;
@@ -3087,7 +3088,7 @@
       const paivia = new Date(vuosi, kk+1, 0).getDate();
       const edKk = new Date(vuosi, kk, 0).getDate();
       const nyt = tanaan();
-      const vpvt = ['Ma','Ti','Ke','To','Pe','La','Su'];
+      const vpvt = (kieliNyt==='en') ? ['Mo','Tu','We','Th','Fr','Sa','Su'] : ['Ma','Ti','Ke','To','Pe','La','Su'];
       let ruudut = '';
       for (let i=ekaVpv-1;i>=0;i--) ruudut += `<div class="kal-paiva muu-kk">${edKk-i}</div>`;
       for (let d=1;d<=paivia;d++) {
@@ -3101,7 +3102,7 @@
       kal.innerHTML = `
         <div class="kal-ylapalkki">
           <button class="kal-nappi" data-kk="-1" aria-label="Edellinen kuukausi">‹</button>
-          <div class="kal-otsikko">${KK_NIMET[kk]} ${vuosi}</div>
+          <div class="kal-otsikko">${(kieliNyt==='en'?KK_NIMET_EN:KK_NIMET)[kk]} ${vuosi}</div>
           <button class="kal-nappi" data-kk="1" aria-label="Seuraava kuukausi">›</button>
         </div>
         <div class="kal-viikonpaivat">${vpvt.map(v=>`<div class="kal-vpv">${v}</div>`).join('')}</div>
@@ -3113,7 +3114,7 @@
         el.onclick = ()=>{ valittuPvm = el.dataset.pvm; piirraKalenteri(); };
       });
       const t = document.getElementById('valittuPvmTeksti');
-      if (t) t.textContent = valittuPvm ? 'Valittu: ' + muotoilePvm(valittuPvm) : 'Ei valittua päivää';
+      if (t) t.textContent = valittuPvm ? L('Valittu','Selected') + ': ' + muotoilePvm(valittuPvm) : L('Ei valittua päivää','No date selected');
     }
     function lisaaKoe() {
       const aine = document.getElementById('uusiKoeAine').value;
@@ -3145,24 +3146,24 @@
       const ala = document.getElementById('suositusAla');
       const nappi = document.getElementById('suositusNappi');
       if (kaikkiKortit().length === 0) {
-        otsikko.textContent = 'Aloita lisäämällä sisältöä';
-        ala.textContent = 'Valitse oppiaine ja lisää ensimmäiset kortit kurssille.';
-        nappi.textContent = 'Selaa aineita →'; nappi.onclick = () => naytaNakyma('koti');
+        otsikko.textContent = L('Aloita lisäämällä sisältöä','Start by adding content');
+        ala.textContent = L('Valitse oppiaine ja lisää ensimmäiset kortit kurssille.','Choose a subject and add the first cards to a course.');
+        nappi.textContent = L('Selaa aineita →','Browse subjects →'); nappi.onclick = () => naytaNakyma('koti');
       } else if (eranneet.length) {
-        otsikko.textContent = 'Kertaa nyt: ' + eranneet.length + ' korttia erääntynyt';
-        ala.textContent = 'Spaced repetition ajoittaa kertauksen juuri oikeaan hetkeen muistamisen kannalta.';
-        nappi.textContent = 'Kertaa →'; nappi.onclick = paivanKertaus;
+        otsikko.textContent = L('Kertaa nyt','Review now') + ': ' + eranneet.length + ' ' + L('korttia erääntynyt','cards due');
+        ala.textContent = L('Spaced repetition ajoittaa kertauksen juuri oikeaan hetkeen muistamisen kannalta.','Spaced repetition times each review for the best moment for memory.');
+        nappi.textContent = L('Kertaa →','Review →'); nappi.onclick = paivanKertaus;
       } else {
         // Ei erääntyneitä → suosittele heikointa settiä
         const heikoin = haePakat().map(p=>({p, jaljella:p.kortit.filter(c=>!c.opittu).length})).filter(x=>x.jaljella>0).sort((a,b)=>b.jaljella-a.jaljella)[0];
         if (heikoin) {
-          otsikko.textContent = 'Hyvin kerrattu! Jatka: ' + heikoin.p.nimi;
-          ala.textContent = heikoin.jaljella + ' korttia vielä opeteltavana tässä setissä.';
-          nappi.textContent = 'Jatka →'; nappi.onclick = () => { asetaAktiivinen(heikoin.p.id); korttiLahde=null; korttiPaluuAine=null; siirryOpiskeluun=true; naytaNakyma('kortit'); };
+          otsikko.textContent = L('Hyvin kerrattu! Jatka','Well reviewed! Continue') + ': ' + heikoin.p.nimi;
+          ala.textContent = heikoin.jaljella + ' ' + L('korttia vielä opeteltavana tässä setissä.','cards still to learn in this set.');
+          nappi.textContent = L('Jatka →','Continue →'); nappi.onclick = () => { asetaAktiivinen(heikoin.p.id); korttiLahde=null; korttiPaluuAine=null; siirryOpiskeluun=true; naytaNakyma('kortit'); };
         } else {
-          otsikko.textContent = 'Kaikki hallussa juuri nyt! 🎉';
-          ala.textContent = 'Ei erääntyneitä kortteja. Tee harjoituskoe tai kirjoita essee.';
-          nappi.textContent = 'Tee koe →'; nappi.onclick = () => naytaNakyma('koe');
+          otsikko.textContent = L('Kaikki hallussa juuri nyt! 🎉','All mastered right now! 🎉');
+          ala.textContent = L('Ei erääntyneitä kortteja. Tee harjoituskoe tai kirjoita essee.','No cards due. Take a practice exam or write an essay.');
+          nappi.textContent = L('Tee koe →','Take an exam →'); nappi.onclick = () => naytaNakyma('koe');
         }
       }
     }
