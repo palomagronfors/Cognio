@@ -3280,7 +3280,7 @@
         const an=document.getElementById('aaniNappi'); if(an) an.hidden=true; return;
       }
       const k = korttiJarjestys[korttiIndeksi];
-      const yks = laskut ? 'Tehtävä' : 'Kortti';
+      const yks = laskut ? L('Tehtävä','Task') : L('Kortti','Card');
       document.getElementById('korttiEdistys').textContent=`${yks} ${korttiIndeksi+1} / ${korttiJarjestys.length}`;
       document.getElementById('korttiPalkki').style.width=(korttiIndeksi/korttiJarjestys.length)*100+'%';
       if (laskut) {
@@ -3713,7 +3713,7 @@
       koeVastattu=false; const pakka=haePakat().find(x=>x.id===aktiivinenId()); const kys=koeKysymykset[koeIndeksi];
       document.getElementById('koeOhje').textContent='Mikä on käännös:';
       document.getElementById('koeKysymys').textContent=koeKys(kys);
-      document.getElementById('koeEdistys').textContent=`Kysymys ${koeIndeksi+1} / ${koeKysymykset.length} · Pisteet ${koePisteet}`;
+      document.getElementById('koeEdistys').textContent=`${L('Kysymys','Question')} ${koeIndeksi+1} / ${koeKysymykset.length} · ${L('Pisteet','Points')} ${koePisteet}`;
       document.getElementById('koePalkki').style.width=(koeIndeksi/koeKysymykset.length)*100+'%';
       document.getElementById('koePalaute').textContent=''; document.getElementById('koeSeuraava').style.display='none';
       const oikea=koeVas(kys);
@@ -3742,7 +3742,7 @@
       const p=document.getElementById('koePalaute');
       if(oikein){ koePisteet++; p.textContent='✓ Oikein!'; p.style.color='var(--md-ok)'; } else { p.textContent=`✗ Oikea vastaus: ${oikea}`; p.style.color='var(--md-error)'; }
       merkitseOpiskelu({ min:0.4, kys:1, oik: oikein?1:0, xp: oikein?10:2 });
-      document.getElementById('koeEdistys').textContent=`Kysymys ${koeIndeksi+1} / ${koeKysymykset.length} · Pisteet ${koePisteet}`;
+      document.getElementById('koeEdistys').textContent=`${L('Kysymys','Question')} ${koeIndeksi+1} / ${koeKysymykset.length} · ${L('Pisteet','Points')} ${koePisteet}`;
       document.getElementById('koeSeuraava').style.display='block';
     }
     function koeSeuraava(){ if(koeIndeksi<koeKysymykset.length-1){ koeIndeksi++; piirraKoeKysymys(); } else naytaKoeTulos(); }
@@ -4399,6 +4399,60 @@
 
     /* ============ Kielivalinta (FI/EN) ============ */
     const KAANNOS = {
+      // --- aalto 3: dialogit ja tyhjatilat ---
+      'Aineen koodi (esim. BI, ENA, HI):':'Subject code (e.g. BI, ENA, HI):',
+      'Anna esseelle nimi:':'Name your essay:',
+      'Anna kesto minuutteina.':'Enter the duration in minutes.',
+      'Anna uudelle pakalle nimi:':'Name the new deck:',
+      'Edistys ja tilastot nollattu.':'Progress and statistics reset.',
+      'Ei erääntyneitä kortteja juuri nyt. Kaikki on ajan tasalla.':'No cards due right now. You are all caught up.',
+      'Ei kaksoiskappaleita.':'No duplicates.',
+      'Ei kortteja':'No cards',
+      'Ei kortteja. Lisää ensimmäinen yllä.':'No cards. Add your first one above.',
+      'Ei lisättyjä koepäiviä. Lisää alta.':'No exam dates added. Add one below.',
+      'Ei merkintöjä vielä. Harjoittele kortteja tai lisää oma merkintä, niin päiväsi näkyvät tässä.':'No entries yet. Practise cards or add your own entry, and your days will appear here.',
+      'Ei pakkoja':'No decks',
+      'Ei suosikkeja':'No favourites',
+      'Ei tallennettuja esseitä vielä.':'No saved essays yet.',
+      'Ei tarpeeksi kortteja':'Not enough cards',
+      'En löytänyt yhtään sana–merkitys-paria. Kirjoita yksi pari per rivi, esim. "inevitable, väistämätön".':'I could not find any word–meaning pairs. Write one pair per line, e.g. "inevitable, väistämätön".',
+      'Essee tallennettu! 💾':'Essay saved! 💾',
+      'Harjoittele kortteja, niin näet kaaviot.':'Practise cards to see the charts.',
+      'Harjoittele kortteja, niin näet vahvuutesi.':'Practise cards to see your strengths.',
+      'Harjoittele kortteja, niin tunnistan heikot aiheet.':'Practise cards so I can spot your weak topics.',
+      'Hienoa!':'Great!',
+      'Hienoa! Ei kerrattavaa juuri nyt. 🎉':'Great! Nothing to review right now. 🎉',
+      'Kirjautuminen ei ole käytettävissä':'Login is unavailable',
+      'Kirjautumispalvelua ei saatu ladattua. Tarkista verkkoyhteys ja päivitä sivu.':'The login service could not be loaded. Check your connection and refresh the page.',
+      'Kirjoita ensin esseetä.':'Write some of the essay first.',
+      'Lataa essee':'Load essay',
+      'Linkin nimi (esim. "Kurssin muistiinpanot" tai "Opettajan diat")':'Link name (e.g. "Course notes" or "Teacher\'s slides")',
+      'Linkin osoite (URL)':'Link address (URL)',
+      'Lisää ensin kortteja aineiden kursseille.':'Add some cards to the subject courses first.',
+      'Lisää ensin kortteja johonkin aineeseen. Kortteja tarvitaan vähintään kaksi.':'Add cards to a subject first. At least two cards are needed.',
+      'Lisää ensin sisältöä kursseihin.':'Add some content to the courses first.',
+      'Palautetaanko kaikki oletukset? Omat pakat, tehtävät, esseet ja muistiinpanot poistetaan. Tätä ei voi perua.':'Restore all defaults? Your own decks, tasks, essays and notes will be deleted. This cannot be undone.',
+      'Poista kaksoiskappaleet':'Remove duplicates',
+      'Poista kortti':'Delete card',
+      'Poista linkki':'Delete link',
+      'Poistetaanko tämä oma linkki?':'Delete this custom link?',
+      'Suunnitelma on päivitetty tietojesi mukaan.':'The plan has been updated to match your details.',
+      'Tallennettu':'Saved',
+      'Tarvitset vähintään 2 korttia pelataksesi. Lisää kortteja aineiden kursseille.':'You need at least 2 cards to play. Add cards to the subject courses.',
+      'Tyhjennetäänkö suunnitelman tiedot?':'Clear the plan details?',
+      'Tyhjennetäänkö tämä essee?':'Clear this essay?',
+      'Tyhjennä essee':'Clear essay',
+      'Tässä pakassa ei ole vielä suosikkeja. Merkitse kortteja tähdellä ☆.':'This deck has no favourites yet. Mark cards with a star ☆.',
+      'Täytä molemmat kentät.':'Fill in both fields.',
+      'Täytä molemmat puolet.':'Fill in both sides.',
+      'Täytä tietosi, niin asetan kuukausitavoitteet.':'Fill in your details and I will set monthly goals.',
+      'Täytä tietosi, niin ehdotan päivärytmin.':'Fill in your details and I will suggest a daily rhythm.',
+      'Valitse kirjoitusten ajankohta.':'Choose the exam session.',
+      'Valitse päivämäärä kalenterista.':'Pick a date from the calendar.',
+      'Valitse yläpuolelta kirjoitettavat aineet ja tavoitearvosanat, niin rakennan sinulle viikkoaikataulun.':'Choose the subjects you will sit and your target grades above, and I will build you a weekly schedule.',
+      'Valmis':'Done',
+      'Valmista':'Done',
+      'Vähintään yksi pakka tarvitaan.':'At least one deck is required.',
       // --- oppiaineiden nimet ---
       'Äidinkieli ja kirjallisuus':'Native language and literature','Ruotsi (B1)':'Swedish (B1)','Englanti (A)':'English (A)',
       'Biologia':'Biology','Maantiede':'Geography','Fysiikka':'Physics','Kemia':'Chemistry','Historia':'History',
@@ -4631,8 +4685,8 @@
         const tag = vanhempi.nodeName; if(tag==='SCRIPT'||tag==='STYLE') return;
         if(n.__alkup===undefined){ const t=n.nodeValue.trim(); if(!t) return; n.__alkup=n.nodeValue; }
         const t = n.__alkup.trim();
-        if(kieli==='en' && KAANNOS[t]) n.nodeValue = n.__alkup.replace(t, KAANNOS[t]);
-        else n.nodeValue = n.__alkup;
+        const uusi = (kieli==='en' && KAANNOS[t]) ? n.__alkup.replace(t, KAANNOS[t]) : n.__alkup;
+        if(n.nodeValue !== uusi) n.nodeValue = uusi;   // kirjoita vain muuttuessa (estää observer-silmukan)
       });
       // Attribuutit: placeholder, title, aria-label
       ['placeholder','title','aria-label'].forEach(attr=>{
@@ -4640,8 +4694,8 @@
           const avain='__a_'+attr;
           if(el[avain]===undefined){ const v=el.getAttribute(attr); if(!v||!v.trim()) return; el[avain]=v; }
           const t=el[avain].trim();
-          if(kieli==='en' && KAANNOS[t]) el.setAttribute(attr, el[avain].replace(t, KAANNOS[t]));
-          else el.setAttribute(attr, el[avain]);
+          const uusi = (kieli==='en' && KAANNOS[t]) ? el[avain].replace(t, KAANNOS[t]) : el[avain];
+          if(el.getAttribute(attr)!==uusi) el.setAttribute(attr, uusi);
         });
       });
       const nappi = document.getElementById('kieliVaihto');
@@ -4654,6 +4708,23 @@
       kaannaSivu(kieliNyt);
     }
     document.getElementById('kieliVaihto').onclick = vaihdaKieli;
+    // Kielitietoinen apu muuttujia sisältäviin teksteihin
+    function L(fi, en){ return kieliNyt==='en' ? en : fi; }
+    // Automaattikäännin: kääntää myös dynaamisesti luodun tekstin (dialogit, uudelleenpiirrot)
+    let kaannaKesken = false, kaannaAjastin = null;
+    function paivitaKaannos(){
+      if(kieliNyt!=='en') return;
+      clearTimeout(kaannaAjastin);
+      kaannaAjastin = setTimeout(()=>{ kaannaKesken = true; try{ kaannaSivu('en'); } finally { kaannaKesken = false; } }, 60);
+    }
+    (function(){
+      if(!('MutationObserver' in window)) return;
+      const obs = new MutationObserver((muutokset)=>{
+        if(kaannaKesken || kieliNyt!=='en') return;
+        for(const m of muutokset){ if(m.type==='childList' && m.addedNodes.length){ paivitaKaannos(); return; } if(m.type==='characterData'){ paivitaKaannos(); return; } }
+      });
+      obs.observe(document.body, { childList:true, subtree:true, characterData:true });
+    })();
 
     /* ============ Alustus ============ */
     // Rekisteröi service worker: offline-tuki ja nopeampi lataus (ei estä sovellusta jos epäonnistuu)
