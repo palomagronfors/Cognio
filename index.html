@@ -1755,15 +1755,16 @@
       { koodi:'FY',  nimi:'Fysiikka',           vari:'#0277BD', kmin:1,  kmax:8 },
       { koodi:'KE',  nimi:'Kemia',              vari:'#AD1457', kmin:1,  kmax:6 },
       { koodi:'HI',  nimi:'Historia',           vari:'#8D6E63', kmin:1,  kmax:6 },
-      { koodi:'YH',  nimi:'YH',    vari:'#5E35B1', kmin:1,  kmax:4 },
+      { koodi:'YH',  nimi:'Yhteiskuntaoppi', lyhyt:'YH', vari:'#5E35B1', kmin:1,  kmax:4 },
       { koodi:'PS',  nimi:'Psykologia',         vari:'#7B1FA2', kmin:1,  kmax:5 },
       { koodi:'FI',  nimi:'Filosofia',          vari:'#6D4C41', kmin:1,  kmax:4 },
       { koodi:'TE',  nimi:'Terveystieto',       vari:'#EF6C00', kmin:1,  kmax:3 },
       { koodi:'UE',  nimi:'Uskonto',            vari:'#C2185B', kmin:1,  kmax:6 },
-      { koodi:'ET',  nimi:'ET',vari:'#F9A825', kmin:1,  kmax:6 },
+      { koodi:'ET',  nimi:'Elämänkatsomustieto', lyhyt:'ET', vari:'#F9A825', kmin:1,  kmax:6 },
     ];
     function aineVari(koodi){ const a = AINEET.find(x=>x.koodi===koodi); return a ? a.vari : '#B3315F'; }
     function aineNimi(koodi){ const a = AINEET.find(x=>x.koodi===koodi); return a ? a.nimi : koodi; }
+    function aineLyhyt(a){ return a && (a.lyhyt || a.nimi); }   // lyhyt nimi ahtaisiin laatikoihin
     function aineenKurssit(koodi){ const a=AINEET.find(x=>x.koodi===koodi); if(!a) return []; const r=[]; for(let i=a.kmin;i<=a.kmax;i++) r.push(a.koodi+i); return r; }
 
     /* ============ Pakat ja kortit ============ */
@@ -2740,7 +2741,7 @@
       const alue = document.getElementById('ojAineet');
       alue.innerHTML = AINEET.map(a=>`<div class="aine-kortti" data-aine="${a.koodi}" style="--aine-vari:${a.vari}; text-align:center">
         <span class="aine-koodi" style="background:${a.vari}">${a.koodi}</span>
-        <div class="aine-nimi" style="font-size:12.5px">${a.nimi}</div></div>`).join('');
+        <div class="aine-nimi" style="font-size:12.5px">${aineLyhyt(a)}</div></div>`).join('');
       alue.querySelectorAll('.aine-kortti').forEach(el=>{ el.onclick=()=>naytaOpintojakso(el.dataset.aine); });
       document.getElementById('ojSisalto').hidden = true;
     }
@@ -2817,7 +2818,7 @@
       alue.innerHTML = AINEET.map(a =>
         `<div class="aine-kortti" data-aine="${a.koodi}" style="--aine-vari:${a.vari}; text-align:center">
           <span class="aine-koodi" style="background:${a.vari}">${a.koodi}</span>
-          <div class="aine-nimi">${a.nimi}</div>
+          <div class="aine-nimi">${aineLyhyt(a)}</div>
         </div>`).join('');
       alue.querySelectorAll('.aine-kortti').forEach(el => { el.onclick = () => avaaAineSivu(el.dataset.aine); });
     }
@@ -3257,7 +3258,7 @@
         const h = aineenHallussa(a.koodi);
         return `<div class="aine-kortti" data-aine="${a.koodi}" style="--aine-vari:${a.vari}; text-align:center">
           <span class="aine-koodi" style="background:${a.vari}">${a.koodi}</span>
-          <div class="aine-nimi" style="font-size:12.5px">${a.nimi}</div>
+          <div class="aine-nimi" style="font-size:12.5px">${aineLyhyt(a)}</div>
           <div class="aine-tila">${h.kortteja ? h.kortteja+' korttia · '+h.pros+' %' : 'aloita tästä'}</div></div>`;
       }).join('');
       alue.querySelectorAll('.aine-kortti').forEach(el=>{ el.onclick=()=>{ nykyAine=el.dataset.aine; naytaNakyma('aine'); }; });
